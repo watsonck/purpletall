@@ -1,15 +1,15 @@
 # purpletall
 A project management system
 
-Contributors to Controller
+Contributors to Controller: 
   Cameron Haddock
   Colin Watson
   Michael Montgomery
 
-Contributors to View
+Contributors to View: 
   Brendan Speed
   Ryan White
   Alex Sedgwick
 
-Unit Testing
+Unit Testing: 
   Shyheim Williams
