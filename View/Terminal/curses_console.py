@@ -58,7 +58,27 @@ def remake_resp(resp):
         result = result + " " + word
     return result
 
+#Function for printing the kanban sections
+def kanban_print(sect, sect_n, split):
+    for i in range(len(sect)):
+        str2 = str(i) + ":" + sect[i]
+        screen.addstr(2+(i*2), 2+(split*sect_n), str2[:len(str2)], curses.A_REVERSE)
 
+#Function to clear the screen where a task you are moving was 
+def clear_task(task, sect, sect_n,split):
+    start = 0
+    end = 0
+    if sect_n == 0:
+        return
+    elif sect_n == 1:
+        start = 2
+        end = split-3
+    elif sect_n == 2:
+        start = split+2
+        end = split+split-2        
+    for x in range(start, end):
+        screen.addstr(2+(task*2), x, " ")
+        screen.addstr(2+len(sect)*2, x, " ")    
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -97,56 +117,42 @@ def kanban():
             break
         elif parsed[0].decode() == "TODO":
             task = ""
-            if len(tasks) == max_tasks :
+            if len(tasks) == max_tasks :#temporary untill i do scrolling of the tasks
                 continue
             for word in parsed[1:]:
                 task = task + word.decode() + " "
             resp = requests.get("http://127.0.0.1:5000/TODO/" + task).text
-            if len(resp) > split:
+            if len(resp) > split:#temporary until i do character wrapping
                 continue
             resp = parse_cmd(resp)
             resp = remake_resp(resp)
             tasks.append(resp)
         elif parsed[0].decode() == "INPR":
             task = requests.get("http://127.0.0.1:5000/INPR/" + str(parsed[1].decode())).text
-            if len(in_prog) == max_tasks:
+            if len(in_prog) == max_tasks:#temporary untill i do scrolling of the tasks
                 continue
-            elif len(task) > split:
+            elif len(task) > split:#temporary until i do character wrapping
                 continue
             task = parse_cmd(task)
             if int(task[1]) <= len(tasks)-1 :
                 in_prog.append(tasks[int(task[1])])
                 tasks.pop(int(task[1]))
-                for x in range(2, split-3):
-                    print(2+(int(task[1]*2)))
-                    screen.addstr(2+(int(int(task[1])*2)), x, " ")
-                    screen.addstr(2+len(tasks)*2, x, " ")
+                clear_task(int(task[1]), tasks, 1, split)
         elif parsed[0].decode() == "COMP":
             task = requests.get("http://127.0.0.1:5000/COMP/" + str(parsed[1].decode())).text
-            if len(complete) == max_tasks:
+            if len(complete) == max_tasks:#temporary untill i do scrolling of the tasks
                 continue
-            elif len(task) > split:
+            elif len(task) > split:#temporary until i do character wrapping
                 continue
             task = parse_cmd(task)
             if int(task[1]) <= len(in_prog)-1:
                 complete.append(in_prog[int(task[1])])
                 in_prog.pop(int(task[1]))
-                for x in range(split+2, split+split-2):
-                    print(task[1])
-                    screen.addstr(2+(int(int(task[1])*2)), x, " ")
+                clear_task(int(task[1]), in_prog, 2, split)
 
- 
-        for i in range(len(tasks)):
-            str2 = str(i) + ":" + tasks[i]
-            screen.addstr(2+(i*2), 2, str2[:len(str2)], curses.A_REVERSE)
-            
-        for i in range(len(in_prog)):
-            str2 = str(i) + ":" + in_prog[i]
-            screen.addstr(2+(i*2), split+2 , str2[:len(str2)], curses.A_REVERSE)
-                      
-        for i in range(len(complete)):
-            str2 = str(i) + ":" + complete[i]
-            screen.addstr(2+(i*2), split+split+2 , str2[:len(str2)], curses.A_REVERSE)
+        kanban_print(tasks,0,split)
+        kanban_print(in_prog,1,split)
+        kanban_print(complete,2,split)
             
         refresh_screen()
 
