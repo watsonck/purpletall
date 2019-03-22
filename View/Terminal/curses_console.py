@@ -64,6 +64,7 @@ def remake_resp(resp):
 def kanban():
     global screen
     size = screen.getmaxyx()
+    max_tasks = int((size[0]-5)/2)+1
     for x in range(size[1]):
         screen.addstr(size[0]-2, x, " ", curses.A_REVERSE)
         screen.addstr(0,x, " ", curses.A_REVERSE)
@@ -85,7 +86,9 @@ def kanban():
         global in_prog
         global complete
 
-        str1 = get_text(split-2)
+        str1 = get_text(split-1)
+        if len(str1) < 1:
+            continue
         parsed = parse_cmd(str1)
         
 
@@ -94,40 +97,55 @@ def kanban():
             break
         elif parsed[0].decode() == "TODO":
             task = ""
+            if len(tasks) == max_tasks :
+                continue
             for word in parsed[1:]:
                 task = task + word.decode() + " "
             resp = requests.get("http://127.0.0.1:5000/TODO/" + task).text
+            if len(resp) > split:
+                continue
             resp = parse_cmd(resp)
             resp = remake_resp(resp)
             tasks.append(resp)
         elif parsed[0].decode() == "INPR":
             task = requests.get("http://127.0.0.1:5000/INPR/" + str(parsed[1].decode())).text
+            if len(in_prog) == max_tasks:
+                continue
+            elif len(task) > split:
+                continue
             task = parse_cmd(task)
             if int(task[1]) <= len(tasks)-1 :
                 in_prog.append(tasks[int(task[1])])
                 tasks.pop(int(task[1]))
-                for x in range(2, split-2):
+                for x in range(2, split-3):
+                    print(2+(int(task[1]*2)))
                     screen.addstr(2+(int(int(task[1])*2)), x, " ")
+                    screen.addstr(2+len(tasks)*2, x, " ")
         elif parsed[0].decode() == "COMP":
             task = requests.get("http://127.0.0.1:5000/COMP/" + str(parsed[1].decode())).text
+            if len(complete) == max_tasks:
+                continue
+            elif len(task) > split:
+                continue
             task = parse_cmd(task)
             if int(task[1]) <= len(in_prog)-1:
                 complete.append(in_prog[int(task[1])])
                 in_prog.pop(int(task[1]))
                 for x in range(split+2, split+split-2):
+                    print(task[1])
                     screen.addstr(2+(int(int(task[1])*2)), x, " ")
 
  
         for i in range(len(tasks)):
-            str2 = str(i) + ": " + tasks[i]
+            str2 = str(i) + ":" + tasks[i]
             screen.addstr(2+(i*2), 2, str2[:len(str2)], curses.A_REVERSE)
             
         for i in range(len(in_prog)):
-            str2 = str(i) + ": " + in_prog[i]
+            str2 = str(i) + ":" + in_prog[i]
             screen.addstr(2+(i*2), split+2 , str2[:len(str2)], curses.A_REVERSE)
                       
         for i in range(len(complete)):
-            str2 = str(i) + ": " + complete[i]
+            str2 = str(i) + ":" + complete[i]
             screen.addstr(2+(i*2), split+split+2 , str2[:len(str2)], curses.A_REVERSE)
             
         refresh_screen()
@@ -136,7 +154,6 @@ def kanban():
 def main():
     kanban()
     refresh_screen()
-    time.sleep(3)
     screen.clear()
 
 init_curses()
