@@ -44,6 +44,22 @@ def parse_cmd(cmd):
     return cmd.upper().split() 
 
 
+#Just remakes the rest of the cmd without the leading four letter identifier 
+def remake_cmd(cmd):
+    result = ""
+    for word in resp[1:]:
+        result = result + " " + word.decode()
+    return result
+
+#same as above but for server responses so it doesnt need to be decoded 
+def remake_resp(resp):
+    result = ""
+    for word in resp[1:]:
+        result = result + " " + word
+    return result
+
+
+
 ##Cannot write to bottom right corner
 def kanban():
     global screen
@@ -64,82 +80,55 @@ def kanban():
     screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
 
-    server_test = 0
     while True:
         global tasks
         global in_prog
         global complete
 
-        #str1 = get_text(split-2)
-        str1 = ""
-        if server_test == 3:
-            break
-        elif server_test == 0:
-            str1 = requests.get("http://127.0.0.1:5000/TODO").text
-        elif server_test == 1:
-            str1 = requests.get("http://127.0.0.1:5000/INPR").text
-        elif server_test == 2:
-            str1 = requests.get("http://127.0.0.1:5000/COMP").text
+        str1 = get_text(split-2)
         parsed = parse_cmd(str1)
-        print(parsed)
-        server_test = server_test + 1
         
 
         #For when typing in input
-        # if parsed[0].decode() == "QUIT":
-        #     break
-        # elif parsed[0].decode() == "TODO":
-        #     task = ""
-        #     for word in parsed[1:]:
-        #         task = task + word.decode() + " "
-        #     tasks.append(task)
-        # elif parsed[0].decode() == "INPR":
-        #     if int(parsed[1].decode()) <= len(tasks)-1 :
-        #         in_prog.append(tasks[int(parsed[1].decode())])
-        #         tasks.pop(int(parsed[1].decode()))
-        #         for x in range(2, split-2):
-        #             screen.addstr(2+(int(parsed[1].decode()*2)), x, " ")
-        # elif parsed[0].decode() == "COMP":
-        #     if int(parsed[1].decode()) <= len(in_prog)-1:
-        #         complete.append(in_prog[int(parsed[1].decode())])
-        #         in_prog.pop(int(parsed[1].decode()))
-        #         for x in range(split+2, split+split-2):
-        #             screen.addstr(2+(int(parsed[1].decode()*2)), x, " ")
-        
-        
-        #for when receiving from server
-        if parsed[0] == "QUIT":
+        if parsed[0].decode() == "QUIT":
             break
-        elif parsed[0] == "TODO":
+        elif parsed[0].decode() == "TODO":
             task = ""
             for word in parsed[1:]:
-                task = task + word + " "
-            tasks.append(task)
-        elif parsed[0] == "INPR":
-            if int(parsed[1]) <= len(tasks)-1 :
-                in_prog.append(tasks[int(parsed[1])])
-                tasks.pop(int(parsed[1]))
+                task = task + word.decode() + " "
+            resp = requests.get("http://127.0.0.1:5000/TODO/" + task).text
+            resp = parse_cmd(resp)
+            resp = remake_resp(resp)
+            tasks.append(resp)
+        elif parsed[0].decode() == "INPR":
+            task = requests.get("http://127.0.0.1:5000/INPR/" + str(parsed[1].decode())).text
+            task = parse_cmd(task)
+            if int(task[1]) <= len(tasks)-1 :
+                in_prog.append(tasks[int(task[1])])
+                tasks.pop(int(task[1]))
                 for x in range(2, split-2):
-                    screen.addstr(2+(int(parsed[1]*2)), x, " ")
-        elif parsed[0] == "COMP":
-            if int(parsed[1]) <= len(in_prog)-1:
-                complete.append(in_prog[int(parsed[1])])
-                in_prog.pop(int(parsed[1]))
+                    screen.addstr(2+(int(int(task[1])*2)), x, " ")
+        elif parsed[0].decode() == "COMP":
+            task = requests.get("http://127.0.0.1:5000/COMP/" + str(parsed[1].decode())).text
+            task = parse_cmd(task)
+            if int(task[1]) <= len(in_prog)-1:
+                complete.append(in_prog[int(task[1])])
+                in_prog.pop(int(task[1]))
                 for x in range(split+2, split+split-2):
-                    screen.addstr(2+(int(parsed[1]*2)), x, " ")
+                    screen.addstr(2+(int(int(task[1])*2)), x, " ")
 
  
         for i in range(len(tasks)):
             str2 = str(i) + ": " + tasks[i]
-            screen.addstr(2+(i*2), 2, str2[:len(str2)-1], curses.A_REVERSE)
+            screen.addstr(2+(i*2), 2, str2[:len(str2)], curses.A_REVERSE)
             
         for i in range(len(in_prog)):
             str2 = str(i) + ": " + in_prog[i]
-            screen.addstr(2+(i*2), split+2 , str2[:len(str2)-1], curses.A_REVERSE)
+            screen.addstr(2+(i*2), split+2 , str2[:len(str2)], curses.A_REVERSE)
                       
         for i in range(len(complete)):
             str2 = str(i) + ": " + complete[i]
-            screen.addstr(2+(i*2), split+split+2 , str2[:len(str2)-1], curses.A_REVERSE)
+            screen.addstr(2+(i*2), split+split+2 , str2[:len(str2)], curses.A_REVERSE)
             
         refresh_screen()
 
