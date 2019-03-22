@@ -122,7 +122,7 @@ def kanban():
             for word in parsed[1:]:
                 task = task + word.decode() + " "
             resp = requests.get("http://127.0.0.1:5000/TODO/" + task).text
-            if len(resp) > split:#temporary until i do character wrapping
+            if len(resp) > split:#temporary until i do popups for more info on tasks
                 continue
             resp = parse_cmd(resp)
             resp = remake_resp(resp)
@@ -131,7 +131,7 @@ def kanban():
             task = requests.get("http://127.0.0.1:5000/INPR/" + str(parsed[1].decode())).text
             if len(in_prog) == max_tasks:#temporary untill i do scrolling of the tasks
                 continue
-            elif len(task) > split:#temporary until i do character wrapping
+            elif len(task) > split:#temporary until i do popups for more info on tasks
                 continue
             task = parse_cmd(task)
             if int(task[1]) <= len(tasks)-1 :
@@ -142,13 +142,20 @@ def kanban():
             task = requests.get("http://127.0.0.1:5000/COMP/" + str(parsed[1].decode())).text
             if len(complete) == max_tasks:#temporary untill i do scrolling of the tasks
                 continue
-            elif len(task) > split:#temporary until i do character wrapping
+            elif len(task) > split:#temporary until i do popups for more info on tasks
                 continue
             task = parse_cmd(task)
             if int(task[1]) <= len(in_prog)-1:
                 complete.append(in_prog[int(task[1])])
                 in_prog.pop(int(task[1]))
                 clear_task(int(task[1]), in_prog, 2, split)
+        elif parsed[0].decode() == "SPLT":
+            task = requests.get("http://127.0.0.1:5000/SPLT/" + str(parsed[1].decode())).text
+            if len(tasks) == max_tasks:#temporary untill i do scrolling of the tasks
+                continue
+            elif len(task) > split:#temporary until i do popups for more info on tasks
+                continue
+            task = parse_cmd(task)
 
         kanban_print(tasks,0,split)
         kanban_print(in_prog,1,split)
