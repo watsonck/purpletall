@@ -2,17 +2,18 @@ from flask import Flask
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def hello_world():
     return "Hello World"
 
-@app.route("/TODO/<string:task>")
+@app.route("/ADD/<string:task>")
 def todo_test(task):
-    return "TODO" + " " + task
+    return "ADD" + " " + task
 
-@app.route("/INPR/<itask>")
-def inpr_test(itask):
-    return "INPR" + " " + str(itask)
+@app.route("/MOVE/<string:task>")
+def inpr_test(task):
+    return "MOVE" + " " + task
 
 @app.route("/COMP/<ctask>")
 def comp_test(ctask):

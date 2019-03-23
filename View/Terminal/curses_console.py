@@ -47,7 +47,7 @@ def parse_cmd(cmd):
 #Just remakes the rest of the cmd without the leading four letter identifier 
 def remake_cmd(cmd):
     result = ""
-    for word in resp[1:]:
+    for word in cmd[1:]:
         result = result + " " + word.decode()
     return result
 
@@ -111,44 +111,37 @@ def kanban():
             continue
         parsed = parse_cmd(str1)
         
-
+        print(parsed[0].decode())
         #For when typing in input
         if parsed[0].decode() == "QUIT":
             break
-        elif parsed[0].decode() == "TODO":
+        elif parsed[0].decode() == "ADD":
             task = ""
             if len(tasks) == max_tasks :#temporary untill i do scrolling of the tasks
                 continue
             for word in parsed[1:]:
                 task = task + word.decode() + " "
-            resp = requests.get("http://127.0.0.1:5000/TODO/" + task).text
+            resp = requests.get("http://127.0.0.1:5000/ADD/" + task).text
             if len(resp) > split:#temporary until i do popups for more info on tasks
                 continue
             resp = parse_cmd(resp)
             resp = remake_resp(resp)
             tasks.append(resp)
-        elif parsed[0].decode() == "INPR":
-            task = requests.get("http://127.0.0.1:5000/INPR/" + str(parsed[1].decode())).text
-            if len(in_prog) == max_tasks:#temporary untill i do scrolling of the tasks
-                continue
-            elif len(task) > split:#temporary until i do popups for more info on tasks
-                continue
+        elif parsed[0].decode() == "MOVE":
+            task = requests.get("http://127.0.0.1:5000/MOVE/" + remake_cmd(parsed)).text
             task = parse_cmd(task)
-            if int(task[1]) <= len(tasks)-1 :
-                in_prog.append(tasks[int(task[1])])
-                tasks.pop(int(task[1]))
-                clear_task(int(task[1]), tasks, 1, split)
-        elif parsed[0].decode() == "COMP":
-            task = requests.get("http://127.0.0.1:5000/COMP/" + str(parsed[1].decode())).text
-            if len(complete) == max_tasks:#temporary untill i do scrolling of the tasks
-                continue
-            elif len(task) > split:#temporary until i do popups for more info on tasks
-                continue
-            task = parse_cmd(task)
-            if int(task[1]) <= len(in_prog)-1:
+            if len(complete) < max_tasks and task[2] == 'COMP' and int(task[1]) <= len(in_prog)-1:
+                if len(remake_resp(task)) > split-2:
+                    continue
                 complete.append(in_prog[int(task[1])])
                 in_prog.pop(int(task[1]))
                 clear_task(int(task[1]), in_prog, 2, split)
+            elif len(in_prog) < max_tasks and task[2] == 'INPR' and int(task[1]) <= len(tasks)-1 :
+                if len(remake_resp(task)) > split-2:
+                    continue
+                in_prog.append(tasks[int(task[1])])
+                tasks.pop(int(task[1]))
+                clear_task(int(task[1]), tasks, 1, split)
         elif parsed[0].decode() == "SPLT":
             task = requests.get("http://127.0.0.1:5000/SPLT/" + str(parsed[1].decode())).text
             if len(tasks) == max_tasks:#temporary untill i do scrolling of the tasks
