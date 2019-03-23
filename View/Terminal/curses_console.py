@@ -9,6 +9,8 @@ screen = -1
 tasks = []
 in_prog = []
 complete = []
+boards = {'todo':tasks, 'inpr':in_prog, 'comp':complete}
+
 
 #Put init stuff here
 def init_curses(): 
@@ -58,6 +60,10 @@ def remake_resp(resp):
         result = result + " " + word
     return result
 
+def send_recv(cmd):
+    task = requests.get("http://127.0.0.1:5000/TASK/" + cmd).text
+    return parse_cmd(task)    
+
 #Function for printing the kanban sections
 def kanban_print(sect, sect_n, split):
     for i in range(len(sect)):
@@ -68,15 +74,13 @@ def kanban_print(sect, sect_n, split):
 def clear_task(task, sect, sect_n,split):
     start = 0
     end = 0
-    if sect_n == 0:
-        return
-    elif sect_n == 1:#todo
+    if sect_n == 'todo':#todo
         start = 2
         end = split-3
-    elif sect_n == 2:#inpr
+    elif sect_n == 'inpr':#inpr
         start = split+2
         end = split+split-2
-    elif sect_n == 3:#comp
+    elif sect_n == 'comp':#comp
         start = split+split+2
         end = split+split+split-2        
     for x in range(start, end):
@@ -105,9 +109,7 @@ def kanban():
     screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
 
     while True:
-        global tasks
-        global in_prog
-        global complete
+        global boards
 
         str1 = get_text(split-1)
         if len(str1) < 1:
@@ -117,52 +119,45 @@ def kanban():
         #For when typing in input
         if parsed[0].decode() == "QUIT":
             break
-        elif parsed[0].decode() == "ADD":
-            task = requests.get("http://127.0.0.1:5000/TASK/" + remake_cmd(parsed)).text
-            task = parse_cmd(task)
-            if len(tasks) == max_tasks or len(task) < 2:#temporary untill i do scrolling of the tasks
+        elif parsed[0].decode() == "ADD":#EX: ADD Do this thing
+            task = send_recv(str1.decode())
+            if len(boards['todo']) == max_tasks or len(task) < 2:#temporary untill i do scrolling of the tasks
                 continue
             if len(remake_resp(task)) > split:#temporary until i do popups for more info on tasks
                 continue
-            tasks.append(remake_resp(task))
-        elif parsed[0].decode() == "MOVE":
-            task = requests.get("http://127.0.0.1:5000/TASK/" + remake_cmd(parsed)).text
-            task = parse_cmd(task)
+            boards['todo'].append(remake_resp(task))
+        elif parsed[0].decode() == "MOVE":#EX: MOVE 0 from dest 
+            task = send_recv(str1.decode())
             if len(task) < 3:
                 continue
-            if len(complete) < max_tasks and task[2] == 'COMP' and int(task[1]) <= len(in_prog)-1:
+            c_board = task[2].lower()
+            t_board = task[3].lower()
+            if len(task) < 3:
+                continue
+            if len(boards[t_board]) < max_tasks and int(task[1]) <= len(boards[c_board])-1:
                 if len(remake_resp(task)) > split-2:
                     continue
-                complete.append(in_prog[int(task[1])])
-                in_prog.pop(int(task[1]))
-                clear_task(int(task[1]), in_prog, 2, split)
-            elif len(in_prog) < max_tasks and task[2] == 'INPR' and int(task[1]) <= len(tasks)-1 :
-                if len(remake_resp(task)) > split-2:
-                    continue
-                in_prog.append(tasks[int(task[1])])
-                tasks.pop(int(task[1]))
-                clear_task(int(task[1]), tasks, 1, split)
-        elif parsed[0].decode() == "REMV":
-            task = requests.get("http://127.0.0.1:5000/TASK/" + remake_cmd(parsed)).text
-            task = parse_cmd(task)
+                boards[t_board].append(boards[c_board][int(task[1])])
+                boards[c_board].pop(int(task[1]))
+                clear_task(int(task[1]), boards[c_board], c_board, split)
+        elif parsed[0].decode() == "REMV":#EX: REMV 0 COMP,  Once we have a model this will be REMV 0 
+            task = send_recv(str1.decode())
             if len(task) < 3 : 
                 continue
-            if int(task[1]) <= len(tasks)-1 and task[2] == "TODO":
-                tasks.pop(int(task[1]))
-                clear_task(int(task[1]), tasks, 1, split)
-            elif int(task[1]) <= len(in_prog)-1 and task[2] == "INPR":
-                in_prog.pop(int(task[1]))
-                clear_task(int(task[1]), in_prog, 2, split)
-            elif int(task[1]) <= len(complete)-1 and task[2] == "COMP":
-                complete.pop(int(task[1]))
-                clear_task(int(task[1]), complete, 3, split)
-        elif parsed[0].decode() == "SPLT":
-            task = requests.get("http://127.0.0.1:5000/SPLT/" + str(parsed[1].decode())).text
-            if len(tasks) == max_tasks:#temporary untill i do scrolling of the tasks
+            c_board = task[2].lower()
+            if int(task[1]) <= len(boards[c_board])-1:
+                boards[c_board].pop(int(task[1]))
+                clear_task(int(task[1]), boards[c_board], c_board, split)
+        elif parsed[0].decode() == "SPLT":#EX: SPLT 0 COMP Task1 Task2,   Once we have a model this will be SPLT 0 Task1 Task2
+            task = send_recv(str1.decode())
+            if len(task) < 5:
                 continue
-            elif len(task) > split:#temporary until i do popups for more info on tasks
-                continue
-            task = parse_cmd(task)
+            c_board = task[2].lower()
+            if len(boards[c_board]) <= max_tasks-2 and int(task[1]) <= len(boards[c_board])-1:#temporary untill i do scrolling of the tasks
+                boards[c_board].pop(int(task[1]))
+                boards[c_board].append(task[3])
+                boards[c_board].append(task[4])
+            clear_task(int(task[1]), boards[c_board], c_board, split)
 
         kanban_print(tasks,0,split)
         kanban_print(in_prog,1,split)
