@@ -7,17 +7,13 @@ app = Flask(__name__)
 def hello_world():
     return "Hello World"
 
-@app.route("/ADD/<string:task>")
-def todo_test(task):
-    return "ADD" + " " + task
+@app.route("/TASK/<string:task>")
+def new_task(task):
+    n_task = ""
+    for word in task.split():
+        n_task = n_task + word + " "
+    return n_task
 
-@app.route("/MOVE/<string:task>")
-def inpr_test(task):
-    return "MOVE" + " " + task
-
-@app.route("/COMP/<ctask>")
-def comp_test(ctask):
-    return "COMP" + " " + str(ctask)
 
 if __name__ == "__main__":
     app.run()
