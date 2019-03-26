@@ -2,9 +2,9 @@ CREATE TABLE Task  (id      	 SERIAL PRIMARY KEY,
     		    name	 VARCHAR(20)
 		    description	 TEXT,
 		    stage	 VARCHAR(4),
-		    startTime    TIMESTAMP
-		    exptCompTime 
-		    actCompTime
+		    startTime    TEXT,
+		    exptCompTime TEXT,
+		    actCompTime  TEXT
     );
 
 
@@ -14,11 +14,18 @@ CREATE TABLE Users (userId  SERIAL PRIMARY KEY,
 		    lname   VARCHAR(10),
 		    email   VARCHAR(30),
 		    gitname VARCHAR(20)
-  );
+    );
 
 
-CREATE TABLE Logs  (taskId
-  		    contributor
-		    action
-		    time
-		    comments
+CREATE TABLE Logs  (taskId	 SERIAL,
+  		    contributor	 SERIAL,
+		    action	 TEXT,
+		    time	 TEXT,
+		    comments	 TEXT,
+		    PRIMARY KEY(taskId, time)
+    );
+
+ALTER TABLE Logs ADD FOREIGN KEY (taskId) REFRENCES Task(id);
+ALTER TABLE Logs ADD FOREIGN KEY (contributor) REFRENCES Users(userId);
+
+
