@@ -61,7 +61,7 @@ def remake_resp(resp):
     return result
 
 def send_recv(cmd):
-    task = requests.get("http://127.0.0.1:5000/TASK/" + cmd).text
+    task = requests.get("http://204.111.247.205:5000/TASK/" + cmd).text
     return parse_cmd(task)    
 
 #Function for printing the kanban sections
