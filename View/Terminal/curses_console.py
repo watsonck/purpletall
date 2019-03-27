@@ -109,8 +109,8 @@ def login():
     screen.addstr(splity+4, splitx+12, "                ")
 
     curses.echo()
-    username = screen.getstr(splity+2,splitx+12,16)
-    password = screen.getstr(splity+4,splitx+12,16)
+    username = screen.getstr(splity+2,splitx+12,15)
+    password = screen.getstr(splity+4,splitx+12,15)
     curses.noecho()
     screen.clear()
 
