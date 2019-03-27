@@ -1,4 +1,4 @@
-from flask import Flask,request,g,redirect,escape,render_tmeplate
+from flask import Flask,request,g,redirect,escape,render_template
 import psycopg2,psycopg2.extras,time
 
 app = Flask(__name__)
