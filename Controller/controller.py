@@ -1,4 +1,4 @@
-from flask import Flask,request,g,redirect,escape
+from flask import Flask,request,g,redirect,escape,render_tmeplate
 import psycopg2,psycopg2.extras,time
 
 app = Flask(__name__)
@@ -30,7 +30,9 @@ def close_db(error):
 
 @app.route("/")
 def hello_world():
-	return "Hello World"
+        return "Hello World"
+        return render_template("../../Web/login.html")
+    #todo: treat GET requests as terminal source and POST requests as web source
 
 @app.route("/TASK/<string:task>")
 def new_task(task):
@@ -72,7 +74,13 @@ def move():
 #http://204.111.247.205:5000/remove?id=1
 @app.route("/remove")
 def remove():
-	return ''
+        taskid = request.args.get('id',0)
+        if taskid:
+            db = get_db()
+            db.execute("DELETE FROM task WHERE id = '%s'" % (taskid))
+            db.execute("DELETE FROM logs WHERE taskId = '%s'" % (taskid))
+            #manual cascade'ing till know friegn keys are setup correctly
+	return '' #render_template( path to a result web page or default )
 
 #Example url
 #http://204.111.247.205:5000/split?id=1
