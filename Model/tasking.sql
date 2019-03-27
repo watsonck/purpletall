@@ -28,4 +28,5 @@ CREATE TABLE Logs  (taskId	 SERIAL,
 ALTER TABLE Logs ADD FOREIGN KEY (taskId) REFRENCES Task(id);
 ALTER TABLE Logs ADD FOREIGN KEY (contributor) REFRENCES Users(userId);
 
-
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Watson','Colin','colin.watson777@yahoo.com', 'watsonck');
+INSERT INTO Task (name, description, stage,) VALUES ('Kanban', 'Start an online kanban board', 'DONE');
