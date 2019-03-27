@@ -4,6 +4,8 @@ import requests
 
 win_list = []
 screen = -1
+username = ""
+password = ""
 
 #kanban varriables
 tasks = []
@@ -61,14 +63,16 @@ def remake_resp(resp):
     return result
 
 def send_recv(cmd):
-    task = requests.get("http://204.111.247.205:5000/TASK/" + cmd).text
+    task = requests.get("http://purpletall.cs.longwood.edu:5000/TASK/" + cmd).text
     return parse_cmd(task)    
 
 #Function for printing the kanban sections
 def kanban_print(sect, sect_n, split):
+    global username
     for i in range(len(sect)):
         str2 = str(i) + ":" + sect[i]
         screen.addstr(2+(i*2), 2+(split*sect_n), str2[:len(str2)], curses.A_REVERSE)
+        screen.addstr(3+(i*2), 2+(split*sect_n), username, curses.A_REVERSE)
 
 #Function to clear the screen where a task you are moving was 
 def clear_task(task, sect, sect_n,split):
@@ -86,6 +90,34 @@ def clear_task(task, sect, sect_n,split):
     for x in range(start, end):
         screen.addstr(2+(task*2), x, " ")
         screen.addstr(2+len(sect)*2, x, " ")    
+
+def login():
+    global username
+    global password
+    global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+    for y in range(splity,splity+splity):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
+    
+    screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.A_REVERSE)
+    screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
+    screen.addstr(splity+2, splitx+12, "                ")
+    screen.addstr(splity+4, splitx+1, "Password:", curses.A_REVERSE)
+    screen.addstr(splity+4, splitx+12, "                ")
+
+    curses.echo()
+    username = screen.getstr(splity+2,splitx+12,15)
+    password = screen.getstr(splity+4,splitx+12,15)
+    curses.noecho()
+    screen.clear()
+
+    
+
+    
+
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -167,6 +199,7 @@ def kanban():
 
 
 def main():
+    login()
     kanban()
     refresh_screen()
     screen.clear()
