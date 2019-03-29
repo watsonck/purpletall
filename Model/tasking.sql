@@ -1,5 +1,8 @@
+
+
+
 CREATE TABLE Task  (id			SERIAL PRIMARY KEY,
-    		    name		VARCHAR(20)
+    		    name		VARCHAR(20),
 		    description		TEXT,
 		    stage		VARCHAR(4),
 		    startTime		TEXT,
@@ -33,7 +36,6 @@ CREATE TABLE Stages (projId		SERIAL,
 		     PRIMARY KEY(projId, stageName)
     );
 
-ALTER TABLE Logs ADD FOREIGN KEY (taskId) REFRENCES Task(id);
-ALTER TABLE Stages ADD FOREIGN KEY (proj) REFRENCES Projects(projId);
-
+ALTER TABLE Logs ADD FOREIGN KEY (taskId) REFERENCES Task(id);
+ALTER TABLE Stages ADD FOREIGN KEY (projId) REFERENCES Projects(projId);
 
