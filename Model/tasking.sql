@@ -7,20 +7,33 @@ CREATE TABLE Task  (id			SERIAL PRIMARY KEY,
 		    actCompTime		TEXT
     );
 
-CREATE TABLE Users (userId	SERIAL PRIMARY KEY,
-  		    fname	VARCHAR(10),
-		    lname	VARCHAR(10),
-		    email	VARCHAR(30),
-		    gitname	VARCHAR(20)
+CREATE TABLE Users (userId		SERIAL PRIMARY KEY,
+  		    fname		VARCHAR(10),
+		    lname		VARCHAR(10),
+		    email		VARCHAR(30),
+		    gitname		VARCHAR(20)
     );
 
-CREATE TABLE Logs  (taskId	SERIAL,
-  		    contributor	SERIAL REFERENCES Users (userId),
-		    action	TEXT,
-		    time	TEXT,
-		    comments	TEXT,
+CREATE TABLE Logs  (taskId		SERIAL,
+  		    contributor		SERIAL REFERENCES Users (userId),
+		    action		TEXT,
+		    time		TEXT,
+		    comments		TEXT,
 		    PRIMARY KEY(taskId, time)
     );
 
+CREATE TABLE Projects (projId		SERIAL PRIMARY KEY,
+    		       name		VARCHAR(30),
+		       description	TEXT
+    );
+
+CREATE TABLE Stages (projId		SERIAL,
+    		     stageName		VARCHAR,
+		     stageOrder		INTEGER,
+		     PRIMARY KEY(projId, stageName)
+    );
+
 ALTER TABLE Logs ADD FOREIGN KEY (taskId) REFRENCES Task(id);
+ALTER TABLE Stages ADD FOREIGN KEY (proj) REFRENCES Projects(projId);
+
 
