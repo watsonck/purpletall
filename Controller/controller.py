@@ -28,87 +28,119 @@ def close_db(error):
 		g.db.close()
 	return ''
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def hello_world():
+    if request.method == "GET":
+        #example for other actual functions below,
+        #give plain/JSON output here
         return "Hello World"
+    else:
+        #build web page otherwise, sending what it would need in comma list
         return render_template("../../Web/login.html")
-    #todo: treat GET requests as terminal source and POST requests as web source
+        #might need to move file and rename path, jinja looks for templates
 
 @app.route("/TASK/<string:task>")
 def new_task(task):
-	n_task = ""
-	for word in task.split():
-		n_task = n_task + word + " "
-	return n_task
+    n_task = ""
+    for word in task.split():
+        n_task = n_task + word + " "
+    db = getdb()
+    #fetch the task info from Database here
+    #todo: parse n_task, or directly use it as 'id'
+    #db.execute("SELECT * FROM tasks WHERE taskid = '%s' % (id))
+    return n_task
 
 #Example url
 #http://204.111.247.205:5000/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
 #Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
-@app.route("/add")
+@app.route("/add", methods=["GET", "POST"])
 def add():
-	name = request.args.get('name','N/A').replace('{','').replace('}','')
-	desc = request.args.get('desc','N/A').replace('{','').replace('}','')
-	ect = request.args.get('time','N/A').replace('{','').replace('}','')
-	bug = request.args.get('bug','false').replace('{','').replace('}','')
-	start = time.asctime(time.localtime(time.time()))
-
-	db = get_db()
-	db.execute("INSERT INTO task(name,description,start_time,exp_comp_time,is_bug,stage) values ('%s','%s','%s','%s','%s','todo');" % (name,desc,start,ect,bug))
-	g.db.commit()
-	return name
+    if request.method=="GET":
+        name = request.args.get('name','N/A').replace('{','').replace('}','')
+        desc = request.args.get('desc','N/A').replace('{','').replace('}','')
+        ect = request.args.get('time','N/A').replace('{','').replace('}','')
+        bug = request.args.get('bug','false').replace('{','').replace('}','')
+        start = time.asctime(time.localtime(time.time()))
+    #else:   
+        db = get_db()
+        db.execute("INSERT INTO task (name,description,start_time,exp_comp_time,is_bug,stage) VALUES ('%s','%s','%s','%s','%s','todo');" % (name,desc,start,ect,bug))
+        g.db.commit()
+        #why is it returning name? for debug/proof it did something?
+        return name
 
 #Example url
 #http://204.111.247.205:5000/move?id=1&stage={complete}
-@app.route("/move")
+@app.route("/move", methods=["GET", "POST"])
 def move():
-	id = request.args.get('id',0)
+    #if request.method=="GET"
+	taskid = request.args.get('id',0)
 	stage = request.args.get('stage','N/A').replace('{','').replace('}','')
 
 	db = get_db()
-	db.execute("UPDATE task SET stage='%s' WHERE id=%s;" % (stage,id))
+	db.execute("UPDATE task SET stage='%s' WHERE id=%s;" % (stage, taskid))
 	g.db.commit()
 	return id
 
-
 #Example url
 #http://204.111.247.205:5000/remove?id=1
-@app.route("/remove")
+@app.route("/remove", methods=["GET", "POST"])
 def remove():
+    if request.method=="GET":
         taskid = request.args.get('id',0)
         if taskid:
             db = get_db()
             db.execute("DELETE FROM task WHERE id = '%s'" % (taskid))
             db.execute("DELETE FROM logs WHERE taskId = '%s'" % (taskid))
             #manual cascade'ing till know friegn keys are setup correctly
-	return '' #render_template( path to a result web page or default )
+    return ''
+    #else:
+        #return render_template( path to a result web page or default )
 
 #Example url
 #http://204.111.247.205:5000/split?id=1
-@app.route("/split")
+@app.route("/split", methods=["GET", "POST"]) #post still listed for web
 def split():
-	return ''
+    db = getdb()
+    taskid = request.args.get('id',0)
+    db.execute("SELECT * FROM task WHERE id = '%s'" % (taskid))
+    rows = db.fetchall() #should be a single disctionaly/map object list
+    rows['id'] = ""
+
+    db.execute("INSERT INTO task VALUES ('%s', '%s', '%s', '%s', '%s', 'todo')" % (rows))
+    #might need to fix to explitly grab each thing in the row list
+    return ''
 
 #Example url
 #http://204.111.247.205:5000/split?id=1
-@app.route("/modify")
+@app.route("/modify", methods=["GET", "POST"])
 def modify():
+        #need to expand this to include what sort of modification
 	return ''
 
 #Example url
 #http://204.111.247.205:5000/info?id=1
-@app.route("/info")
+@app.route("/info", methods=["GET", "POST"])
 def info():
-	return ''
+    db = getdb()
+    taskid = 0;
+    if request.method=="GET":
+        taskid = request.args.get('id', 0)
+        db.execute("SELECT * FROM task WHERE id = '%s'" % (taskid))
+        return '' #organized plain text or a JSON
+    else:
+        taskid = request.form.getValue('id', 0) #might need to wrap in an escape()
+        db.execute("SELECT * FROM task WHERE id = '%s'" % (taskid))
+        return '' #redirect to view page, which will do displaying
 
 #Example url
 #http://204.111.247.205:5000/ping?user={haddockcl}
-@app.route("/ping")
+@app.route("/ping", methods=["GET", "POST"])
 def ping():
 	return ''
 
 #Example url
 #http://204.111.247.205:5000/login?user={haddockcl}
-@app.route("/login")
+@app.route("/login", methods=["GET", "POST"])
 def login():
 	return ''
 
