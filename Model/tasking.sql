@@ -39,3 +39,15 @@ CREATE TABLE Stages (projId		SERIAL,
 ALTER TABLE Logs ADD FOREIGN KEY (taskId) REFERENCES Task(id);
 ALTER TABLE Stages ADD FOREIGN KEY (projId) REFERENCES Projects(projId);
 
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Colin', 'Watson', 'colin.watson777@yahoo.com', 'watsonck');
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Cameron', 'Haddock', 'cameron.haddock@live.longwood.edu', 'TheBiggerFish');
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Ryan'. 'White', 'ryan.white@live.longwood.edu','whitebryan');
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Micheal', 'Montgomery', 'soul4hdwn@gmail', 'soul4hdwn');
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Brendan', 'Speed', 'bredan.speed@live.longwood.edu','Iridium12');
+INSERT INTO Users (fname, lname, email, gitname) VALUES ('Shyheim', 'Williams', 'shyheim.williams@live.longwood.edu', 'steelairship');
+
+INSERT INTO Projects(name, description) VALUES ('Testing Project','a project made to test program');
+
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1,'start',0);
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1, 'todo',1);
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1, 'Done',2);
