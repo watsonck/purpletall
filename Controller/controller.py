@@ -74,12 +74,12 @@ def move():
 #http://204.111.247.205:5000/remove?id=1
 @app.route("/remove")
 def remove():
-        taskid = request.args.get('id',0)
-        if taskid:
-            db = get_db()
-            db.execute("DELETE FROM task WHERE id = '%s'" % (taskid))
-            db.execute("DELETE FROM logs WHERE taskId = '%s'" % (taskid))
-            #manual cascade'ing till know friegn keys are setup correctly
+	taskid = request.args.get('id',0)
+	if taskid:
+		db = get_db()
+		db.execute("DELETE FROM task WHERE id = '%s'" % (taskid))
+		db.execute("DELETE FROM logs WHERE taskId = '%s'" % (taskid))
+		#manual cascade'ing till know friegn keys are setup correctly
 	return '' #render_template( path to a result web page or default )
 
 #Example url
