@@ -72,7 +72,6 @@ def send_recv(proj, cmd, args):
         url = url + 'remove?id=' + args[0]
     elif cmd == 'modi':
         return
-        #not defined in controller yet
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0]
     task = requests.get(url).text
