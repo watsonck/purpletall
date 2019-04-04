@@ -7,8 +7,8 @@ app.config.from_object(__name__)
 app.config.update( dict(
 	DATABASE="purpletall",
 	SECRET_KEY="Lizard Overlords",
-	USERNAME="purpletall",
-	PASSWORD="purpletall"
+	USERNAME="postgres",
+	PASSWORD="postgres"
 ))
 
 def connect_db():
@@ -51,13 +51,26 @@ def new_task(task):
 	return n_task
 
 
+
+#https://realpython.com/python-json/
+@app.route("/<int:project>/LIST")
 def pull_tasks(project):
-	json_string = '{'
+	json_dict = {}
+	json_dict['metadata'] = {}
+	json_dict['tasks'] = []
+
+	json_dict['metadata']['project'] = project
+
 	db = get_db()
-	db.execute("SELECT id,name,user FROM tasks NATURAL JOIN projects WHERE projid=%d;"% (projid))
-	db.fetchall()
-	json_string += '}'
-	return json.dumps(json_string)
+	db.execute("SELECT id,task.name as name,contributor FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
+	tasks = db.fetchall()
+	for row in tasks:
+		json_dict['tasks'].append({
+			'id': row['id'],
+			'name': row['name'],
+			'user': row['contributor'],
+		})
+	return json.dumps(json_dict)
 
 
 #Example url
