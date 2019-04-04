@@ -63,7 +63,7 @@ def remake_resp(resp):
     return result
 
 def send_recv(proj, cmd, args):
-    url = "http://purpletall.cs.longwood.edu:5000/" + proj +'/'
+    url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
         url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={2019-05-01}&bug={' + args[2].decode() + '}'
     elif cmd == 'move' and len(args) >= 2:
