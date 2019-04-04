@@ -1,6 +1,4 @@
-import curses
-import time
-import requests
+import curses, time, requests, json
 
 win_list = []
 screen = -1
@@ -105,8 +103,7 @@ def login():
     screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.A_REVERSE)
     screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
     screen.addstr(splity+2, splitx+12, "                ")
-    screen.addstr(splity+4, splitx+1, "Password:", curses.A_REVERSE)
-    screen.addstr(splity+4, splitx+12, "                ")
+
 
     curses.echo()
     username = screen.getstr(splity+2,splitx+12,15)
@@ -139,6 +136,10 @@ def kanban():
     screen.addstr(1,int(split/2)-5, "TO DO", curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
+
+    task = json.load(requests.get("http://purpletall.cs.longwood.edu:5000/<string:project>/modifiy").text)
+    print(task)
+
 
     while True:
         global boards
