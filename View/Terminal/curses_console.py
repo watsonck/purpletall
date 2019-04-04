@@ -157,6 +157,8 @@ def kanban():
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
+    task = json.load(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    proc_resp(task)
     draw_kanban(size[1],size[0],split)
 
     while True:
