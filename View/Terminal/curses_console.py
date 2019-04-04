@@ -79,14 +79,14 @@ def send_recv(proj, cmd, args):
     return json.loads(requests.get(url).text)    
 
 def proc_resp(task):
-    for i in range(len(task['stages'])):
+    for i in range(task['stages']):
         for j in range(len(task['stages'][str(i)])):
             if i == 0:
-                boards['todo']task['stages']['0'][j]['id'] = task['stages']['0'][j]['name']
+                boards['todo'][task['stages']['0'][j]['id']] = task['stages']['0'][j]['name']
             elif i == 1:
-                boards['inpr']task['stages']['1'][j]['id'] = task['stages']['1'][j]['name']
+                boards['inpr'][task['stages']['1'][j]['id']] = task['stages']['1'][j]['name']
             elif i == 2:
-                boards['comp']task['stages']['2'][j]['id'] = task['stages']['2'][j]['name']
+                boards['comp'][task['stages']['2'][j]['id']] = task['stages']['2'][j]['name']
 
 
 #Function for printing the kanban sections
