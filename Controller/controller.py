@@ -57,15 +57,23 @@ def new_task(task):
 def pull_tasks(project):
 	json_dict = {}
 	json_dict['metadata'] = {}
-	json_dict['tasks'] = []
+	json_dict['stages'] = {}
+	db = get_db()
+	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%d;"% (project))
+	stages = int(db.fetchone()['count'])
+	if stages == 0:
+		return 'Stage Error: No stages on project'
 
 	json_dict['metadata']['project'] = project
+	json_dict['metadata']['stages'] = stages
 
-	db = get_db()
-	db.execute("SELECT id,task.name as name,contributor FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
+
+	db.execute("SELECT id,task.name as name,contributor,stage FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
 	tasks = db.fetchall()
 	for row in tasks:
-		json_dict['tasks'].append({
+		json_dict['stages'][row['stage']] = []
+	for row in tasks:
+		json_dict['stages'][row['stage']].append({
 			'id': row['id'],
 			'name': row['name'],
 			'user': row['contributor'],
