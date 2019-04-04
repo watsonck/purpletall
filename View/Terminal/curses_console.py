@@ -62,17 +62,18 @@ def remake_resp(resp):
 
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + proj +'/'
-    if cmd == 'add' and size(args) >= 4:
+    if cmd == 'add' and len(args) >= 4:
         url = url + 'add?name={'+ args[0] + '}&desc={' + args[1] + '}&time={2019-05-01}&bug={' + args[2] + '}'
-    elif cmd == 'move' and size(args) >= 2:
+    elif cmd == 'move' and len(args) >= 2:
         url = url + 'move?id=' + args[0] +'&stage={'+args[1]+'}'
-    elif cmd == 'splt' and size(args) >= 1:
+    elif cmd == 'splt' and len(args) >= 1:
         url = url + 'split?id=' +args[0]
-    elif cmd == 'remv' and size(args) >= 1:
+    elif cmd == 'remv' and len(args) >= 1:
         url = url + 'remove?id=' + args[0]
     elif cmd == 'modi':
+        return
         #not defined in controller yet
-    elif cmd == 'info' and size(args) >= 1:
+    elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0]
     task = requests.get(url).text
     return parse_cmd(task)    
@@ -149,8 +150,8 @@ def kanban():
     screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
 
-    #task = requests.get("http://purpletall.cs.longwood.edu:5000/<string:project>/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={false}").text
-    #print(task)
+    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    print(task)
 
 
     while True:
