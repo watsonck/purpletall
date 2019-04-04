@@ -6,9 +6,11 @@ username = ""
 password = ""
 
 #kanban varriables
-tasks = []
-in_prog = []
-complete = []
+cur_proj = 0
+kanban_start = 0
+tasks = {}
+in_prog = {}
+complete = {}
 boards = {'todo':tasks, 'inpr':in_prog, 'comp':complete}
 
 
@@ -63,44 +65,65 @@ def remake_resp(resp):
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + proj +'/'
     if cmd == 'add' and len(args) >= 4:
-        url = url + 'add?name={'+ args[0] + '}&desc={' + args[1] + '}&time={2019-05-01}&bug={' + args[2] + '}'
+        url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={2019-05-01}&bug={' + args[2].decode() + '}'
     elif cmd == 'move' and len(args) >= 2:
-        url = url + 'move?id=' + args[0] +'&stage={'+args[1]+'}'
+        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'
     elif cmd == 'splt' and len(args) >= 1:
-        url = url + 'split?id=' +args[0]
+        url = url + 'split?id=' +args[0].decode()
     elif cmd == 'remv' and len(args) >= 1:
-        url = url + 'remove?id=' + args[0]
+        url = url + 'remove?id=' + args[0].decode()
     elif cmd == 'modi':
         return
     elif cmd == 'info' and len(args) >= 1:
-        url = url + 'info?id=' +args[0]
-    task = requests.get(url).text
-    return parse_cmd(task)    
+        url = url + 'info?id=' +args[0].decode()
+    return json.loads(requests.get(url).text)    
+
+def proc_resp(task):
+    for i in range(len(task['stages'])):
+        for j in range(len(task['stages'][str(i)])):
+            if i == 0:
+                boards['todo']task['stages']['0'][j]['id'] = task['stages']['0'][j]['name']
+            elif i == 1:
+                boards['inpr']task['stages']['1'][j]['id'] = task['stages']['1'][j]['name']
+            elif i == 2:
+                boards['comp']task['stages']['2'][j]['id'] = task['stages']['2'][j]['name']
+
 
 #Function for printing the kanban sections
-def kanban_print(sect, sect_n, split, start = 0):
-    global username
-    for i in range(len(sect)):
-        str2 = str(i) + ":" + sect[i]
-        screen.addstr(2+(i*2), 2+(split*sect_n), str2[:len(str2)], curses.A_REVERSE)
-        screen.addstr(3+(i*2), 2+(split*sect_n), username, curses.A_REVERSE)
+def kanban_print(split, max_tasks, limit):
+    global kanban_print
+    global boards
 
-#Function to clear the screen where a task you are moving was 
-def clear_task(task, sect, sect_n,split):
-    start = 0
-    end = 0
-    if sect_n == 'todo':#todo
-        start = 2
-        end = split-3
-    elif sect_n == 'inpr':#inpr
-        start = split+2
-        end = split+split-2
-    elif sect_n == 'comp':#comp
-        start = split+split+2
-        end = split+split+split-2        
-    for x in range(start, end):
-        screen.addstr(2+(task*2), x, " ")
-        screen.addstr(2+len(sect)*2, x, " ")    
+    cur_tasks = 0
+    cur_board = 0
+    for board in boards:
+        for task in boards[board]:
+            if cur_tasks == max_tasks:
+                break
+            else:
+                str1 = str(task) + ": " + boards[board][task]['name']
+                screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
+                screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), boards[board][task]['user'], curses.A_REVERSE)
+                cur_tasks = cur_tasks + 1
+        cur_board = cur_board + 1
+
+
+def draw_kanban(max_x,max_y,split):
+    for x in range(max_x):
+        screen.addstr(max_y-2, x, " ", curses.A_REVERSE)
+        screen.addstr(0,x, " ", curses.A_REVERSE)
+
+    for y in range(max_y-1):
+        screen.addstr(y,0+split, " ", curses.A_REVERSE)
+        screen.addstr(y,0+split+split, " ", curses.A_REVERSE)
+        if y < max_y-2:
+            screen.addstr(y,0, " ", curses.A_REVERSE)
+            screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
+        
+    screen.addstr(1,int(split/2)-5, "TO DO", curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
+
 
 def login():
     global username
@@ -133,31 +156,12 @@ def kanban():
     global screen
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
-    for x in range(size[1]):
-        screen.addstr(size[0]-2, x, " ", curses.A_REVERSE)
-        screen.addstr(0,x, " ", curses.A_REVERSE)
-
     split = int(size[1]/3)
-    for y in range(size[0]-1):
-        screen.addstr(y,0+split, " ", curses.A_REVERSE)
-        screen.addstr(y,0+split+split, " ", curses.A_REVERSE)
-        if y < size[0]-2:
-            screen.addstr(y,0, " ", curses.A_REVERSE)
-            screen.addstr(y,size[1]-1, " ", curses.A_REVERSE)
-        
-    screen.addstr(1,int(split/2)-5, "TO DO", curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
-
-    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
-    screen.addstr(1,int((split/2)*5)-5, task['tasks'][0]['name'], curses.A_REVERSE)
-    for i in range(len(task['tasks'])):
-        print(task['tasks'][i]['name'])
-        print('\n')
-
+    draw_kanban(size[1],size[0],split)
 
     while True:
         global boards
+        global cur_proj
 
         str1 = get_text(split-1)
         if len(str1) < 1:
@@ -168,49 +172,21 @@ def kanban():
         if parsed[0].decode() == "QUIT":
             break
         elif parsed[0].decode() == "ADD":#EX: ADD Do this thing
-            task = send_recv(str1.decode())
-            if len(boards['todo']) == max_tasks or len(task) < 2:#temporary untill i do scrolling of the tasks
-                continue
-            if len(remake_resp(task)) > split:#temporary until i do popups for more info on tasks
-                continue
-            boards['todo'].append(remake_resp(task))
+            task = send_recv(cur_proj, 'add', parsed[1:])
+            proc_resp(task)
         elif parsed[0].decode() == "MOVE":#EX: MOVE 0 from dest 
-            task = send_recv(str1.decode())
-            if len(task) < 3:
-                continue
-            c_board = task[2].lower()
-            t_board = task[3].lower()
-            if len(task) < 3:
-                continue
-            if len(boards[t_board]) < max_tasks and int(task[1]) <= len(boards[c_board])-1:
-                if len(remake_resp(task)) > split-2:
-                    continue
-                boards[t_board].append(boards[c_board][int(task[1])])
-                boards[c_board].pop(int(task[1]))
-                clear_task(int(task[1]), boards[c_board], c_board, split)
+            task = send_recv(cur_proj, 'move', parsed[1:])
+            proc_resp(task)
         elif parsed[0].decode() == "REMV":#EX: REMV 0 COMP,  Once we have a model this will be REMV 0 
-            task = send_recv(str1.decode())
-            if len(task) < 3 : 
-                continue
-            c_board = task[2].lower()
-            if int(task[1]) <= len(boards[c_board])-1:
-                boards[c_board].pop(int(task[1]))
-                clear_task(int(task[1]), boards[c_board], c_board, split)
+            task = send_recv(cur_proj, 'remv', parsed[1:])
+            proc_resp(task)
         elif parsed[0].decode() == "SPLT":#EX: SPLT 0 COMP Task1 Task2,   Once we have a model this will be SPLT 0 Task1 Task2
-            task = send_recv(str1.decode())
-            if len(task) < 5:
-                continue
-            c_board = task[2].lower()
-            if len(boards[c_board]) <= max_tasks-2 and int(task[1]) <= len(boards[c_board])-1:#temporary untill i do scrolling of the tasks
-                boards[c_board].pop(int(task[1]))
-                boards[c_board].append(task[3])
-                boards[c_board].append(task[4])
-            clear_task(int(task[1]), boards[c_board], c_board, split)
+            task = send_recv(cur_proj, 'splt', parsed[1:])
+            proc_resp(task)
 
-        kanban_print(tasks,0,split)
-        kanban_print(in_prog,1,split)
-        kanban_print(complete,2,split)
-            
+        screen.clear()
+        draw_kanban(size[1],size[0],split)
+        kanban_print(split, max_tasks, split-1)
         refresh_screen()
 
 
