@@ -137,7 +137,7 @@ def kanban():
     screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
 
-    task = json.load(requests.get("http://purpletall.cs.longwood.edu:5000/<string:project>/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={false}").text)
+    task = requests.get("http://purpletall.cs.longwood.edu:5000/<string:project>/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={false}").text
     print(task)
 
 
