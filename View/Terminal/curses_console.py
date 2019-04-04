@@ -150,6 +150,7 @@ def kanban():
     screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
 
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    print(task['tasks'][0]['name'])
     for i in range(len(task['tasks'])):
         print(task['tasks'][i]['name'])
         print('\n')
