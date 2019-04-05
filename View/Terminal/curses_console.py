@@ -79,7 +79,7 @@ def send_recv(proj, cmd, args):
     return json.loads(requests.get(url).text)    
 
 def proc_resp(task):
-    for i in range(task['stages']):
+    for i in range(len(task['stages'])):
         for j in range(len(task['stages'][str(i)])):
             if i == 0:
                 boards['todo'][task['stages']['0'][j]['id']] = task['stages']['0'][j]['name']
