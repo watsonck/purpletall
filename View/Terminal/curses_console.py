@@ -77,7 +77,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
     print(url)
-    return json.loads(requests.get(url).text)  
+    return requests.get(url).json()#json.loads(requests.get(url).text)  
 
 def proc_resp(task):
     for i in range(len(task['stages'])):
@@ -158,7 +158,7 @@ def kanban():
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
-    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    task = requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').json()#json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
     proc_resp(task)
     draw_kanban(size[1],size[0],split)
 
