@@ -65,7 +65,7 @@ def remake_resp(resp):
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
-        url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={2019-05-01}&bug={' + args[2].decode() + '}'
+        url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'
     elif cmd == 'move' and len(args) >= 2:
         url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'
     elif cmd == 'splt' and len(args) >= 1:
@@ -77,7 +77,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
     print(url)
-    return json.loads(requests.get(url).text)    
+    return json.loads(requests.get(url.decode()).text)    
 
 def proc_resp(task):
     for i in range(len(task['stages'])):
