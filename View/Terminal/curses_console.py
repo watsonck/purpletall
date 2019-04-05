@@ -162,12 +162,15 @@ def kanban():
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
-    task = requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').json()#json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
-    screen.addstr(size[0]+4, size[1]+2, task['stages']['0'][0]['name'], curses.A_REVERSE)
+    #task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/ADD/').text)
+    added = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
+
+    string = added['metadata']['stagecount']
 
     #proc_resp(task)
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
+    screen.addstr(0,0,str(string), curses.A_REVERSE)
 
 
     while True:

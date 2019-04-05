@@ -65,7 +65,12 @@ def pull_tasks(project):
 		return 'Stage Error: No stages on project'
 
 	json_dict['metadata']['project'] = project
-	json_dict['metadata']['stages'] = stages
+	json_dict['metadata']['stagecount'] = stages
+	json_dict['metadata']['stages'] = {}
+	
+	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%d;"% (project))
+	for row in db.fetchall():
+		json_dict['metadata']['stages'][row['id']]= row['name']
 
 
 	db.execute("SELECT id,task.name as name,contributor,stage FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
@@ -82,9 +87,9 @@ def pull_tasks(project):
 
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/<string:project>/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
+#http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
 #Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
-@app.route("/<string:project>/add", methods=["GET", "POST"])
+@app.route("/<int:project>/add", methods=["GET", "POST"])
 def add(project):
 	if request.method=="GET":
 		name = request.args.get('name','N/A').replace('{','').replace('}','')
@@ -94,14 +99,14 @@ def add(project):
 		start = time.asctime(time.localtime(time.time()))
 	#else:   
 		db = get_db()
-		db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage) VALUES ('%s','%s','%s','%s','todo');" % (name,desc,start,ect))
+		db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid) VALUES ('%s','%s','%s','%s','0',%d);" % (name,desc,start,ect,project))
 		g.db.commit()
 		#why is it returning name? for debug/proof it did something?
 		return pull_tasks(project)
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/<string:project>/move?id=1&stage={complete}
-@app.route("/<string:project>/move", methods=["GET", "POST"])
+#http://purpletall.cs.longwood.edu:5000/1/move?id=1&stage={complete}
+@app.route("/<int:project>/move", methods=["GET", "POST"])
 def move(project):
 	#if request.method=="GET"
 	taskid = request.args.get('id',0)
@@ -113,8 +118,8 @@ def move(project):
 	return pull_tasks(project)
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/<string:project>/remove?id=1
-@app.route("/<string:project>/remove", methods=["GET", "POST"])
+#http://purpletall.cs.longwood.edu:5000/1/remove?id=1
+@app.route("/<int:project>/remove", methods=["GET", "POST"])
 def remove(project):
 	if request.method=="GET":
 		taskid = request.args.get('id',0)
@@ -128,8 +133,8 @@ def remove(project):
 		#return render_template( path to a result web page or default )
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/<string:project>/split?id=1
-@app.route("/<string:project>/split", methods=["GET", "POST"]) #post still listed for web
+#http://purpletall.cs.longwood.edu:5000/1/split?id=1
+@app.route("/<int:project>/split", methods=["GET", "POST"]) #post still listed for web
 def split(project):
 	db = getdb()
 	taskid = request.args.get('id',0)
@@ -142,15 +147,15 @@ def split(project):
 	return pull_tasks(project)
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/<string:project>/split?id=1
-@app.route("/<string:project>/modify", methods=["GET", "POST"])
+#http://purpletall.cs.longwood.edu:5000/1/split?id=1
+@app.route("/<int:project>/modify", methods=["GET", "POST"])
 def modify(project):
 		#need to expand this to include what sort of modification
 	return pull_tasks(project)
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/<string:project>/info?id=1
-@app.route("/<string:project>/info", methods=["GET", "POST"])
+#http://purpletall.cs.longwood.edu:5000/1/info?id=1
+@app.route("/<int:project>/info", methods=["GET", "POST"])
 def info(project):
 	db = getdb()
 	taskid = 0;
