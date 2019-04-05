@@ -163,6 +163,8 @@ def kanban():
     task = requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').json()#json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
     proc_resp(task)
     draw_kanban(size[1],size[0],split)
+    kanban_print(split, max_tasks, split-1)
+
 
     while True:
         global boards
