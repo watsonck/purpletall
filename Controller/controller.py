@@ -94,7 +94,7 @@ def add(project):
 		start = time.asctime(time.localtime(time.time()))
 	#else:   
 		db = get_db()
-		db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage) VALUES ('%s','%s','%s','%s','%s','todo');" % (name,desc,start,ect,bug))
+		db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage) VALUES ('%s','%s','%s','%s','todo');" % (name,desc,start,ect))
 		g.db.commit()
 		#why is it returning name? for debug/proof it did something?
 		return pull_tasks(project)
