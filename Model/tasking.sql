@@ -9,11 +9,12 @@ CREATE TABLE Task  (id			SERIAL,
     		    projId		INTEGER,
     		    name		VARCHAR(20),
 		    description		TEXT,
-		    stage		INTEGER,
+		    stage		TEXT,
 		    startTime		TEXT,
 		    exptCompTime	TEXT,
 		    actCompTime		TEXT,
 		    contributor		INTEGER,
+		    bugged		BOOLEAN,
 		    PRIMARY KEY(id, projId)
     );
 
@@ -62,6 +63,6 @@ INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1,'start',0);
 INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1, 'todo',1);
 INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1, 'Done',2);
 
-INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TesterOne', 'Need to start this thing',0,2);
-INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TestTwo', 'Heres somethiong else',0,2);
-INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TestThree','Last one',0,2);
+INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TesterOne', 'Need to start this thing','todo',2);
+INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TestTwo', 'Heres somethiong else','start',2);
+INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TestThree','Last one','todo',2);
