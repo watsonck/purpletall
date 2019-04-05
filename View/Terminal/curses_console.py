@@ -77,7 +77,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
     print(url)
-    return json.loads(requests.get(url.text))  
+    return json.loads(requests.get(url).text)  
 
 def proc_resp(task):
     for i in range(len(task['stages'])):
