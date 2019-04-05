@@ -1,14 +1,14 @@
 from flask import Flask,request,g,redirect,escape,render_template
-import psycopg2,psycopg2.extras,time
+import psycopg2,psycopg2.extras,time,json,git
 
 app = Flask(__name__)
 
 app.config.from_object(__name__)
 app.config.update( dict(
-    DATABASE="purpletall",
-    SECRET_KEY="Lizard Overlords",
-    USERNAME="purpletall",
-    PASSWORD="purpletall"
+	DATABASE="purpletall",
+	SECRET_KEY="Lizard Overlords",
+	USERNAME="postgres",
+	PASSWORD="postgres"
 ))
 
 def connect_db():
@@ -28,87 +28,150 @@ def close_db(error):
 		g.db.close()
 	return ''
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def hello_world():
-        return "Hello World"
-        return render_template("../../Web/login.html")
-    #todo: treat GET requests as terminal source and POST requests as web source
+	if request.method == "GET":
+		#example for other actual functions below,
+		#give plain/JSON output here
+		return "Hello World"
+	else:
+		#build web page otherwise, sending what it would need in comma list
+		return render_template("../../Web/login.html")
+		#might need to move file and rename path, jinja looks for templates
 
 @app.route("/TASK/<string:task>")
 def new_task(task):
 	n_task = ""
 	for word in task.split():
 		n_task = n_task + word + " "
+	db = getdb()
+	#fetch the task info from Database here
+	#todo: parse n_task, or directly use it as 'id'
+	#db.execute("SELECT * FROM tasks WHERE taskid = '%s' % (id))
 	return n_task
 
-#Example url
-#http://204.111.247.205:5000/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
-#Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
-@app.route("/add")
-def add():
-	name = request.args.get('name','N/A').replace('{','').replace('}','')
-	desc = request.args.get('desc','N/A').replace('{','').replace('}','')
-	ect = request.args.get('time','N/A').replace('{','').replace('}','')
-	bug = request.args.get('bug','false').replace('{','').replace('}','')
-	start = time.asctime(time.localtime(time.time()))
 
+
+#https://realpython.com/python-json/
+@app.route("/<int:project>/LIST")
+def pull_tasks(project):
+	json_dict = {}
+	json_dict['metadata'] = {}
+	json_dict['stages'] = {}
 	db = get_db()
-	db.execute("INSERT INTO task(name,description,start_time,exp_comp_time,is_bug,stage) values ('%s','%s','%s','%s','%s','todo');" % (name,desc,start,ect,bug))
-	g.db.commit()
-	return name
+	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%d;"% (project))
+	stages = int(db.fetchone()['count'])
+	if stages == 0:
+		return 'Stage Error: No stages on project'
+
+	json_dict['metadata']['project'] = project
+	json_dict['metadata']['stages'] = stages
+
+
+	db.execute("SELECT id,task.name as name,contributor,stage FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
+	tasks = db.fetchall()
+	for row in tasks:
+		json_dict['stages'][row['stage']] = []
+	for row in tasks:
+		json_dict['stages'][row['stage']].append({
+			'id': row['id'],
+			'name': row['name'],
+			'user': row['contributor'],
+		})
+	return json.dumps(json_dict)
+
 
 #Example url
-#http://204.111.247.205:5000/move?id=1&stage={complete}
-@app.route("/move")
-def move():
-	id = request.args.get('id',0)
+#http://purpletall.cs.longwood.edu:5000/<string:project>/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
+#Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
+@app.route("/<string:project>/add", methods=["GET", "POST"])
+def add(project):
+	if request.method=="GET":
+		name = request.args.get('name','N/A').replace('{','').replace('}','')
+		desc = request.args.get('desc','N/A').replace('{','').replace('}','')
+		ect = request.args.get('time','N/A').replace('{','').replace('}','')
+		bug = request.args.get('bug','false').replace('{','').replace('}','')
+		start = time.asctime(time.localtime(time.time()))
+	#else:   
+		db = get_db()
+		db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage) VALUES ('%s','%s','%s','%s','todo');" % (name,desc,start,ect))
+		g.db.commit()
+		#why is it returning name? for debug/proof it did something?
+		return pull_tasks(project)
+
+#Example url
+#http://purpletall.cs.longwood.edu:5000/<string:project>/move?id=1&stage={complete}
+@app.route("/<string:project>/move", methods=["GET", "POST"])
+def move(project):
+	#if request.method=="GET"
+	taskid = request.args.get('id',0)
 	stage = request.args.get('stage','N/A').replace('{','').replace('}','')
 
 	db = get_db()
-	db.execute("UPDATE task SET stage='%s' WHERE id=%s;" % (stage,id))
+	db.execute("UPDATE task SET stage='%s' WHERE id=%s;" % (stage, taskid))
 	g.db.commit()
-	return id
-
-
-#Example url
-#http://204.111.247.205:5000/remove?id=1
-@app.route("/remove")
-def remove():
-        taskid = request.args.get('id',0)
-        if taskid:
-            db = get_db()
-            db.execute("DELETE FROM task WHERE id = '%s'" % (taskid))
-            db.execute("DELETE FROM logs WHERE taskId = '%s'" % (taskid))
-            #manual cascade'ing till know friegn keys are setup correctly
-	return '' #render_template( path to a result web page or default )
+	return pull_tasks(project)
 
 #Example url
-#http://204.111.247.205:5000/split?id=1
-@app.route("/split")
-def split():
-	return ''
+#http://purpletall.cs.longwood.edu:5000/<string:project>/remove?id=1
+@app.route("/<string:project>/remove", methods=["GET", "POST"])
+def remove(project):
+	if request.method=="GET":
+		taskid = request.args.get('id',0)
+		if taskid:
+		    db = get_db()
+		    db.execute("DELETE FROM task WHERE id = '%s'" % (taskid))
+		    db.execute("DELETE FROM logs WHERE taskId = '%s'" % (taskid))
+		    #manual cascade'ing till know friegn keys are setup correctly
+	return pull_tasks(project)
+	#else:
+		#return render_template( path to a result web page or default )
 
 #Example url
-#http://204.111.247.205:5000/split?id=1
-@app.route("/modify")
-def modify():
-	return ''
+#http://purpletall.cs.longwood.edu:5000/<string:project>/split?id=1
+@app.route("/<string:project>/split", methods=["GET", "POST"]) #post still listed for web
+def split(project):
+	db = getdb()
+	taskid = request.args.get('id',0)
+	db.execute("SELECT * FROM task WHERE id = '%s'" % (taskid))
+	rows = db.fetchall() #should be a single disctionaly/map object list
+	rows['id'] = ""
+
+	db.execute("INSERT INTO task VALUES ('%s', '%s', '%s', '%s', '%s', 'todo')" % (rows))
+	#might need to fix to explitly grab each thing in the row list
+	return pull_tasks(project)
 
 #Example url
-#http://204.111.247.205:5000/info?id=1
-@app.route("/info")
-def info():
-	return ''
+#http://purpletall.cs.longwood.edu:5000/<string:project>/split?id=1
+@app.route("/<string:project>/modify", methods=["GET", "POST"])
+def modify(project):
+		#need to expand this to include what sort of modification
+	return pull_tasks(project)
 
 #Example url
-#http://204.111.247.205:5000/ping?user={haddockcl}
-@app.route("/ping")
+#http://purpletall.cs.longwood.edu:5000/<string:project>/info?id=1
+@app.route("/<string:project>/info", methods=["GET", "POST"])
+def info(project):
+	db = getdb()
+	taskid = 0;
+	if request.method=="GET":
+		taskid = request.args.get('id', 0)
+		db.execute("SELECT * FROM task WHERE id = '%s'" % (taskid))
+		return '' #organized plain text or a JSON
+	else:
+		taskid = request.form.getValue('id', 0) #might need to wrap in an escape()
+		db.execute("SELECT * FROM task WHERE id = '%s'" % (taskid))
+		return '' #redirect to view page, which will do displaying
+
+#Example url
+#http://purpletall.cs.longwood.edu:5000/ping?user={haddockcl}
+@app.route("/ping", methods=["GET", "POST"])
 def ping():
 	return ''
 
 #Example url
-#http://204.111.247.205:5000/login?user={haddockcl}
-@app.route("/login")
+#http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
+@app.route("/login", methods=["GET", "POST"])
 def login():
 	return ''
 
