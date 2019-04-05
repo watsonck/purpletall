@@ -163,7 +163,7 @@ def kanban():
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
     task = requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').json()#json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
-    screen.addstr(task, curses.A_REVERSE)
+    screen.addstr(size[0]+4, size[1]+2, task['stages']['0'][0]['name'], curses.A_REVERSE)
 
     #proc_resp(task)
     draw_kanban(size[1],size[0],split)
