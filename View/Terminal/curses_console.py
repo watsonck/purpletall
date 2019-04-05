@@ -8,10 +8,8 @@ password = ""
 #kanban varriables
 cur_proj = 1
 kanban_start = 0
-tasks = {}
-in_prog = {}
-complete = {}
-boards = {'todo':tasks, 'inpr':in_prog, 'comp':complete}
+boards = {}
+sect_names = []
 
 
 #Put init stuff here
@@ -62,6 +60,15 @@ def remake_resp(resp):
         result = result + " " + word
     return result
 
+def proj_change(proj_num = 1):
+    global boards
+    empt = {}
+    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    for key, val in task['metadata']['stages']:
+        boards[key] = empt
+        sect_names.append([key,val])
+
+
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
@@ -79,14 +86,17 @@ def send_recv(proj, cmd, args):
     return json.loads(requests.get(url).text)
 
 def proc_resp(task):
-    for i in range(len(task['stages'])):
-        for j in range(len(task['stages'][str(i)])):
-            if i == 0:
-                boards['todo'][task['stages']['0'][j]['id']] = [task['stages']['0'][j]['name'], task['stages']['0'][j]['user']]
-            elif i == 1:
-                boards['inpr'][task['stages']['1'][j]['id']] = [task['stages']['1'][j]['name'], task['stages']['1'][j]['user']]
-            elif i == 2:
-                boards['comp'][task['stages']['2'][j]['id']] = [task['stages']['2'][j]['name'], task['stages']['2'][j]['user']]
+    for key1, stage in task['stages']:
+        for key2, task in stage:
+            boards[key1][task['id']] = [task['name'], task['user']]
+#    for i in range(len(task['stages'])):
+#        for j in range(len(task['stages'][str(i)])):
+#            if i == 0:
+#                boards['todo'][task['stages']['0'][j]['id']] = [task['stages']['0'][j]['name'], task['stages']['0'][j]['user']]
+#            elif i == 1:
+#                boards['inpr'][task['stages']['1'][j]['id']] = [task['stages']['1'][j]['name'], task['stages']['1'][j]['user']]
+#            elif i == 2:
+#                boards['comp'][task['stages']['2'][j]['id']] = [task['stages']['2'][j]['name'], task['stages']['2'][j]['user']]
 
 
 #Function for printing the kanban sections
@@ -158,10 +168,10 @@ def kanban():
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
-    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
-    #task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    #task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
 
-    proc_resp(task)
+    #proc_resp(task)
+    proj_change()
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
     screen.addstr(0,0,str(task['metadata']['stagecount']), curses.A_REVERSE)
