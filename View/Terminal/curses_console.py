@@ -76,8 +76,9 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
-    test = requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}')#.json() #requests.get(url).json()
+    test = requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text#.json() #requests.get(url).json()
     print(test)
+    screen.addstr(2, 2, test, curses.A_REVERSE)
     return 0
 
 def proc_resp(task):
@@ -177,6 +178,8 @@ def kanban():
             break
         elif parsed[0].decode() == "ADD":#EX: ADD Do this thing
             task = send_recv(cur_proj, 'add', parsed[1:])
+            str1 = get_text(split-1)
+
             break
             proc_resp(task)
         elif parsed[0].decode() == "MOVE":#EX: MOVE 0 from dest 
