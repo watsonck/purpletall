@@ -104,7 +104,8 @@ def kanban_print(split, max_tasks, limit):
             else:
                 str1 = str(key2) + ": " + task
                 screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
-                screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), task['user'], curses.A_REVERSE)
+                break
+                #screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), task['user'], curses.A_REVERSE)
                 cur_tasks = cur_tasks + 1
         cur_board = cur_board + 1
 
