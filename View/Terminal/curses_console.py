@@ -76,7 +76,9 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
-    return requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').json() #requests.get(url).json()
+    test = requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}')#.json() #requests.get(url).json()
+    print(test)
+    return 0
 
 def proc_resp(task):
     for i in range(len(task['stages'])):
@@ -175,6 +177,7 @@ def kanban():
             break
         elif parsed[0].decode() == "ADD":#EX: ADD Do this thing
             task = send_recv(cur_proj, 'add', parsed[1:])
+            break
             proc_resp(task)
         elif parsed[0].decode() == "MOVE":#EX: MOVE 0 from dest 
             task = send_recv(cur_proj, 'move', parsed[1:])
