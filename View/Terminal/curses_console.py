@@ -6,7 +6,7 @@ username = ""
 password = ""
 
 #kanban varriables
-cur_proj = 0
+cur_proj = 1
 kanban_start = 0
 tasks = {}
 in_prog = {}
@@ -76,6 +76,7 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
+    print(url)
     return json.loads(requests.get(url).text)    
 
 def proc_resp(task):
