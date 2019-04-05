@@ -101,7 +101,7 @@ def kanban_print(split, max_tasks, limit):
     cur_board = 0
     for board in boards:
         for task in boards[board]:
-            screen.addstr(task + ' ', curses.A_REVERSE)
+            screen.addstr(str(task) + ' ', curses.A_REVERSE)
             if cur_tasks == max_tasks:
                 break
             else:
