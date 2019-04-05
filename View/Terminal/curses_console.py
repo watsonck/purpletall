@@ -65,8 +65,7 @@ def remake_resp(resp):
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
-        url = url + 'add?name={'+ args[0] + '}&desc={' + args[1]+ '}&time={' + args[2]  + '}&bug={' + args[3] + '}'
-        #url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'
+        url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'
     elif cmd == 'move' and len(args) >= 2:
         url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'
     elif cmd == 'splt' and len(args) >= 1:
@@ -77,8 +76,7 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
-    print(url)
-    return requests.get(url).json()#json.loads(requests.get(url).text)  
+    return requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').json() #requests.get(url).json()
 
 def proc_resp(task):
     for i in range(len(task['stages'])):
