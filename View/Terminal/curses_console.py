@@ -76,10 +76,7 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
-    test = requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text#.json() #requests.get(url).json()
-    print(test)
-    screen.addstr(2, 2, test, curses.A_REVERSE)
-    return 0
+    return json.loads(requests.get(url).text)
 
 def proc_resp(task):
     for i in range(len(task['stages'])):
@@ -102,7 +99,6 @@ def kanban_print(split, max_tasks, limit):
     for board in boards:
         for task in boards[board]:
             screen.addstr(str(task) + ' ', curses.A_REVERSE)
-            break
             if cur_tasks == max_tasks:
                 break
             else:
@@ -162,15 +158,12 @@ def kanban():
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
-    #task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/ADD/').text)
-    added = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
+    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/ADD/').text)
 
-    string = added['metadata']['stagecount']
-
-    #proc_resp(task)
+    proc_resp(task)
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-    screen.addstr(0,0,str(string), curses.A_REVERSE)
+    screen.addstr(0,0,str(task['metadata']['stagecount']), curses.A_REVERSE)
 
 
     while True:
@@ -187,9 +180,6 @@ def kanban():
             break
         elif parsed[0].decode() == "ADD":#EX: ADD Do this thing
             task = send_recv(cur_proj, 'add', parsed[1:])
-            str1 = get_text(split-1)
-
-            break
             proc_resp(task)
         elif parsed[0].decode() == "MOVE":#EX: MOVE 0 from dest 
             task = send_recv(cur_proj, 'move', parsed[1:])
