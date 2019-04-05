@@ -7,8 +7,8 @@ app.config.from_object(__name__)
 app.config.update( dict(
 	DATABASE="purpletall",
 	SECRET_KEY="Lizard Overlords",
-	USERNAME="purpletall",
-	PASSWORD="purpletall"
+	USERNAME="postgres",
+	PASSWORD="postgres"
 ))
 
 def connect_db():
@@ -51,13 +51,34 @@ def new_task(task):
 	return n_task
 
 
+
+#https://realpython.com/python-json/
+@app.route("/<int:project>/LIST")
 def pull_tasks(project):
-	json_string = '{'
+	json_dict = {}
+	json_dict['metadata'] = {}
+	json_dict['stages'] = {}
 	db = get_db()
-	db.execute("SELECT id,name,user FROM tasks NATURAL JOIN projects WHERE projid=%d;"% (projid))
-	db.fetchall()
-	json_string += '}'
-	return json.dumps(json_string)
+	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%d;"% (project))
+	stages = int(db.fetchone()['count'])
+	if stages == 0:
+		return 'Stage Error: No stages on project'
+
+	json_dict['metadata']['project'] = project
+	json_dict['metadata']['stages'] = stages
+
+
+	db.execute("SELECT id,task.name as name,contributor,stage FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
+	tasks = db.fetchall()
+	for row in tasks:
+		json_dict['stages'][row['stage']] = []
+	for row in tasks:
+		json_dict['stages'][row['stage']].append({
+			'id': row['id'],
+			'name': row['name'],
+			'user': row['contributor'],
+		})
+	return json.dumps(json_dict)
 
 
 #Example url
@@ -73,7 +94,7 @@ def add(project):
 		start = time.asctime(time.localtime(time.time()))
 	#else:   
 		db = get_db()
-		db.execute("INSERT INTO task (name,description,start_time,exp_comp_time,is_bug,stage) VALUES ('%s','%s','%s','%s','%s','todo');" % (name,desc,start,ect,bug))
+		db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage) VALUES ('%s','%s','%s','%s','todo');" % (name,desc,start,ect))
 		g.db.commit()
 		#why is it returning name? for debug/proof it did something?
 		return pull_tasks(project)
