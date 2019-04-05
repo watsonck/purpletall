@@ -82,11 +82,11 @@ def proc_resp(task):
     for i in range(len(task['stages'])):
         for j in range(len(task['stages'][str(i)])):
             if i == 0:
-                boards['todo'][task['stages']['0'][j]['id']] = task['stages']['0'][j]['name']
+                boards['todo'][task['stages']['0'][j]['id']] = [task['stages']['0'][j]['name'], task['stages']['0'][j]['user']]
             elif i == 1:
-                boards['inpr'][task['stages']['1'][j]['id']] = task['stages']['1'][j]['name']
+                boards['inpr'][task['stages']['1'][j]['id']] = [task['stages']['1'][j]['name'], task['stages']['1'][j]['user']]
             elif i == 2:
-                boards['comp'][task['stages']['2'][j]['id']] = task['stages']['2'][j]['name']
+                boards['comp'][task['stages']['2'][j]['id']] = [task['stages']['2'][j]['name'], task['stages']['2'][j]['user']]
 
 
 #Function for printing the kanban sections
@@ -102,10 +102,9 @@ def kanban_print(split, max_tasks, limit):
             if cur_tasks == max_tasks:
                 break
             else:
-                str1 = str(key2) + ": " + task
+                str1 = str(key2) + ": " + task[0]
                 screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
-                break
-                #screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), task['user'], curses.A_REVERSE)
+                screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), task[1], curses.A_REVERSE)
                 cur_tasks = cur_tasks + 1
         cur_board = cur_board + 1
 
