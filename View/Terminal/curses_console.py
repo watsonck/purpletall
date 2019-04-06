@@ -64,9 +64,11 @@ def proj_change(proj_num = 1):
     global boards
     empt = {}
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
-    for key, val in task['metadata']['stages']:
-        boards[key] = empt
-        sect_names.append([key,val])
+    if int(task['metadata']['stagecount']) < 2:
+        for stage in task['metadata']['stages']:
+            boards[stage] = empt
+            sect_names.append([stage,task['metadata'][stage]])
+
 
 
 def send_recv(proj, cmd, args):
