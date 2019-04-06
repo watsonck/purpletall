@@ -70,7 +70,7 @@ def proj_change(proj_num = 1):
             sect_names.append([stage,task['metadata'][stage]])
     
     proc_resp(task)
-    
+
 
 
 
@@ -91,8 +91,8 @@ def send_recv(proj, cmd, args):
     return json.loads(requests.get(url).text)
 
 def proc_resp(task):
-    for key1, stage in task['stages']:
-        for key2, task in stage:
+    for key1, stage in task['stages'].items():
+        for key2, task in stage.items():
             boards[key1][task['id']] = [task['name'], task['user']]
 #    for i in range(len(task['stages'])):
 #        for j in range(len(task['stages'][str(i)])):
