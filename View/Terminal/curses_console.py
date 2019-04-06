@@ -176,7 +176,7 @@ def kanban():
     proj_change()
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-    screen.addstr(0,0,str(task['metadata']['stagecount']), curses.A_REVERSE)
+    #screen.addstr(0,0,str(task['metadata']['stagecount']), curses.A_REVERSE)
 
 
     while True:
