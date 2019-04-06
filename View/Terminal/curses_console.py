@@ -68,6 +68,9 @@ def proj_change(proj_num = 1):
         for stage in task['metadata']['stages']:
             boards[stage] = empt
             sect_names.append([stage,task['metadata'][stage]])
+    
+    proc_resp(task)
+    
 
 
 
