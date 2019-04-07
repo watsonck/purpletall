@@ -66,7 +66,7 @@ def proj_change(proj_num = 1):
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage]] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
-    proc_resp(task)
+    #proc_resp(task)
 
 
 def send_recv(proj, cmd, args):
@@ -189,10 +189,15 @@ def kanban():
     
     proj_change()
     draw_kanban(size[1],size[0],split)
-    kanban_print(split, max_tasks, split-1)
+    global boards
+    test = 0
+    for key, val in boards.items():
+        screen.addstr(4+test, 2, str(key), curses.A_REVERSE)
+        test = test + 1
+    #kanban_print(split, max_tasks, split-1)
 
     while True:
-        global boards
+        #global boards
         global cur_proj
 
         str1 = get_text(split-1)
