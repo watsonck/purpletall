@@ -92,9 +92,13 @@ def send_recv(proj, cmd, args):
 def proc_resp(task):
     for key1, board in boards.items():
         board.clear()
+    test = 0
     for key1, stage in task['stages'].items():
         for task in stage:
             boards[str(key1)][task['id']] = [task['name'], task['user']]
+            test_str = str(key1) + " " + task['id'] + " "
+            screen.addstr(100+test, 2, test_str, curses.A_REVERSE)
+            test = test + 2
 #    for i in range(len(task['stages'])):
 #        for j in range(len(task['stages'][str(i)])):
 #            if i == 0:
@@ -123,6 +127,7 @@ def kanban_print(split, max_tasks, limit):
                 screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
                 screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
                 cur_tasks = cur_tasks + 1
+        cur_tasks = 0
         cur_board = cur_board + 1
         test_str = 'KEY: ' + key1 + 'LEN: ' + str(len(board)) + 'T ' 
         screen.addstr(0+(2*cur_board),5, test_str, curses.A_REVERSE)
