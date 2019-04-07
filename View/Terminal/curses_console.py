@@ -88,6 +88,7 @@ def send_recv(proj, cmd, args):
     return json.loads(requests.get(url).text)
 
 def proc_resp(task):
+    global boards
     for key1, board in boards.items():
         board.clear()
     test = 0
@@ -95,6 +96,7 @@ def proc_resp(task):
         test = test + 1
         for task in stage:
             boards[str(key1)][str(task['id'])] = [task['name'], task['user']]
+    test_str = str(test) + "    " + str(len(boards)) + " " + str(len(boards['0']))+ " " + str(len(boards['1']))+ " " + str(len(boards['2']))
     screen.addstr(50, 2, str(test), curses.A_REVERSE)
 
 
