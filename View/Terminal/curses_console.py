@@ -137,7 +137,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     fir_i = 0
     sec_o = -1
     sec_i = 0
-    last_o = 0
+    last_o = -1
     last_i = 0 
     for start in range(len(sect_names)-1):
         if int(sect_names[start][0]) < fir_o or fir_o == -1:
@@ -146,7 +146,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
         elif int(sect_names[start][0]) < sec_o or sec_o == -1:
             sec_o = int(sect_names[start][0])
             sec_i = start
-        elif int(sect_names[start][0]) < last_o or last_o == -1:
+        elif int(sect_names[start][0]) > last_o or last_o == -1:
             last_o = int(sect_names[start][0])
             last_i = start
     
@@ -192,15 +192,10 @@ def kanban():
     
     proj_change()
     draw_kanban(size[1],size[0],split)
-    global boards
-    test = 0
-    for key, val in boards.items():
-        screen.addstr(4+test, 2, str(key), curses.A_REVERSE)
-        test = test + 1
-    #kanban_print(split, max_tasks, split-1)
+    kanban_print(split, max_tasks, split-1)
 
     while True:
-        #global boards
+        global boards
         global cur_proj
 
         str1 = get_text(split-1)
