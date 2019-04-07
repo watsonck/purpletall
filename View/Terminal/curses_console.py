@@ -92,8 +92,6 @@ def proc_resp(task):
     for key1, stage in task['stages'].items():
         for task in stage:
             boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user']]
-    test_str = str(len(boards)) + "  " + str(len(boards['DONE'])) + "  " + str(len(boards['TODO'])) + "  " + str(len(boards['START'])) + "  //"
-    screen.addstr(50, 2, test_str, curses.A_REVERSE)
 
 
 
@@ -146,7 +144,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
         elif int(sect_names[start][0]) < sec_o or sec_o == -1:
             sec_o = int(sect_names[start][0])
             sec_i = start
-        elif int(sect_names[start][0]) > last_o or last_o == -1:
+        else:
             last_o = int(sect_names[start][0])
             last_i = start
     
