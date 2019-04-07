@@ -131,27 +131,19 @@ def draw_kanban(max_x,max_y,split,start = 0):
             screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
     
     global sect_names
-    fir_o = -1
-    fir_i = 0
-    sec_o = -1
-    sec_i = 0
-    last_o = -1
-    last_i = 0 
-    for start in range(len(sect_names)-1):
-        if int(sect_names[start][0]) < fir_o or fir_o == -1:
-            fir_o = int(sect_names[start][0])
-            fir_i = start
-        elif sec_o == -1:
-            sec_o = int(sect_names[start][0])
-            sec_i = start
-        elif int(sect_names[start][0]) > fir_o and int(sect_names[start][0]) < last_o:
-            last_o = sec_o
-            last_i = sec_i
-            sec_o = int(sect_names[start][0])
-            sec_i = start
-        else:
-            last_o = int(sect_names[start][0])
-            last_i = start
+    first = -1
+    second = -1
+    last = -1
+    while True:
+        for i in range(len(sect_names)):
+            if int(sect_names[i][0]) == start:
+                first = sect_names[i][1]
+            elif int(sect_names[i][0]) == start+1:
+                second = sect_names[i][1]
+            elif int(sect_names[i][0]) == start+2:
+                last = sect_names[i][1]
+        if first != -1 and second != -1 and last != -1:
+            break
     
     screen.addstr(1,int((split/2))-5, sect_names[fir_i][1], curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, sect_names[sec_i][1], curses.A_REVERSE)
