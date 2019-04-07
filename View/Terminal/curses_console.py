@@ -124,8 +124,8 @@ def kanban_print(split, max_tasks, limit):
                 screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
                 cur_tasks = cur_tasks + 1
         cur_board = cur_board + 1
-        test_str = 'KEY: ' + key1 + 'LEN: ' + str(len(board)) + 'T' 
-        screen.addstr(0,2+cur_board*2,test_str, curses.A_REVERSE)
+        test_str = 'KEY: ' + key1 + 'LEN: ' + str(len(board)) + 'T ' 
+        screen.addstr(0,2+cur_board*5,test_str, curses.A_REVERSE)
 
 
 def draw_kanban(max_x,max_y,split):
