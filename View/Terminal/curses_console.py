@@ -91,7 +91,7 @@ def send_recv(proj, cmd, args):
 def proc_resp(task):
     global boards
     test_str1 = 'B2: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
-    screen.addstr(62, 2, test_str1, curses.A_REVERSE)
+    screen.addstr(61, 2, test_str1, curses.A_REVERSE)
     for key1, board in boards.items():
         board.clear()
     test = 0
@@ -99,8 +99,8 @@ def proc_resp(task):
         test = test + 1
         for task in stage:
             boards[str(key1)][str(task['id'])] = [task['name'], task['user']]
-    test_str = str(test) + "    " + str(len(boards)) + " " + str(len(boards['0']))+ " " + str(len(boards['1']))+ " " + str(len(boards['2']))
-    screen.addstr(50, 2, test_str, curses.A_REVERSE)
+    test_str1 = 'B3: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
+    screen.addstr(62, 2, test_str1, curses.A_REVERSE)
 
 
 
