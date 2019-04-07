@@ -97,7 +97,7 @@ def proc_resp(task):
         for task in stage:
             boards[str(key1)][str(task['id'])] = [task['name'], task['user']]
             test_str = str(key1) + " " + str(task['id']) + " "
-            screen.addstr(100+test, 2, test_str, curses.A_REVERSE)
+            screen.addstr(50+test, 2, test_str, curses.A_REVERSE)
             test = test + 2
 #    for i in range(len(task['stages'])):
 #        for j in range(len(task['stages'][str(i)])):
