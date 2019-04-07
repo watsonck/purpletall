@@ -100,6 +100,27 @@ def proc_resp(task):
 def kanban_print(split, max_tasks, limit):
     global kanban_print
     global boards
+    global sect_names
+
+    first = -1
+    f_name = ""
+    second = -1
+    s_name = ""
+    last = -1
+    l_name = ""
+    while True:
+        for i in range(len(sect_names)):
+            if int(sect_names[i][0]) == start:
+                first = int(sect_names[i][0])
+                f_name = sect_names[i][1]
+            elif int(sect_names[i][0]) == start+1:
+                second = int(sect_names[i][0])
+                s_name = sect_names[i][1]
+            elif int(sect_names[i][0]) == start+2:
+                last = int(sect_names[i][0])
+                l_name = sect_names[i][1]
+        if first != -1 and second != -1 and last != -1:
+            break
 
     cur_tasks = 0
     cur_board = 0
@@ -109,6 +130,12 @@ def kanban_print(split, max_tasks, limit):
                 cur_tasks = 0
                 break
             else:
+                if key1 == f_name:
+                    cur_board = first
+                elif key1 == s_name:
+                    cur_board = second
+                else:
+                    cur_board = last
                 str1 = str(key2) + ": " + task[0]
                 screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
                 screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
@@ -145,9 +172,9 @@ def draw_kanban(max_x,max_y,split,start = 0):
         if first != -1 and second != -1 and last != -1:
             break
     
-    screen.addstr(1,int((split/2))-5, sect_names[fir_i][1], curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*3)-5, sect_names[sec_i][1], curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*5)-5, sect_names[last_i][1], curses.A_REVERSE)
+    screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*5)-5, third, curses.A_REVERSE)
 
 
 
