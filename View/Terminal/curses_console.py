@@ -67,7 +67,8 @@ def proj_change(proj_num = 1):
     for stage in task['metadata']['stages']:
         boards[str(stage)] = empt
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
-    
+    test_str = 'B: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
+    screen.addstr(60, 2, test_str, curses.A_REVERSE)
     proc_resp(task)
 
 
@@ -89,6 +90,8 @@ def send_recv(proj, cmd, args):
 
 def proc_resp(task):
     global boards
+    test_str1 = 'B: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
+    screen.addstr(60, 2, test_str1, curses.A_REVERSE)
     for key1, board in boards.items():
         board.clear()
     test = 0
@@ -110,7 +113,7 @@ def kanban_print(split, max_tasks, limit):
     cur_board = 0
     for key1, board in boards.items():
         for key2, task in board.items():
-            screen.addstr(str(key2) + ' ', curses.A_REVERSE)
+            #screen.addstr(str(key2) + ' ', curses.A_REVERSE)
             if cur_tasks == max_tasks:
                 cur_tasks = 0
                 break
@@ -121,8 +124,7 @@ def kanban_print(split, max_tasks, limit):
                 cur_tasks = cur_tasks + 1
         cur_tasks = 0
         cur_board = cur_board + 1
-        test_str = 'KEY: ' + key1 + 'LEN: ' + str(len(board)) + 'T ' 
-        screen.addstr(0+(2*cur_board),5, test_str, curses.A_REVERSE)
+
 
 
 def draw_kanban(max_x,max_y,split):
@@ -178,12 +180,9 @@ def kanban():
     proj_change()
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-    global boards
-    test_str = 'B: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
-    screen.addstr(60, 2, test_str, curses.A_REVERSE)
 
     while True:
-        #global boards
+        global boards
         global cur_proj
 
         str1 = get_text(split-1)
