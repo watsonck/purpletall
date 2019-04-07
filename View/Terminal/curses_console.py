@@ -64,7 +64,7 @@ def proj_change(proj_num = 1):
     global boards
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
     for stage in task['metadata']['stages']:
-        boards[str(stage)] = {}
+        boards[task['metadata']['stages'][stage]] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
     proc_resp(task)
 
@@ -104,7 +104,6 @@ def kanban_print(split, max_tasks, limit):
     cur_board = 0
     for key1, board in boards.items():
         for key2, task in board.items():
-            #screen.addstr(str(key2) + ' ', curses.A_REVERSE)
             if cur_tasks == max_tasks:
                 cur_tasks = 0
                 break
@@ -118,7 +117,7 @@ def kanban_print(split, max_tasks, limit):
 
 
 
-def draw_kanban(max_x,max_y,split):
+def draw_kanban(max_x,max_y,split,start = 0):
     for x in range(max_x):
         screen.addstr(max_y-2, x, " ", curses.A_REVERSE)
         screen.addstr(0,x, " ", curses.A_REVERSE)
@@ -131,11 +130,27 @@ def draw_kanban(max_x,max_y,split):
             screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
     
     global sect_names
-    mult = [1,3,5]#just numbers i found made it look the best
-    sect = 0
-    for num in mult:
-        screen.addstr(1,int((split/2)*num)-5, sect_names[sect][1], curses.A_REVERSE)
-        sect = sect + 1
+    fir_o = -1
+    fir_i = 0
+    sec_o = -1
+    sec_i = 0
+    last_o = 0
+    last_i = 0 
+    for start in range(len(sect_names)-1):
+        if int(sect_names[start][0]) < fir_o or fir_o == -1:
+            fir_o = int(sect_names[start][0])
+            fir_i = start
+        elif int(sect_names[start][0]) < sec_o or sec_o == -1:
+            sec_o = int(sect_names[start][0])
+            sec_i = start
+        elif int(sect_names[start][0]) < last_o or last_o == -1:
+            last_o = int(sect_names[start][0])
+            last_i = start
+    
+    screen.addstr(1,int((split/2))-5, sect_names[fir_i][1], curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*3)-5, sect_names[fir_i][1], curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*5)-5, sect_names[fir_i][1], curses.A_REVERSE)
+
 
 
 
