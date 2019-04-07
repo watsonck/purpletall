@@ -1,30 +1,56 @@
-import flask
+from flask import Flask, request, g, redirect, escape, render_template, current_app
 import unittest
-from controller import app
+import requests, json, git, time
+import controller
+from controller import app, get_db, connect_db, home
+import psycopg2
+import psycopg2.extras
 
 class Test(unittest.TestCase):
 
-    TEST_DB = 'test.db'
+    with app.app_context():
+        print current_app.name
 
     def setUp(self):
         app.config['TESTING'] = True
         app.config['WTF_CSRF_ENABLED'] = False
         app.config['DEBUG'] = False
-        #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + \ os.path.join(app.config['BASEDIR'], TEST_DB)
         self.app = app.test_client()
-        ##db.drop_all()
-        ##db.create_all()
 
     def tearDown(self):
         pass
 
-    def test_main_page(self):
+#compare the connection's status code to 200, which is "ok"
+    def test_connection(self):
         response = self.app.get('/', follow_redirects=True)
         self.assertEqual(response.status_code, 200)
+
+#test if homepage is displaying correctly
+    def test_home(self):
+        with app.test_request_context():
+            self.assertEqual(home(), "Hello World")
+
+#test if a user is in database
+    def test_user_in_db(self):
+        db = get_db()
+        fname = db.execute("SELECT fname FROM users WHERE fname = 'Colin' ")
+        lname = db.execute("SELECT lname FROM users WHERE lname = 'Watson' ")
+        email = db.execute("SELECT email FROM users WHERE email = 'colin.watson777@yahoo.com'")
+        gitname = db.execute("SELECT gitname FROM users WHERE gitname = 'watsonck'")
+        self.assertEqual(fname, "Colin")
+        self.assertEqual(lname, "Watson")
+        self.assertEqual(email, "colin.watson777@yahoo.com")
+        self.assertEqual(gitname, "watsonck")
+
+    ##def test_project_in_db(self):
+        ##db = get_db()
+        
     
+    #def test_new_task(task):
+        #response = self.app.post('/TASK/<string:task>', data=dict()
 
-
-    #def test_add(self, task):
+    #def test_add(self, project):
+        
 
     #def test_move(self):
         #return self.app.post(
