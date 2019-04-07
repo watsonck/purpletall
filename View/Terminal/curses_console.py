@@ -62,10 +62,9 @@ def remake_resp(resp):
 
 def proj_change(proj_num = 1):
     global boards
-    empt = {}
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
     for stage in task['metadata']['stages']:
-        boards[str(stage)] = empt
+        boards[str(stage)] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
     test_str = 'B1: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
     screen.addstr(60, 2, test_str, curses.A_REVERSE)
