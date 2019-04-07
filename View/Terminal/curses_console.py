@@ -141,7 +141,12 @@ def draw_kanban(max_x,max_y,split,start = 0):
         if int(sect_names[start][0]) < fir_o or fir_o == -1:
             fir_o = int(sect_names[start][0])
             fir_i = start
-        elif int(sect_names[start][0]) < sec_o or sec_o == -1:
+        elif sec_o == -1:
+            sec_o = int(sect_names[start][0])
+            sec_i = start
+        elif int(sect_names[start][0]) > fir_o and int(sect_names[start][0]) < last_o:
+            last_o = sec_o
+            last_i = sec_i
             sec_o = int(sect_names[start][0])
             sec_i = start
         else:
