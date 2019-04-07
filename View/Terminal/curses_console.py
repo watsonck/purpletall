@@ -97,7 +97,7 @@ def proc_resp(task):
 
 
 #Function for printing the kanban sections
-def kanban_print(split, max_tasks, limit):
+def kanban_print(split, max_tasks, limit, start = 0):
     global kanban_print
     global boards
     global sect_names
