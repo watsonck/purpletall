@@ -129,10 +129,14 @@ def draw_kanban(max_x,max_y,split):
         if y < max_y-2:
             screen.addstr(y,0, " ", curses.A_REVERSE)
             screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
-        
-    screen.addstr(1,int(split/2)-5, "TO DO", curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*3)-5, "IN PROGRESS", curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*5)-5, "COMPLETE", curses.A_REVERSE)
+    
+    global sect_names
+    mult = [1,3,5]#just numbers i found made it look the best
+    sect = 0
+    for num in mult:
+        screen.addstr(1,int((split/2)*num)-5, sect_names[sect], curses.A_REVERSE)
+        sect = sect + 1
+
 
 
 def login():
