@@ -92,11 +92,11 @@ def proc_resp(task):
         board.clear()
     test = 0
     for key1, stage in task['stages'].items():
+        test = test + 1
         for task in stage:
             boards[str(key1)][str(task['id'])] = [task['name'], task['user']]
-            test_str = str(key1) + " " + str(task['id']) + " "
-            screen.addstr(50+test, 2, test_str, curses.A_REVERSE)
-            test = test + 2
+    screen.addstr(50, 2, str(test), curses.A_REVERSE)
+
 
 
 #Function for printing the kanban sections
