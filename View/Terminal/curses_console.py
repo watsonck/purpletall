@@ -134,7 +134,7 @@ def draw_kanban(max_x,max_y,split):
     mult = [1,3,5]#just numbers i found made it look the best
     sect = 0
     for num in mult:
-        screen.addstr(1,int((split/2)*num)-5, sect_names[sect], curses.A_REVERSE)
+        screen.addstr(1,int((split/2)*num)-5, sect_names[sect][1], curses.A_REVERSE)
         sect = sect + 1
 
 
