@@ -174,7 +174,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     
     screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*5)-5, third, curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)
 
 
 
