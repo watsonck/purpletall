@@ -67,7 +67,7 @@ def proj_change(proj_num = 1):
     for stage in task['metadata']['stages']:
         boards[str(stage)] = empt
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
-    test_str = 'B: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
+    test_str = 'B1: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
     screen.addstr(60, 2, test_str, curses.A_REVERSE)
     proc_resp(task)
 
@@ -90,8 +90,8 @@ def send_recv(proj, cmd, args):
 
 def proc_resp(task):
     global boards
-    test_str1 = 'B: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
-    screen.addstr(60, 2, test_str1, curses.A_REVERSE)
+    test_str1 = 'B2: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
+    screen.addstr(70, 2, test_str1, curses.A_REVERSE)
     for key1, board in boards.items():
         board.clear()
     test = 0
