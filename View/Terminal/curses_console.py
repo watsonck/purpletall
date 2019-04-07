@@ -1,4 +1,5 @@
-import curses, time, requests, json
+import curses, time, requests, json, signal
+from sys import exit
 
 win_list = []
 screen = -1
@@ -11,6 +12,11 @@ kanban_start = 0
 boards = {}
 sect_names = []
 
+#prevents CTRL+C from breaking the terminal
+#Lines 16-19 and Line 257 Helped by :https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python
+def signal_handler(sig, frame):
+    close_curses()
+    exit()
 
 #Put init stuff here
 def init_curses(): 
@@ -248,6 +254,7 @@ def kanban():
 
 
 def main():
+    signal.signal(signal.SIGINT, signal_handler)
     login()
     kanban()
     refresh_screen()
