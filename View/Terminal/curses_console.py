@@ -90,6 +90,8 @@ def send_recv(proj, cmd, args):
     return json.loads(requests.get(url).text)
 
 def proc_resp(task):
+    for key1, board in boards.items():
+        board.clear()
     for key1, stage in task['stages'].items():
         for task in stage:
             boards[str(key1)][task['id']] = [task['name'], task['user']]
@@ -114,6 +116,7 @@ def kanban_print(split, max_tasks, limit):
         for key2, task in board.items():
             screen.addstr(str(key2) + ' ', curses.A_REVERSE)
             if cur_tasks == max_tasks:
+                cur_tasks = 0
                 break
             else:
                 str1 = str(key2) + ": " + task[0]
@@ -121,6 +124,7 @@ def kanban_print(split, max_tasks, limit):
                 screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
                 cur_tasks = cur_tasks + 1
         cur_board = cur_board + 1
+        screen.addstr(0,2+cur_board*2,str(len(board)), curses.A_REVERSE)
 
 
 def draw_kanban(max_x,max_y,split):
