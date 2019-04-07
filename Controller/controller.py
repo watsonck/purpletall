@@ -89,7 +89,10 @@ def add(project):
 	    start = time.asctime(time.localtime(time.time()))
 
 	db = get_db()
-	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid) VALUES ('%s','%s','%s','%s','0',%d);" % (name,desc,start,ect,project))
+	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;"%(project))
+	stage = db.fetchone()['stagename']
+
+	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid) VALUES ('%s','%s','%s','%s','%s',%d);" % (name,desc,start,ect,stage,project))
 	g.db.commit()
 	return pull_tasks(project)
 
@@ -102,8 +105,8 @@ def move(project):
 	stage = request.args.get('stage','N/A').replace('{','').replace('}','')
 
 	db = get_db()
-	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename='%s';"% (project, stage))
-	if db.fetchone()[0] > 0:
+	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename ILIKE '%s';"% (project, stage))
+	if db.fetchone()['count'] > 0:
 	    db.execute("UPDATE task SET stage='%s' WHERE id=%s AND projid=%d;" % (stage, taskid, project))
 	    g.db.commit()
 	return pull_tasks(project)
@@ -139,7 +142,7 @@ def split(project):
 	if stage == None:
 		stage = 0
 
-	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s',%s,'%s','%s','%s',%s)" % (project,name,desc,str(stage),start,ect,act,str(user)))
+	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s','%s','%s','%s','%s',%s)" % (project,name,desc,str(stage),start,ect,act,str(user)))
 	g.db.commit()
 	#might need to fix to explitly grab each thing in the row list
 	return pull_tasks(project)
