@@ -66,7 +66,7 @@ def proj_change(proj_num = 1):
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
-    #proc_resp(task)
+    proc_resp(task)
 
 
 def send_recv(proj, cmd, args):
