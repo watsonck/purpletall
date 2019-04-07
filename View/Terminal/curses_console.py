@@ -64,7 +64,7 @@ def proj_change(proj_num = 1):
     global boards
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
     for stage in task['metadata']['stages']:
-        boards[task['metadata']['stages'][stage]] = {}
+        boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage]])
     #proc_resp(task)
 
@@ -91,7 +91,7 @@ def proc_resp(task):
         board.clear()
     for key1, stage in task['stages'].items():
         for task in stage:
-            boards[str(key1)][str(task['id'])] = [task['name'], task['user']]
+            boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user']]
 
 
 
