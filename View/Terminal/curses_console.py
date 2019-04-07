@@ -71,8 +71,6 @@ def proj_change(proj_num = 1):
     proc_resp(task)
 
 
-
-
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
@@ -99,14 +97,6 @@ def proc_resp(task):
             test_str = str(key1) + " " + str(task['id']) + " "
             screen.addstr(50+test, 2, test_str, curses.A_REVERSE)
             test = test + 2
-#    for i in range(len(task['stages'])):
-#        for j in range(len(task['stages'][str(i)])):
-#            if i == 0:
-#                boards['todo'][task['stages']['0'][j]['id']] = [task['stages']['0'][j]['name'], task['stages']['0'][j]['user']]
-#            elif i == 1:
-#                boards['inpr'][task['stages']['1'][j]['id']] = [task['stages']['1'][j]['name'], task['stages']['1'][j]['user']]
-#            elif i == 2:
-#                boards['comp'][task['stages']['2'][j]['id']] = [task['stages']['2'][j]['name'], task['stages']['2'][j]['user']]
 
 
 #Function for printing the kanban sections
@@ -182,17 +172,16 @@ def kanban():
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
-    #task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
-
-    #proc_resp(task)
+    
     proj_change()
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-    #screen.addstr(0,0,str(task['metadata']['stagecount']), curses.A_REVERSE)
-
+    global boards
+    test_str = 'B: ' + str(len(boards)) + " " + str(len(boards['0'])) + " " + str(len(boards['1'])) + " " + str(len(boards['2']))
+    screen.addstr(60, 2, test_str, curses.A_REVERSE)
 
     while True:
-        global boards
+        #global boards
         global cur_proj
 
         str1 = get_text(split-1)
