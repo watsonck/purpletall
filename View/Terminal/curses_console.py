@@ -4,7 +4,6 @@ from sys import exit
 win_list = []
 screen = -1
 username = ""
-password = ""
 
 #kanban varriables
 cur_proj = 1
@@ -103,16 +102,17 @@ def more_info(url):
 
 
 def send_recv(proj, cmd, args):
+    global username
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
         url = url + 'add?name={'+ args[0].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + " "
-        url = url[:len(url)-2] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'
+        url = url[:len(url)-2] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user={'+username+'}'
     elif cmd == 'move' and len(args) >= 2:
-        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'
+        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user={'+username+'}'
     elif cmd == 'splt' and len(args) >= 1:
-        url = url + 'split?id=' +args[0].decode()
+        url = url + 'split?id=' +args[0].decode()+'&user={'+username+'}'
     elif cmd == 'remv' and len(args) >= 1:
         url = url + 'remove?id=' + args[0].decode()
     elif cmd == 'modi':
