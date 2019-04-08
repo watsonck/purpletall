@@ -74,6 +74,19 @@ def proj_change(proj_num = 1):
         sect_names.append([str(stage),task['metadata']['stages'][stage].upper()])
     proc_resp(task)
 
+def more_info(url):
+    global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+    for y in range(splity,splity+splity):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
+    
+    task = json.loads(requests.get(url).text)
+    screen.addstr(40,40, task, curses.A_REVERSE)
+    get_text(splitx+splitx)
+
 
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
@@ -89,6 +102,8 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
+        more_info(url)
+        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST'
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode)
         return
@@ -229,7 +244,7 @@ def kanban():
         global boards
         global cur_proj
 
-        str1 = get_text(split-1)
+        str1 = get_text(split+split)
         if len(str1) < 1:
             continue
         parsed = parse_cmd(str1)
