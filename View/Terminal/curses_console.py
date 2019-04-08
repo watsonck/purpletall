@@ -109,11 +109,11 @@ def send_recv(proj, cmd, args):
         url = url + 'add?name={'+ args[0].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + " "
-        url = url[:len(url)-2] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user={'+user_id+'}'
+        url = url[:len(url)-2] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user={'+str(user_id)+'}'
     elif cmd == 'move' and len(args) >= 2:
-        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user={'+user_id+'}'
+        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user={'+str(user_id)+'}'
     elif cmd == 'splt' and len(args) >= 1:
-        url = url + 'split?id=' +args[0].decode()+'&user={'+user_id+'}'
+        url = url + 'split?id=' +args[0].decode()+'&user={'+str(user_id)+'}'
     elif cmd == 'remv' and len(args) >= 1:
         url = url + 'remove?id=' + args[0].decode()
     elif cmd == 'modi':
