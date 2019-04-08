@@ -68,7 +68,7 @@ def remake_resp(resp):
 
 def proj_change(proj_num = 1):
     global boards
-    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/1/LIST').text)
+    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text)
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage].upper()])
@@ -89,6 +89,9 @@ def send_recv(proj, cmd, args):
         return
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
+    elif cmd == 'proj' and len(args) >= 1:
+        proj_change(args[0].decode)
+        return
     return json.loads(requests.get(url).text)
 
 def proc_resp(task):

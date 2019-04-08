@@ -13,4 +13,7 @@ REMV : Removes task
 SPLT : Splits task into 2 tasks
 	SPLT 0 comp Task1 Task2
 	SPLT <task_id> 
+PROJ: Changes projects
+	PROJ 1
+	PROJ <proj_id>
 QUIT : Exits the kanaban loop 
