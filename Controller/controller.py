@@ -19,25 +19,25 @@ def connect_db():
 
 def get_db():
 	if not hasattr(g, "db"):
-	    g.db = connect_db()
+		g.db = connect_db()
 	return g.db.cursor()
 
 @app.teardown_appcontext
 def close_db(error):
 	if hasattr(g, "db"):
-	    g.db.close()
+		g.db.close()
 	return ''
 
 @app.route("/", methods=["GET", "POST"])
 def home():
 	if request.method == "GET":
-	    #example for other actual functions below,
-	    #give plain/JSON output here
-	    return "Hello World"
+		#example for other actual functions below,
+		#give plain/JSON output here
+		return "Hello World"
 	else:
-	    #build web page otherwise, sending what it would need in comma list
-	    return render_template("../../public_html/login.html", title = "Login")
-	    #might need to move file and rename path, jinja looks for templates
+		#build web page otherwise, sending what it would need in comma list
+		return render_template("../../public_html/login.html", title = "Login")
+		#might need to move file and rename path, jinja looks for templates
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/LIST
@@ -51,27 +51,28 @@ def pull_tasks(project):
 	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%d;"% (project))
 	stages = int(db.fetchone()['count'])
 	if stages == 0:
-	    return 'ERROR'
+		return 'ERROR'
 
 	json_dict['metadata']['project'] = project
 	json_dict['metadata']['stagecount'] = stages
 	json_dict['metadata']['stages'] = {}
-	    
+		
 	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%d;"% (project))
 	for row in db.fetchall():
-	    json_dict['metadata']['stages'][row['id']]= row['name']
+		json_dict['metadata']['stages'][row['id']]= row['name']
 
 
-	db.execute("SELECT id,task.name as name,contributor,stage FROM task,projects WHERE task.projid = projects.projid AND projects.projid=%d;"% (project))
+	db.execute("SELECT id,task.name as name,gitname,stage,is_bug FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%d AND contributor=userid;"% (project))
 	tasks = db.fetchall()
 	for row in tasks:
-	    json_dict['stages'][row['stage']] = []
+		json_dict['stages'][row['stage']] = []
 	for row in tasks:
-	    json_dict['stages'][row['stage']].append({
-	        'id': row['id'],
-	        'name': row['name'],
-	        'user': row['contributor'],
-	    })
+		json_dict['stages'][row['stage']].append({
+		    'id': row['id'],
+		    'name': row['name'],
+		    'user': row['gitname'],
+			'is_bug':row['is_bug']
+		})
 	return json.dumps(json_dict)
 
 
@@ -81,17 +82,18 @@ def pull_tasks(project):
 @app.route("/<int:project>/add", methods=["GET", "POST"])
 def add(project):
 	if request.method=="GET":
-	    name = request.args.get('name','N/A').replace('{','').replace('}','')
-	    desc = request.args.get('desc','N/A').replace('{','').replace('}','')
-	    ect = request.args.get('time','N/A').replace('{','').replace('}','')
-	    bug = request.args.get('bug','false').replace('{','').replace('}','')
-	    start = time.asctime(time.localtime(time.time()))
+		name = request.args.get('name','N/A').replace('{','').replace('}','')
+		desc = request.args.get('desc','N/A').replace('{','').replace('}','')
+		ect = request.args.get('time','N/A').replace('{','').replace('}','')
+		bug = request.args.get('bug',False).replace('{','').replace('}','')
+		user = request.args.get('user',0).replace('{','').replace('}','')
+		start = time.asctime(time.localtime(time.time()))
 
 	db = get_db()
 	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;"%(project))
 	stage = db.fetchone()['stagename']
 
-	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid) VALUES ('%s','%s','%s','%s','%s',%d);" % (name,desc,start,ect,stage,project))
+	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,is_bug,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%d);" % (name,desc,start,ect,stage,project,bug,user))
 	g.db.commit()
 	return pull_tasks(project)
 
@@ -102,12 +104,13 @@ def move(project):
 	#if request.method=="GET"
 	taskid = request.args.get('id',0)
 	stage = request.args.get('stage','N/A').replace('{','').replace('}','')
+	user = request.args.get('user',0).replace('{','').replace('}','')
 
 	db = get_db()
 	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename ILIKE '%s';"% (project, stage))
 	if db.fetchone()['count'] > 0:
-	    db.execute("UPDATE task SET stage='%s' WHERE id=%s AND projid=%d;" % (stage, taskid, project))
-	    g.db.commit()
+		db.execute("UPDATE task SET stage='%s',contributor=%d WHERE id=%s AND projid=%d;" % (stage, user, taskid, project))
+		g.db.commit()
 	return pull_tasks(project)
 
 #Example url
@@ -126,7 +129,8 @@ def remove(project):
 def split(project):
 	db = get_db()
 	taskid = request.args.get('id',0)
-	db.execute("SELECT name,description,stage,exptcomptime,actcomptime,contributor FROM task WHERE id = %d AND projid=%d;" % (int(taskid),project))
+	user = request.args.get('user',0).replace('{','').replace('}','')
+	db.execute("SELECT name,description,stage,exptcomptime,actcomptime,gitname FROM task,users WHERE id = %d AND projid=%d AND userid=contributor;" % (int(taskid),project))
 	row = db.fetchone() #should be a single disctionaly/map object list
 	name = 'split: ' + row['name']
 	desc = row['description']
@@ -134,14 +138,13 @@ def split(project):
 	start = time.asctime(time.localtime(time.time()))
 	ect = row['exptcomptime']
 	act = row['actcomptime']
-	user = row['contributor']
 
 	if user == None:
 		user = 0
 	if stage == None:
 		stage = 0
 
-	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s','%s','%s','%s','%s',%s)" % (project,name,desc,str(stage),start,ect,act,str(user)))
+	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s','%s','%s','%s','%s',%d)" % (project,name,desc,str(stage),start,ect,act,user))
 	g.db.commit()
 	#might need to fix to explitly grab each thing in the row list
 	return pull_tasks(project)
@@ -159,7 +162,7 @@ def modify(project):
 def info(project):
 	taskid = request.args.get('id',0)
 	if taskid == 0:
-	    return 'ERROR'
+		return 'ERROR'
 	db = get_db()
 	db.execute("SELECT * FROM task WHERE id = %s and projid=%d" % (taskid,project))
 	row = db.fetchone()
