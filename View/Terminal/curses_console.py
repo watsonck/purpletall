@@ -129,7 +129,7 @@ def proc_resp(task):
         board.clear()
     for key1, stage in task['stages'].items():
         for task in stage:
-            boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user']]
+            boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user'], task['is_bug']]
 
 
 
@@ -174,9 +174,16 @@ def kanban_print(split, max_tasks, limit, start = 0):
                     cur_board = second
                 else:
                     cur_board = last
-                str1 = str(key2) + ": " + task[0]
-                screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
-                screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
+                str1 = ""
+                if task[2] == True: #Unicode emoji copied from https://www.compart.com/en/unicode/U+1F41B
+                    str1 = '🐛' + " " + str(key2) + ": " + task[0] + " " + '🐛'
+                    screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.color_pair(1))
+                    screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.color_pair(1))
+                else:
+                    str1 = str(key2) + ": " + task[0]
+                    screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
+                    screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
+
                 cur_tasks = cur_tasks + 1
         cur_tasks = 0
         cur_board = cur_board + 1
