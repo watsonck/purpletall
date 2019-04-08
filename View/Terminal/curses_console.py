@@ -276,7 +276,7 @@ def kanban():
         parsed = parse_cmd(str1)
         
         #For when typing in input
-        if parsed[0].decode() == "QUIT":
+        if parsed[0].decode().upper() == "QUIT":
             break
         elif parsed[0].decode().upper() == "ADD":#EX: ADD <name> <expected comp> <is_bug> <desc>
             task = send_recv(cur_proj, 'add', parsed[1:])
