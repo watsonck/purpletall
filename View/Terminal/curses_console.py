@@ -85,6 +85,7 @@ def more_info(url):
     
     task = json.loads(requests.get(url).text)
     screen.addstr(40,40, task, curses.A_REVERSE)
+    screen.refresh()
     get_text(splitx+splitx)
 
 
