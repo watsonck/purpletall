@@ -265,7 +265,7 @@ def kanban():
         elif parsed[0].decode() == "SPLT":#EX: SPLT <task_id>
             task = send_recv(cur_proj, 'splt', parsed[1:])
             proc_resp(task)
-        elif elif parsed[0].decode() == "INFO":
+        elif parsed[0].decode() == "INFO":
             task = send_recv(cur_proj, 'info', parsed[1:])
             proc_resp(task)
 
