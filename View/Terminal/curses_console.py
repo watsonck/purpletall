@@ -103,7 +103,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
         more_info(url)
-        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST'
+        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/LIST'
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode)
         return
