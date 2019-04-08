@@ -176,11 +176,11 @@ def kanban_print(split, max_tasks, limit, start = 0):
                     cur_board = last
                 str1 = ""
                 if task[2] == True: #Unicode emoji copied from https://www.compart.com/en/unicode/U+1F41B
-                    str1 = '🐛' + " " + str(key2) + ": " + task[0] + " " + '🐛'
+                    str1 = str(key2) + ": " + task[0] + " "
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.color_pair(1))
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.color_pair(1))
                 else:
-                    str1 = str(key2) + ": " + task[0] + " TEST: " + str(task[2])
+                    str1 = str(key2) + ": " + task[0]
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
 
