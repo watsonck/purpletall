@@ -84,7 +84,11 @@ def more_info(url):
             screen.addstr(y,x," ", curses.A_REVERSE)
     
     task = json.loads(requests.get(url).text)
-    screen.addstr(40,0, str(task)[:30], curses.A_REVERSE)
+    y = 2
+    for key1, val1 in task.items():
+        test = str(key1) + ": " + str(val1) + " "
+        screen.addstr(y,2, test, curses.A_REVERSE)
+        y = y+1
     screen.refresh()
     get_text(splitx+splitx)
 
