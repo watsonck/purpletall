@@ -108,7 +108,7 @@ def send_recv(proj, cmd, args):
         url = url + 'add?name={'+ args[0].decode() + '}&desc={'
         for words in args[3:]:
             url = url+words.decode()+"%"
-        url = url[:len(url-2)] +'}&time={' + str(args[1].decode())  + '}&bug={' + str(args[2].decode()) + '}'
+        url = str(url[:len(url-2)]) +'}&time={' + str(args[1].decode())  + '}&bug={' + str(args[2].decode()) + '}'
     elif cmd == 'move' and len(args) >= 2:
         url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'
     elif cmd == 'splt' and len(args) >= 1:
