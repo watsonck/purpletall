@@ -21,7 +21,7 @@ How to use:
 	python3 Controller.py
 2) Open another Terminal.
 3) Start the view:
-	cd View
+	cd View/Terminal
 	python3 curses_console.py
 	
 Here are the view controls:
