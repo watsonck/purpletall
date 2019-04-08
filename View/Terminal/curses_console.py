@@ -83,7 +83,7 @@ def more_info(url):
         if y == splity :
             for x in range(splitx, splitx+splitx):
                 screen.addstr(y,x," ", curses.A_REVERSE)
-        elif y == splity+splity:
+        elif y == splity+splity-1:
             for x in range(splitx, splitx+splitx):
                 screen.addstr(y,x," ", curses.A_REVERSE)
         screen.addstr(y,splitx," ", curses.A_REVERSE)
@@ -93,7 +93,7 @@ def more_info(url):
     y = splity+2
     for key1, val1 in task.items():
         str1 = str(key1) + ": " + str(val1) + " "
-        screen.addstr(y,2, str1, curses.A_REVERSE)
+        screen.addstr(y,splitx+1, str1, curses.A_REVERSE)
         y = y+1
     screen.refresh()
     screen.addstr(splity+splity-1, splitx+1, "Press Enter To Contiune", curses.A_REVERSE)
