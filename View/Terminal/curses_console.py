@@ -22,6 +22,7 @@ def signal_handler(sig, frame):
 def init_curses(): 
     global screen
     screen = curses.initscr()
+    curses.start_color()
     curses.noecho()
     curses.cbreak()
     screen.keypad(True)
@@ -82,12 +83,12 @@ def more_info(url):
     for y in range(splity,splity+splity):
         if y == splity :
             for x in range(splitx, splitx+splitx):
-                screen.addstr(y,x," ", curses.A_REVERSE)
+                screen.addstr(y,x," ", curses.color_pair(1))
         elif y == splity+splity-1:
             for x in range(splitx, splitx+splitx):
-                screen.addstr(y,x," ", curses.A_REVERSE)
-        screen.addstr(y,splitx," ", curses.A_REVERSE)
-        screen.addstr(y,splitx+splitx," ", curses.A_REVERSE)
+                screen.addstr(y,x," ", curses.color_pair(1))
+        screen.addstr(y,splitx," ", curses.color_pair(1))
+        screen.addstr(y,splitx+splitx," ", curses.color_pair(1))
     
     task = json.loads(requests.get(url).text)
     y = splity+2
