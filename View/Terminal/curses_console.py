@@ -105,7 +105,10 @@ def more_info(url):
 def send_recv(proj, cmd, args):
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
-        url = url + 'add?name={'+ args[0].decode() + '}&desc={' + args[1].decode() + '}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'
+        url = url + 'add?name={'+ args[0].decode() + '}&desc={'
+        for words in args[3:]:
+            url = url+words.decode()+"%"
+        url = url[:len(url-2)] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'
     elif cmd == 'move' and len(args) >= 2:
         url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'
     elif cmd == 'splt' and len(args) >= 1:
@@ -176,7 +179,7 @@ def kanban_print(split, max_tasks, limit, start = 0):
                     cur_board = last
                 str1 = ""
                 if task[2] == True: #Unicode emoji copied from https://www.compart.com/en/unicode/U+1F41B
-                    str1 = str(key2) + ": " + task[0] + " "
+                    str1 = str(key2) + ": " + task[0] + " " + 
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.color_pair(1))
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.color_pair(1))
                 else:
