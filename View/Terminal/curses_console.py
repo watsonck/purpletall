@@ -98,7 +98,7 @@ def more_info(url):
         screen.addstr(y,splitx+1, str1, curses.A_REVERSE)
         y = y+1
     screen.refresh()
-    screen.addstr(splity+splity-1, splitx+1, "Press Enter To Contiune", curses.A_REVERSE)
+    screen.addstr(splity+splity-1, splitx+1, "Press Enter To Contiune", curses.color_pair(1))
     get_text(splitx+splitx)
 
 
