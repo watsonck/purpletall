@@ -4,7 +4,7 @@ from sys import exit
 win_list = []
 screen = -1
 username = ""
-user_id = -1
+user_id = 0
 
 #kanban varriables
 cur_proj = 1
@@ -230,6 +230,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
 
 def login():
     global username
+    global user_id
     global screen
     size = screen.getmaxyx()
     splity = int(size[0]/3)
