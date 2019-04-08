@@ -4,6 +4,7 @@ from sys import exit
 win_list = []
 screen = -1
 username = ""
+user_id = -1
 
 #kanban varriables
 cur_proj = 1
@@ -102,17 +103,17 @@ def more_info(url):
 
 
 def send_recv(proj, cmd, args):
-    global username
+    global user_id
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add' and len(args) >= 4:
         url = url + 'add?name={'+ args[0].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + " "
-        url = url[:len(url)-2] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user={'+username.decode()+'}'
+        url = url[:len(url)-2] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user={'+user_id+'}'
     elif cmd == 'move' and len(args) >= 2:
-        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user={'+username.decode()+'}'
+        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user={'+user_id+'}'
     elif cmd == 'splt' and len(args) >= 1:
-        url = url + 'split?id=' +args[0].decode()+'&user={'+username.decode()+'}'
+        url = url + 'split?id=' +args[0].decode()+'&user={'+user_id+'}'
     elif cmd == 'remv' and len(args) >= 1:
         url = url + 'remove?id=' + args[0].decode()
     elif cmd == 'modi':
@@ -229,7 +230,6 @@ def draw_kanban(max_x,max_y,split,start = 0):
 
 def login():
     global username
-    global password
     global screen
     size = screen.getmaxyx()
     splity = int(size[0]/3)
@@ -245,6 +245,7 @@ def login():
 
     curses.echo()
     username = screen.getstr(splity+2,splitx+12,15)
+    user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
     curses.noecho()
     screen.clear()
 
