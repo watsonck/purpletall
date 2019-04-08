@@ -16,4 +16,7 @@ SPLT : Splits task into 2 tasks
 PROJ: Changes projects
 	PROJ 1
 	PROJ <proj_id>
+INFO: Displays more info about Task
+	INFO 1
+	INFO <task_id>
 QUIT : Exits the kanaban loop 

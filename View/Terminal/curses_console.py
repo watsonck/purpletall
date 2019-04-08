@@ -80,16 +80,23 @@ def more_info(url):
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
     for y in range(splity,splity+splity):
-        for x in range(splitx,splitx+splitx):
-            screen.addstr(y,x," ", curses.A_REVERSE)
+        if y == splity :
+            for x in range(splitx, splitx+splitx):
+                screen.addstr(y,x," ", curses.A_REVERSE)
+        elif y == splity+splity:
+            for x in range(splitx, splitx+splitx):
+                screen.addstr(y,x," ", curses.A_REVERSE)
+        screen.addstr(y,splitx," ", curses.A_REVERSE)
+        screen.addstr(y,splitx+splitx," ", curses.A_REVERSE)
     
     task = json.loads(requests.get(url).text)
-    y = 30
+    y = splity+2
     for key1, val1 in task.items():
-        test = str(key1) + ": " + str(val1) + " "
-        screen.addstr(y,2, test, curses.A_REVERSE)
+        str1 = str(key1) + ": " + str(val1) + " "
+        screen.addstr(y,2, str1, curses.A_REVERSE)
         y = y+1
     screen.refresh()
+    screen.addstr(splity+splity-1, splitx+1, "Press Enter To Contiune", curses.A_REVERSE)
     get_text(splitx+splitx)
 
 
