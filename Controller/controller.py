@@ -86,14 +86,14 @@ def add(project):
 		desc = request.args.get('desc','N/A').replace('{','').replace('}','')
 		ect = request.args.get('time','N/A').replace('{','').replace('}','')
 		bug = request.args.get('bug',False).replace('{','').replace('}','')
-		user = request.args.get('user',0).replace('{','').replace('}','')
+		user = request.args.get('user','0')
 		start = time.asctime(time.localtime(time.time()))
 
 	db = get_db()
 	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;"%(project))
 	stage = db.fetchone()['stagename']
 
-	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,is_bug,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%d);" % (name,desc,start,ect,stage,project,bug,user))
+	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,is_bug,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%s);" % (name,desc,start,ect,stage,project,bug,user))
 	g.db.commit()
 	return pull_tasks(project)
 
@@ -104,12 +104,12 @@ def move(project):
 	#if request.method=="GET"
 	taskid = request.args.get('id',0)
 	stage = request.args.get('stage','N/A').replace('{','').replace('}','')
-	user = request.args.get('user',0).replace('{','').replace('}','')
+	user = request.args.get('user','0')
 
 	db = get_db()
 	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename ILIKE '%s';"% (project, stage))
 	if db.fetchone()['count'] > 0:
-		db.execute("UPDATE task SET stage='%s',contributor=%d WHERE id=%s AND projid=%d;" % (stage, user, taskid, project))
+		db.execute("UPDATE task SET stage='%s',contributor=%s WHERE id=%s AND projid=%d;" % (stage, user, taskid, project))
 		g.db.commit()
 	return pull_tasks(project)
 
@@ -129,7 +129,7 @@ def remove(project):
 def split(project):
 	db = get_db()
 	taskid = request.args.get('id',0)
-	user = request.args.get('user',0).replace('{','').replace('}','')
+	user = request.args.get('user','0')
 	db.execute("SELECT name,description,stage,exptcomptime,actcomptime,gitname FROM task,users WHERE id = %d AND projid=%d AND userid=contributor;" % (int(taskid),project))
 	row = db.fetchone() #should be a single disctionaly/map object list
 	name = 'split: ' + row['name']
@@ -144,7 +144,7 @@ def split(project):
 	if stage == None:
 		stage = 0
 
-	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s','%s','%s','%s','%s',%d)" % (project,name,desc,str(stage),start,ect,act,user))
+	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s','%s','%s','%s','%s',%s)" % (project,name,desc,str(stage),start,ect,act,user))
 	g.db.commit()
 	#might need to fix to explitly grab each thing in the row list
 	return pull_tasks(project)
@@ -173,6 +173,12 @@ def info(project):
 
 @app.route("/<int:project>/delcol", methods = ["GET","POST"])
 def delcol(project):
+	taskid = request.args.get('id',0)
+
+	return pull_tasks(project)
+
+@app.route("/<int:project>/rename", methods = ["GET","POST"])
+def rename(project):
 	return pull_tasks(project)
 
 #Example url
@@ -188,13 +194,13 @@ def ping():
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
 @app.route("/login", methods=["GET", "POST"])
 def login():
-	user = request.args.get('name',0)
+	user = request.args.get('user','').replace('{','').replace('}','')
 	db = get_db()
-	db.execute("SELECT id FROM users WHERE name = '%s';" % (user))
-	id = db.fetchone()['id']
-	if id is None:
-		return 'ERROR'
-	return id
+	db.execute("SELECT userid FROM users WHERE gitname = '%s';" % (user))
+	row = db.fetchone()
+	if row is None:
+		return '0'
+	return str(row['userid'])
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0')
