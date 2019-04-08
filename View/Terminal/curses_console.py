@@ -51,7 +51,7 @@ def get_text(limit):
     return str1
 
 def parse_cmd(cmd):
-    return cmd.upper().split() 
+    return cmd.split() 
 
 
 #Just remakes the rest of the cmd without the leading four letter identifier 
@@ -278,19 +278,19 @@ def kanban():
         #For when typing in input
         if parsed[0].decode() == "QUIT":
             break
-        elif parsed[0].decode() == "ADD":#EX: ADD <name> <expected comp> <is_bug> <desc>
+        elif parsed[0].decode().upper() == "ADD":#EX: ADD <name> <expected comp> <is_bug> <desc>
             task = send_recv(cur_proj, 'add', parsed[1:])
             proc_resp(task)
-        elif parsed[0].decode() == "MOVE":#EX: MOVE <task_id> <dest> 
+        elif parsed[0].decode().upper() == "MOVE":#EX: MOVE <task_id> <dest> 
             task = send_recv(cur_proj, 'move', parsed[1:])
             proc_resp(task)
-        elif parsed[0].decode() == "REMV":#EX: REMV <task_id>
+        elif parsed[0].decode().upper() == "REMV":#EX: REMV <task_id>
             task = send_recv(cur_proj, 'remv', parsed[1:])
             proc_resp(task)
-        elif parsed[0].decode() == "SPLT":#EX: SPLT <task_id>
+        elif parsed[0].decode().upper() == "SPLT":#EX: SPLT <task_id>
             task = send_recv(cur_proj, 'splt', parsed[1:])
             proc_resp(task)
-        elif parsed[0].decode() == "INFO":#EX: INFO <task_id>
+        elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
             task = send_recv(cur_proj, 'info', parsed[1:])
             proc_resp(task)
 
