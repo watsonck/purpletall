@@ -1,5 +1,5 @@
-from flask import Flask,request,g,redirect,escape,render_template
-import psycopg2,psycopg2.extras,time,json,git
+from flask import Flask, request, g, redirect, escape, render_template
+import psycopg2, psycopg2.extras, time, json, git, smtplib
 
 app = Flask(__name__)
 
@@ -36,9 +36,8 @@ def home():
 	    return "Hello World"
 	else:
 	    #build web page otherwise, sending what it would need in comma list
-	    return render_template("../../Web/login.html")
+	    return render_template("../../public_html/login.html", title = "Login")
 	    #might need to move file and rename path, jinja looks for templates
-
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/LIST
@@ -52,7 +51,7 @@ def pull_tasks(project):
 	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%d;"% (project))
 	stages = int(db.fetchone()['count'])
 	if stages == 0:
-	    return 'Stage Error: No stages on project'
+	    return 'ERROR'
 
 	json_dict['metadata']['project'] = project
 	json_dict['metadata']['stagecount'] = stages
@@ -169,17 +168,30 @@ def info(project):
 		json_dict[key] = row[key]
 	return json.dumps(json_dict)
 
+@app.route("/<int:project>/delcol", methods = ["GET","POST"])
+def delcol(project):
+	return pull_tasks(project)
+
 #Example url
 #http://purpletall.cs.longwood.edu:5000/ping?user={haddockcl}
 @app.route("/ping", methods=["GET", "POST"])
 def ping():
+	sender = request.args.get('sender',0)
+	receiver = request.args.get('receiver',0)
+	#SEND EMAIL
 	return ''
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
 @app.route("/login", methods=["GET", "POST"])
 def login():
-	return ''
+	user = request.args.get('name',0)
+	db = get_db()
+	db.execute("SELECT id FROM users WHERE name = '%s';" % (user))
+	id = db.fetchone()['id']
+	if id is None:
+		return 'ERROR'
+	return id
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0')

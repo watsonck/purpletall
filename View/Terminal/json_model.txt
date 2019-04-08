@@ -1,7 +1,7 @@
 {
-	'stages': 
+	stages': 
 		{
-		'0': 
+		'start': 
 			[
 			{'user': 2, 'id': 1, 'name': 'TesterOne'}, 
 			{'user': 2, 'id': 2, 'name': 'TestTwo'}, 
