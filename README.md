@@ -26,23 +26,23 @@ How to use:
 	
 Here are the view controls:
 Non case sensitive comands:
-ADD : followed by your task
-         ADD Task1  2019 false This thing is broken
-         ADD <name> <expected comp> <is_bug> <desc>
+ADD : followed by your task 
+	ADD Task1 4-6-2019 false This thing is broken
+	ADD <name> <expected comp> <is_bug> <desc>
 MOVE : followed by the task number then destination
-         MOVE 0 todo 
-         MOVE <task_id> <to>
+	MOVE 0 comp
+	MOVE <task_id> <to>
 REMV : Removes task
-         REMV 0 
-         REMV <task_id>
+	REMV 0 comp
+	REMV <task_id> 
 SPLT : Splits task into 2 tasks
-         SPLT 0 
-         SPLT <task_id>
+	SPLT 0 
+	SPLT <task_id> 
 PROJ: Changes projects
-         PROJ 1
-         PROJ <proj_id>
+	PROJ 1
+	PROJ <proj_id>
 INFO: Displays more info about Task
-         INFO 1
-         INFO <task_id>
-QUIT : Exits the kanaban loop
-	
+	INFO 1
+	INFO <task_id>
+QUIT : Exits the kanaban loop 
+
