@@ -7,7 +7,7 @@ DROP TABLE IF EXISTS Stages;
 
 CREATE TABLE Task  (id			SERIAL,
     		    projId		INTEGER,
-    		    name		VARCHAR(20),
+    		    name		TEXT,
 		    description		TEXT,
 		    stage		TEXT,
 		    startTime		TEXT,
@@ -19,10 +19,10 @@ CREATE TABLE Task  (id			SERIAL,
     );
 
 CREATE TABLE Users (userId		SERIAL PRIMARY KEY,
-  		    fname		VARCHAR(10),
-		    lname		VARCHAR(10),
-		    email		VARCHAR(254),
-		    gitname		VARCHAR(20)
+  		    fname		TEXT,
+		    lname		TEXT,
+		    email		TEXT,
+		    gitname		TEXT
     );
 
 CREATE TABLE Logs  (taskId		INTEGER,
@@ -35,7 +35,7 @@ CREATE TABLE Logs  (taskId		INTEGER,
     );
 
 CREATE TABLE Projects (projId		SERIAL PRIMARY KEY,
-    		       name		VARCHAR(30),
+    		       name		TEXT,
 		       description	TEXT
     );
 
