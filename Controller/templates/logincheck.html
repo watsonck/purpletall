@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% block content %}
+	{% if loginUser %}
+		<p><a href=login.html>Invalid login. Click to go back.</a></p>
+	{% elif %}
+		<p><a href=home.html>Valid login. Click to finish logging in.</a></p>
+	{% endif %}
+{% endblock %}
