@@ -194,13 +194,19 @@ def ping():
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
 @app.route("/login", methods=["GET", "POST"])
 def login():
-	user = request.args.get('user','').replace('{','').replace('}','')
-	db = get_db()
-	db.execute("SELECT userid FROM users WHERE gitname = '%s';" % (user))
-	row = db.fetchone()
-	if row is None:
-		return '0'
-	return str(row['userid'])
+    db = get_db()
+    if request.method=="GET":
+        user = request.args.get('user','').replace('{','').replace('}','')
+    elif "user" in request.form:
+        user = escape(request.form['username'])
+    db.execute("SELECT userid FROM users WHERE gitname = '%s';" % (user))
+    row = db.fetchone()
+    if request.method=="GET":
+        if row:
+            return str(row['userid'])
+        else:
+            return '0'
+    return render_template("/logincheck.html", title = "Purple Tall", loginUser=bool(row))
 
 if __name__ == "__main__":
-	app.run(host='0.0.0.0')
+    app.run(host='0.0.0.0')
