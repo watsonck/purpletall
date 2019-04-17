@@ -195,6 +195,7 @@ def ping():
 @app.route("/login", methods=["GET", "POST"])
 def login():
     db = get_db()
+    user = "";
     if request.method=="GET":
         user = request.args.get('user','').replace('{','').replace('}','')
     elif "user" in request.form:
