@@ -30,13 +30,13 @@ def close_db(error):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-	if request.method == "GET":
+	#if request.method == "GET":
 		#example for other actual functions below,
 		#give plain/JSON output here
-		return "Hello World"
-	else:
+	#	return "Hello World"
+	#else:
 		#build web page otherwise, sending what it would need in comma list
-		return render_template("../../public_html/login.html", title = "Login")
+	return render_template("/login.html", title = "Login")
 		#might need to move file and rename path, jinja looks for templates
 
 #Example url

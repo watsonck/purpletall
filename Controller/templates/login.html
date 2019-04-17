@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+	<div id=login>
+	<svg width="100" height="400">
+		<rect width="100" height="400"
+		style="fill:rgb(128,0,128);stroke-width:10,stroke:rgb(0,0,0" />
+	</svg>
+	<form method="POST" action="login.cgi">
+		<fieldset>
+			<legend>Log In</legend>
+			<label for="username">Username:</label><br />
+			<input type="text" name="username" id="username" /><br />
+			<input type="submit" value="Log In"></input>
+		</fieldset>
+	</form>
+	</div>
+{% endblock %}
