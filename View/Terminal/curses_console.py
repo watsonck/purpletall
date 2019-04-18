@@ -125,7 +125,11 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode)
         return
-    return json.loads(requests.get(url).text)
+    result = requests.get(url).text)
+    if result == 'ERROR':
+        return result
+    else:
+        return json.loads(result)
 
 def proc_resp(task):
     global boards
@@ -139,7 +143,7 @@ def proc_resp(task):
 
 
 #Function for printing the kanban sections
-def kanban_print(split, max_tasks, limit):
+def kanban_print(split, max_tasks, limit, start = 0):
     global kanban_start
     global boards
     global sect_names
