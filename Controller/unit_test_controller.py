@@ -40,11 +40,11 @@ class Test(unittest.TestCase):
 #test if a user is in database
     def test_user_in_db(self):
         db = get_db()
-        #fname = db.execute("SELECT fname FROM users WHERE fname = 'Colin' ")
+        fname = db.execute("SELECT fname FROM users WHERE fname = 'Colin' ")
         lname = db.execute("SELECT lname FROM users WHERE lname = 'Watson' ")
         email = db.execute("SELECT email FROM users WHERE email = 'colin.watson777@yahoo.com'")
         gitname = db.execute("SELECT gitname FROM users WHERE gitname = 'watsonck'")
-        #self.assertEqual(fname, 'Colin')
+        self.assertEqual(fname, 'Colin')
         self.assertEqual(lname, 'Watson')
         self.assertEqual(email, 'colin.watson777@yahoo.com')
         self.assertEqual(gitname, 'watsonck')
