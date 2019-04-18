@@ -46,7 +46,7 @@ class Test(unittest.TestCase):
         #email = db.execute("SELECT email FROM Users WHERE email = 'colin.watson777@yahoo.com'")
         #gitname = db.execute("SELECT gitname FROM Users WHERE gitname = 'watsonck'")
         #print(fname)
-        self.assertEqual(fname, 'Colin')
+        self.assertEqual(fname, [{'fname': 'Colin'}])
         #self.assertEqual(lname, 'Watson')
         #self.assertEqual(email, 'colin.watson777@yahoo.com')
         #self.assertEqual(gitname, 'watsonck')
