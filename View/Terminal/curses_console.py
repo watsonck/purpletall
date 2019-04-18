@@ -139,8 +139,8 @@ def proc_resp(task):
 
 
 #Function for printing the kanban sections
-def kanban_print(split, max_tasks, limit, start = 0):
-    global kanban_print
+def kanban_print(split, max_tasks, limit):
+    global kanban_start
     global boards
     global sect_names
 
@@ -166,12 +166,15 @@ def kanban_print(split, max_tasks, limit, start = 0):
 
     cur_tasks = 0
     cur_board = 0
+    s_found = False
     for key1, board in boards.items():
         for key2, task in board.items():
+            if cur_tasks == kanban_start and s_found == False:
+                s_found == True
             if cur_tasks == max_tasks:
                 cur_tasks = 0
                 break
-            else:
+            elif s_found == True:
                 if key1 == f_name:
                     cur_board = first
                 elif key1 == s_name:
@@ -179,7 +182,7 @@ def kanban_print(split, max_tasks, limit, start = 0):
                 else:
                     cur_board = last
                 str1 = ""
-                if task[2] == True: #Unicode emoji copied from https://www.compart.com/en/unicode/U+1F41B
+                if task[2] == True: 
                     str1 = str(key2) + ": " + task[0]
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.color_pair(1))
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.color_pair(1))
@@ -269,6 +272,7 @@ def kanban():
     while True:
         global boards
         global cur_proj
+        global kanban_start
 
         str1 = get_text(split+split)
         if len(str1) < 1:
@@ -293,6 +297,14 @@ def kanban():
         elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
             task = send_recv(cur_proj, 'info', parsed[1:])
             proc_resp(task)
+        elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
+            if len(parsed) < 3:
+                continue
+            if parsed[1].decode() == "T":
+                if parsed[2].decode() == "U":
+                    kanban_start = kanban_start+max_tasks
+                elif parsed[2].decode() == 'D':
+                    kanban_start = kanban_start-max_tasks
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
