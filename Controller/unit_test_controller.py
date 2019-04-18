@@ -44,10 +44,10 @@ class Test(unittest.TestCase):
         lname = db.execute("SELECT lname FROM users WHERE lname = 'Watson' ")
         email = db.execute("SELECT email FROM users WHERE email = 'colin.watson777@yahoo.com'")
         gitname = db.execute("SELECT gitname FROM users WHERE gitname = 'watsonck'")
-        self.assertEqual(fname, "Colin")
-        self.assertEqual(lname, "Watson")
-        self.assertEqual(email, "colin.watson777@yahoo.com")
-        self.assertEqual(gitname, "watsonck")
+        self.assertEqual(fname, 'Colin')
+        self.assertEqual(lname, 'Watson')
+        self.assertEqual(email, 'colin.watson777@yahoo.com')
+        self.assertEqual(gitname, 'watsonck')
 
     def test_project_in_db(self):
         db = get_db()
