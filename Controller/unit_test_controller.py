@@ -61,7 +61,7 @@ class Test(unittest.TestCase):
         name = db.fetchall()
         db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
         description = db.fetchall()
-        self.assertEqual(projId, [{'projId': 1}])
+        self.assertEqual(projId, [{'projid': 1}])
         self.assertEqual(name, [{'name': 'Testing Project'}])
         self.assertEqual(description, [{'description': 'a project made to test program'}])
     
