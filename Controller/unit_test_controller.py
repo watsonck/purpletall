@@ -55,12 +55,15 @@ class Test(unittest.TestCase):
 
     def test_project_in_db(self):
         db = get_db()
-        projId = db.execute("SELECT projId FROM Projects WHERE projId = 1")
-        name = db.execute("SELECT name FROM Projects WHERE name = 'Testing Project'")
-        description = db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
-        self.assertEqual(projId, 1)
-        self.assertEqual(name, "Testing Project")
-        self.assertEqual(description, "a project made to test program")
+        db.execute("SELECT projId FROM Projects WHERE projId = 1")
+        projId = db.fetchall()
+        db.execute("SELECT name FROM Projects WHERE name = 'Testing Project'")
+        name = db.fetchall()
+        db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
+        description = db.fetchall()
+        self.assertEqual(projId, [{'projId': 1}])
+        self.assertEqual(name, [{'name': 'Testing Project'}])
+        self.assertEqual(description, [{'description': 'a project made to test program'}])
     
     #def test_new_task(task):
         #response = self.app.post('/TASK/<string:task>', data=dict()
