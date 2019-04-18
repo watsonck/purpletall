@@ -125,7 +125,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode)
         return
-    result = requests.get(url).text)
+    result = requests.get(url).text
     if result == 'ERROR':
         return result
     else:
