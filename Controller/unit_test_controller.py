@@ -6,6 +6,11 @@ from controller import app, get_db, connect_db, home
 import psycopg2
 import psycopg2.extras
 
+app_context = app.app_context()
+app_context.push()
+
+current_app.name
+
 class Test(unittest.TestCase):
 
     with app.app_context():
