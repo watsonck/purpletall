@@ -9,7 +9,9 @@ import psycopg2.extras
 class Test(unittest.TestCase):
 
     with app.app_context():
-        print current_app.name
+        print(current_app.name)
+
+
 
     def setUp(self):
         app.config['TESTING'] = True
@@ -28,7 +30,7 @@ class Test(unittest.TestCase):
 #test if homepage is displaying correctly
     def test_home(self):
         with app.test_request_context():
-            self.assertEqual(home(), "Hello World")
+            self.assertEqual(home(),render_template("/login.html", title = "Login"))
 
 #test if a user is in database
     def test_user_in_db(self):
@@ -42,9 +44,14 @@ class Test(unittest.TestCase):
         self.assertEqual(email, "colin.watson777@yahoo.com")
         self.assertEqual(gitname, "watsonck")
 
-    ##def test_project_in_db(self):
-        ##db = get_db()
-        
+    def test_project_in_db(self):
+        db = get_db()
+        projId = db.execute("SELECT projId FROM Projects WHERE projId = 1")
+        name = db.execute("SELECT name FROM Projects WHERE name = 'Testing Project'")
+        description = db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
+        self.assertEqual(projId, 1)
+        self.assertEqual(name, "Testing Project")
+        self.assertEqual(description, "a project made to test program")
     
     #def test_new_task(task):
         #response = self.app.post('/TASK/<string:task>', data=dict()
