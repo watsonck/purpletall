@@ -68,9 +68,9 @@ def pull_tasks(project):
 		json_dict['stages'][row['stage']] = []
 	for row in tasks:
 		json_dict['stages'][row['stage']].append({
-		    'id': row['id'],
-		    'name': row['name'],
-		    'user': row['lab_user'],
+			'id': row['id'],
+			'name': row['name'],
+			'user': row['lab_user'],
 			'is_bug':row['is_bug']
 		})
 	return json.dumps(json_dict)
@@ -194,20 +194,24 @@ def ping():
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    db = get_db()
-    user = "";
-    if request.method=="GET":
-        user = request.args.get('user','').replace('{','').replace('}','')
-    elif "user" in request.form:
-        user = escape(request.form['username'])
-    db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
-    row = db.fetchone()
-    if request.method=="GET":
-        if row:
-            return str(row['userid'])
-        else:
-            return '0'
-    return render_template("/logincheck.html", title = "Purple Tall", loginUser=bool(row))
+	db = get_db()
+	user = "";
+	if request.method=="GET":
+		user = request.args.get('user','').replace('{','').replace('}','')
+	elif "username" in request.form:
+		user = escape(request.form['username'])
+	db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
+	row = db.fetchone()
+
+	if request.method=="GET":
+	    if row:
+	        return str(row['userid'])
+	    else:
+	        return '0'
+
+	isUser = row is not None
+
+	return render_template("/logincheck.html", title = "Purple Tall", loginUser=isUser)
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0')
+	app.run(host='0.0.0.0')
