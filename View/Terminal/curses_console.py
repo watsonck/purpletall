@@ -341,6 +341,7 @@ def kanban():
                     screen.addstr(40,5,str(sect_start), curses.A_REVERSE)
                     sect_start = sect_start+1
                     screen.addstr(40,3,str(sect_start), curses.A_REVERSE)
+                    refresh_screen()
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
