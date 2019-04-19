@@ -352,6 +352,8 @@ def kanban():
         kanban_print(split, max_tasks, split-1)
         screen.addstr(42,3,str(2), curses.A_REVERSE)
         refresh_screen()
+        screen.addstr(41,3," ")
+        screen.addstr(42,3," ")
 
 
 def main():
