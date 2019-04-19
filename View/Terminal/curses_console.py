@@ -123,7 +123,7 @@ def send_recv(proj, cmd, args):
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/LIST'
     elif cmd == 'proj' and len(args) >= 1:
-        proj_change(args[0].decode)
+        proj_change(args[0].decode())
         return
     result = requests.get(url).text
     if result == 'ERROR':
@@ -147,6 +147,7 @@ def kanban_print(split, max_tasks, limit, start = 0):
     global kanban_start
     global boards
     global sect_names
+    global empt_boards
 
     first = -1
     f_name = ""
