@@ -339,7 +339,7 @@ def kanban():
                     sect_start = sect_start - 1
                 elif parsed[2].decode().upper() == 'D' and sect_start+1 < len(sect_names)-1 and len(sect_names) > 3:
                     sect_start = sect_start+1
-                    screen.addstr(40,3,str(sect_start), curse.A_REVERSE)
+                    screen.addstr(40,3,str(sect_start), curses.A_REVERSE)
                     str1 = get_text(split+split)
 
 
