@@ -343,9 +343,8 @@ def kanban():
                 if parsed[2].decode().upper() == 'U' and sect_start != 0:
                     sect_start = sect_start - 1
                 elif parsed[2].decode().upper() == 'D' and len(sect_names) > 3:
-                    sect_start = sect_start+1
-                    if sect_start+3 >= len(sect_names):
-                        sect_start = sect_start-1
+                    if sect_start+3 < len(sect_names):
+                        sect_start = sect_start+1
 
 
         screen.clear()
