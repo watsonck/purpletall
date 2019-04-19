@@ -233,16 +233,16 @@ def draw_kanban(max_x,max_y,split,start = 0):
     first = -1
     second = -1
     last = -1
-    while True:
-        for i in range(len(sect_names)):
-            if int(sect_names[i][0]) == sect_start:
-                first = sect_names[i][1]
-            elif int(sect_names[i][0]) == sect_start+1:
-                second = sect_names[i][1]
-            elif int(sect_names[i][0]) == sect_start+2:
-                last = sect_names[i][1]
-        if first != -1 and second != -1 and last != -1:
-            break
+#    while True:
+    for i in range(len(sect_names)):
+        if int(sect_names[i][0]) == sect_start:
+            first = sect_names[i][1]
+        elif int(sect_names[i][0]) == sect_start+1:
+            second = sect_names[i][1]
+        elif int(sect_names[i][0]) == sect_start+2:
+            last = sect_names[i][1]
+ #       if first != -1 and second != -1 and last != -1:
+ #           break
     
     screen.addstr(45,3,str(5), curses.A_REVERSE)
     refresh_screen()
