@@ -261,6 +261,9 @@ def login():
 
 ##Cannot write to bottom right corner
 def kanban():
+    global boards
+    global cur_proj
+    global kanban_start
     global screen
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
@@ -271,10 +274,6 @@ def kanban():
     kanban_print(split, max_tasks, split-1)
 
     while True:
-        global boards
-        global cur_proj
-        global kanban_start
-
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
@@ -303,10 +302,11 @@ def kanban():
                 continue
             if parsed[1].decode() == "T":
                 if parsed[2].decode() == "U":
-                    kanban_start = kanban_start+max_tasks
-                elif parsed[2].decode() == 'D':
                     kanban_start = kanban_start-max_tasks
-
+                elif parsed[2].decode() == 'D':
+                    kanban_start = kanban_start+max_tasks
+        
+        screen.addstr(40,2, str(kanban_start), curses.color_pair(1))
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
