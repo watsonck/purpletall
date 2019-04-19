@@ -142,7 +142,7 @@ def send_recv(proj, cmd, args):
 def proc_resp(task):
     global boards
     global most_tasks
-    most_tasks = -1
+    most_tasks = 0
     if task == -1:
         return
     for key1, board in boards.items():
@@ -150,8 +150,9 @@ def proc_resp(task):
     for key1, stage in task['stages'].items():
         for task in stage:
             boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user'], task['is_bug']]
-        if len(boards[str(key1).upper()]) > most_tasks:
-            most_tasks == len(boards[str(key1).upper()]) 
+    for key1, board in boards.items():
+        if len(board) > most_tasks:
+            most_tasks == len(boards) 
 
 
 
