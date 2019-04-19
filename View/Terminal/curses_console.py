@@ -224,10 +224,18 @@ def draw_kanban(max_x,max_y,split,start = 0):
                 last = sect_names[i][1]
         if first != -1 and second != -1 and last != -1:
             break
-    
+
     screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
+    #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
+    #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
+
     screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)
+    #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
+    #screen.addstr(max_y-1, int((split/2)*3)-5, page, curses.A_REVERSE)
+
+    screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
+    #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
+    #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
 
 
 
@@ -297,16 +305,17 @@ def kanban():
         elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
             task = send_recv(cur_proj, 'info', parsed[1:])
             proc_resp(task)
+        elif parsed[0].decode().upper() == "PROJ":#EX: PROJ <proj_id>
+            task = send_recv(cur_proj, 'proj', parsed[1:])
+            proc_resp(task)
         elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
             if len(parsed) < 3:
                 continue
             if parsed[1].decode() == "T":
-                if parsed[2].decode() == "U":
+                if parsed[2].decode().upper() == "U" and kanban_start != 0:
                     kanban_start = kanban_start-max_tasks
-                elif parsed[2].decode() == 'D':
+                elif parsed[2].decode().upper() == 'D':
                     kanban_start = kanban_start+max_tasks
-        
-        screen.addstr(40,2, str(kanban_start), curses.color_pair(1))
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
