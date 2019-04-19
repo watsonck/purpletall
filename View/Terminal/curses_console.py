@@ -72,8 +72,11 @@ def remake_resp(resp):
 
 def proj_change(proj_num = 1):
     global boards
+    global sect_names
     global kanban_start
     global sect_start
+    sect_names.clear()
+    boards.clear()
     kanban_start = 0
     sect_start = 0
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text)
