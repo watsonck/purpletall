@@ -347,7 +347,10 @@ def kanban():
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
+        screen.addstr(41,3,str(1), curses.A_REVERSE)
+        refresh_screen()
         kanban_print(split, max_tasks, split-1)
+        screen.addstr(42,3,str(2), curses.A_REVERSE)
         refresh_screen()
 
 
