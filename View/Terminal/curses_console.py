@@ -13,7 +13,6 @@ sect_start = 0 # where to start displaying sections from
 boards = {}
 sect_names = []
 most_tasks = -1 # the most tasks in any column, used to prevent scrolling down super far
-at_bottom = False # used to to prevent scrolling down super far
 
 #prevents CTRL+C from breaking the terminal
 #Lines 16-19 and Line 257 Helped by :https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python
@@ -73,6 +72,10 @@ def remake_resp(resp):
 
 def proj_change(proj_num = 1):
     global boards
+    global kanban_start
+    global sect_start
+    kanban_start = 0
+    sect_start = 0
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text)
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
