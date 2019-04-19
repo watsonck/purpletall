@@ -66,3 +66,14 @@ INSERT INTO Stages(projId, stageName, stageOrder) VALUES(1, 'Done',2);
 INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TesterOne', 'Need to start this thing','todo',2);
 INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TestTwo', 'Heres somethiong else','start',2);
 INSERT INTO Task(projId, name, description, stage, contributor) VALUES (1, 'TestThree','Last one','todo',2);
+
+INSERT INTO Projects(name, description) VALUES ('Switching Project','a project made to test switching');
+
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(2,'start',0);
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(2, 'todo',1);
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(2, 'Bugs',2);
+INSERT INTO Stages(projId, stageName, stageOrder) VALUES(2, 'Done',3);
+
+INSERT INTO Task(projId, name, description, stage, contributor) VALUES (2, 'TesterOne', 'Need to start this thing','todo',2);
+INSERT INTO Task(projId, name, description, stage, contributor) VALUES (2, 'TestTwo', 'Heres somethiong else','start',2);
+INSERT INTO Task(projId, name, description, stage, contributor) VALUES (2, 'TestThree','Last one','todo',2);
