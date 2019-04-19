@@ -134,6 +134,10 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode())
         return
+    #elif cmd == 'acol' and len(args) >= 1:
+    #    url = 
+    #elif cmd == 'dcol' and len(args) >= 1:
+    #    url = 
     else:
         return -1
     result = requests.get(url).text
@@ -279,9 +283,26 @@ def login():
     curses.noecho()
     screen.clear()
 
+#user creation screen for once thats in the controller
+def create_user():
+    global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+    for y in range(splity,splity+splity):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
     
-
+    screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Usercreation", curses.A_REVERSE)
+    screen.addstr(splity+2, splitx+1, "Please enter your desired username", curses.A_REVERSE)
+    screen.addstr(splity+4, splitx+1, "Username:", curses.A_REVERSE)
+    screen.addstr(splity+4, splitx+12, "                ")
     
+    curses.echo()
+    username = screen.getstr(splity+4,splitx+12,15)
+    #user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+    curses.noecho()
+    screen.clear()
 
 
 ##Cannot write to bottom right corner
@@ -324,6 +345,12 @@ def kanban():
         elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
             task = send_recv(cur_proj, 'info', parsed[1:])
             proc_resp(task)
+        #elif parsed[0].decode().upper() == "DCOL":#EX: DCOL <col_name>
+        #    task = send_recv(cur_proj, 'dcol', parsed[1:])
+        #    proc_resp(task)        
+        #elif parsed[0].decode().upper() == "ACOL":#EX: ACOL <col_name>
+        #    task = send_recv(cur_proj, 'acol', parsed[1:])
+        #    proc_resp(task)
         elif parsed[0].decode().upper() == "PROJ":#EX: PROJ <proj_id>
             task = send_recv(cur_proj, 'proj', parsed[1:])
         elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
@@ -338,24 +365,13 @@ def kanban():
                 if parsed[2].decode().upper() == 'U' and sect_start != 0:
                     sect_start = sect_start - 1
                 elif parsed[2].decode().upper() == 'D' and len(sect_names) > 3:
-                    #screen.addstr(41,3,str(sect_start+4) + "     " +  str(sect_start) + "    " + str(len(sect_names)) , curses.A_REVERSE)
-                    #refresh_screen()
                     if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
-                    #screen.addstr(42,3,str(sect_start), curses.A_REVERSE)
-                    #refresh_screen()
 
-        x = 0
-        for sect in sect_names:
-            screen.addstr(30+x, 2, str(sect[0]) + "    " + str(sect[1]), curses.A_REVERSE)
-            refresh_screen()
-            x = x + 2
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
-        screen.addstr(41,3,"                                              ")
-        screen.addstr(42,3,"   ")
         refresh_screen()
 
 
