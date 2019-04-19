@@ -358,6 +358,10 @@ def kanban():
         refresh_screen()
         screen.addstr(41,3," ")
         screen.addstr(42,3," ")
+        screen.addstr(43,3," ")
+        screen.addstr(44,3," ")
+        screen.addstr(45,3," ")
+
 
 
 def main():
