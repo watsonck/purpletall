@@ -175,7 +175,7 @@ def kanban_print(split, max_tasks, limit, start = 0):
             if cur_tasks == max_tasks:
                 cur_tasks = 0
                 break
-            elif key2 >= kanban_start:
+            elif int(key2) >= kanban_start:
                 if key1 == f_name:
                     cur_board = first
                 elif key1 == s_name:
