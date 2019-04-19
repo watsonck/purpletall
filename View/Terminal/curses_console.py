@@ -127,7 +127,7 @@ def send_recv(proj, cmd, args):
         proj_change(args[0].decode())
         return
     else:
-        return
+        return -1
     result = requests.get(url).text
     if result == 'ERROR':
         return result
@@ -136,6 +136,8 @@ def send_recv(proj, cmd, args):
 
 def proc_resp(task):
     global boards
+    if task == -1:
+        return
     for key1, board in boards.items():
         board.clear()
     for key1, stage in task['stages'].items():
@@ -324,7 +326,7 @@ def kanban():
             elif parsed[1].decode().upper() == "S":
                 if parsed[2].decode().upper() == 'U' and sect_start != 0:
                     sect_start = sect_start - 3
-                elif parsed[2].decode().upper() == 'D' and sect_start < len(sect_start):
+                elif parsed[2].decode().upper() == 'D' and sect_start < len(sect_names):
                     sect_start = sect_start + 3
         screen.clear()
         draw_kanban(size[1],size[0],split)
