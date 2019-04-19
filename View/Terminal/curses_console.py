@@ -218,14 +218,16 @@ def draw_kanban(max_x,max_y,split,start = 0):
     for x in range(max_x):
         screen.addstr(max_y-2, x, " ", curses.A_REVERSE)
         screen.addstr(0,x, " ", curses.A_REVERSE)
-
+    screen.addstr(43,3,str(3), curses.A_REVERSE)
+    refresh_screen()
     for y in range(max_y-1):
         screen.addstr(y,0+split, " ", curses.A_REVERSE)
         screen.addstr(y,0+split+split, " ", curses.A_REVERSE)
         if y < max_y-2:
             screen.addstr(y,0, " ", curses.A_REVERSE)
             screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
-    
+    screen.addstr(44,3,str(4), curses.A_REVERSE)
+    refresh_screen()
     global sect_names
     global sect_start
     first = -1
@@ -241,7 +243,9 @@ def draw_kanban(max_x,max_y,split,start = 0):
                 last = sect_names[i][1]
         if first != -1 and second != -1 and last != -1:
             break
-
+    
+    screen.addstr(45,3,str(5), curses.A_REVERSE)
+    refresh_screen()
     screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
     #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
