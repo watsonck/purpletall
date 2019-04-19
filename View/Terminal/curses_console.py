@@ -170,15 +170,12 @@ def kanban_print(split, max_tasks, limit, start = 0):
 
     cur_tasks = 0
     cur_board = 0
-    s_found = False
     for key1, board in boards.items():
         for key2, task in board.items():
-            if cur_tasks == kanban_start and s_found == False:
-                s_found == True
             if cur_tasks == max_tasks:
                 cur_tasks = 0
                 break
-            elif s_found == True:
+            elif key2 >= kanban_start:
                 if key1 == f_name:
                     cur_board = first
                 elif key1 == s_name:
