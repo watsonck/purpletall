@@ -9,6 +9,7 @@ user_id = 0
 #kanban varriables
 cur_proj = 1
 kanban_start = 0
+sect_start = 0
 boards = {}
 sect_names = []
 
@@ -125,6 +126,8 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode())
         return
+    else:
+        return
     result = requests.get(url).text
     if result == 'ERROR':
         return result
@@ -143,11 +146,11 @@ def proc_resp(task):
 
 
 #Function for printing the kanban sections
-def kanban_print(split, max_tasks, limit, start = 0):
+def kanban_print(split, max_tasks, limit):
     global kanban_start
     global boards
     global sect_names
-    global empt_boards
+    global sect_start
 
     first = -1
     f_name = ""
@@ -157,13 +160,13 @@ def kanban_print(split, max_tasks, limit, start = 0):
     l_name = ""
     while True:
         for i in range(len(sect_names)):
-            if int(sect_names[i][0]) == start:
+            if int(sect_names[i][0]) == sect_start:
                 first = int(sect_names[i][0])
                 f_name = sect_names[i][1]
-            elif int(sect_names[i][0]) == start+1:
+            elif int(sect_names[i][0]) == sect_start+1:
                 second = int(sect_names[i][0])
                 s_name = sect_names[i][1]
-            elif int(sect_names[i][0]) == start+2:
+            elif int(sect_names[i][0]) == sect_start+2:
                 last = int(sect_names[i][0])
                 l_name = sect_names[i][1]
         if first != -1 and second != -1 and last != -1:
@@ -212,16 +215,17 @@ def draw_kanban(max_x,max_y,split,start = 0):
             screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
     
     global sect_names
+    global sect_start
     first = -1
     second = -1
     last = -1
     while True:
         for i in range(len(sect_names)):
-            if int(sect_names[i][0]) == start:
+            if int(sect_names[i][0]) == sect_start:
                 first = sect_names[i][1]
-            elif int(sect_names[i][0]) == start+1:
+            elif int(sect_names[i][0]) == sect_start+1:
                 second = sect_names[i][1]
-            elif int(sect_names[i][0]) == start+2:
+            elif int(sect_names[i][0]) == sect_start+2:
                 last = sect_names[i][1]
         if first != -1 and second != -1 and last != -1:
             break
@@ -273,6 +277,7 @@ def kanban():
     global boards
     global cur_proj
     global kanban_start
+    global sect_start
     global screen
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
@@ -316,6 +321,11 @@ def kanban():
                     kanban_start = kanban_start-max_tasks
                 elif parsed[2].decode().upper() == 'D':
                     kanban_start = kanban_start+max_tasks
+            elif parsed[1].decode().upper() == "S":
+                if parsed[2].decode().upper() == 'U' and sect_start != 0:
+                    sect_start = sect_start - 3
+                elif parsed[2].decode().upper() == 'D' and sect_start < len(sect_start):
+                    sect_start = sect_start + 3
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
