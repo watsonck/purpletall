@@ -311,7 +311,7 @@ def kanban():
         elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
             if len(parsed) < 3:
                 continue
-            if parsed[1].decode() == "T":
+            if parsed[1].decode().upper() == "T":
                 if parsed[2].decode().upper() == "U" and kanban_start != 0:
                     kanban_start = kanban_start-max_tasks
                 elif parsed[2].decode().upper() == 'D':
