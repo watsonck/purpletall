@@ -340,7 +340,7 @@ def kanban():
                 elif parsed[2].decode().upper() == 'D' and len(sect_names) > 3:
                     #screen.addstr(41,3,str(sect_start+4) + "     " +  str(sect_start) + "    " + str(len(sect_names)) , curses.A_REVERSE)
                     #refresh_screen()
-                    if sect_start+4 < len(sect_names):
+                    if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
                     #screen.addstr(42,3,str(sect_start), curses.A_REVERSE)
                     #refresh_screen()
