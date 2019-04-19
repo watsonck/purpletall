@@ -8,10 +8,11 @@ user_id = 0
 
 #kanban varriables
 cur_proj = 1
-kanban_start = 0
-sect_start = 0
+kanban_start = 0 #where to start displaying tasks from
+sect_start = 0 # where to start displaying sections from
 boards = {}
 sect_names = []
+most_tasks = -1 # the most tasks in any column, used to prevent scrolling down super far
 
 #prevents CTRL+C from breaking the terminal
 #Lines 16-19 and Line 257 Helped by :https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python
@@ -71,6 +72,10 @@ def remake_resp(resp):
 
 def proj_change(proj_num = 1):
     global boards
+    global kanban_start
+    global sect_start
+    kanban_start = 0
+    sect_start = 0
     task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text)
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
@@ -127,7 +132,7 @@ def send_recv(proj, cmd, args):
         proj_change(args[0].decode())
         return
     else:
-        return
+        return -1
     result = requests.get(url).text
     if result == 'ERROR':
         return result
@@ -136,11 +141,17 @@ def send_recv(proj, cmd, args):
 
 def proc_resp(task):
     global boards
+    global most_tasks
+    most_tasks = -1
+    if task == -1:
+        return
     for key1, board in boards.items():
         board.clear()
     for key1, stage in task['stages'].items():
         for task in stage:
             boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user'], task['is_bug']]
+        if len(boards[str(key1).upper()]) > most_tasks:
+            most_tasks == len(boards[str(key1).upper()]) 
 
 
 
@@ -277,6 +288,7 @@ def kanban():
     global boards
     global cur_proj
     global kanban_start
+    global most_tasks
     global sect_start
     global screen
     size = screen.getmaxyx()
@@ -319,13 +331,16 @@ def kanban():
             if parsed[1].decode().upper() == "T":
                 if parsed[2].decode().upper() == "U" and kanban_start != 0:
                     kanban_start = kanban_start-max_tasks
-                elif parsed[2].decode().upper() == 'D':
+                elif parsed[2].decode().upper() == 'D' and kanban_start < most_tasks:
                     kanban_start = kanban_start+max_tasks
             elif parsed[1].decode().upper() == "S":
                 if parsed[2].decode().upper() == 'U' and sect_start != 0:
                     sect_start = sect_start - 3
-                elif parsed[2].decode().upper() == 'D' and sect_start < len(sect_start):
-                    sect_start = sect_start + 3
+                elif parsed[2].decode().upper() == 'D':
+                    if sect_start+3 < len(sect_names):
+                        sect_start = sect_start+3
+                    else:
+                        sect_start = len(sect_names)-3
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
