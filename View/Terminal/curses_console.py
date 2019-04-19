@@ -326,8 +326,11 @@ def kanban():
             elif parsed[1].decode().upper() == "S":
                 if parsed[2].decode().upper() == 'U' and sect_start != 0:
                     sect_start = sect_start - 3
-                elif parsed[2].decode().upper() == 'D' and sect_start < len(sect_names):
-                    sect_start = sect_start + 3
+                elif parsed[2].decode().upper() == 'D':
+                    if sect_start+3 < len(sect_names):
+                        sect_start = sect_start+3
+                    else:
+                        sect_start = len(sect_names)-3
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
