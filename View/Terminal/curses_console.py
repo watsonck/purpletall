@@ -152,7 +152,7 @@ def proc_resp(task):
             boards[str(key1).upper()][str(task['id'])] = [task['name'], task['user'], task['is_bug']]
     for key1, board in boards.items():
         if len(board) > most_tasks:
-            most_tasks == len(boards) 
+            most_tasks = len(boards) 
 
 
 
