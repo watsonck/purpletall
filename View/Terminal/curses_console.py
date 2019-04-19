@@ -308,7 +308,6 @@ def kanban():
             proc_resp(task)
         elif parsed[0].decode().upper() == "PROJ":#EX: PROJ <proj_id>
             task = send_recv(cur_proj, 'proj', parsed[1:])
-            proc_resp(task)
         elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
             if len(parsed) < 3:
                 continue
