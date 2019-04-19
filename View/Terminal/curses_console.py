@@ -234,7 +234,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     second = -1
     last = -1
 
-    screen.addstr(45,3,str(sect_start), curses.A_REVERSE)
+    screen.addstr(46,3,str(sect_start), curses.A_REVERSE)
     refresh_screen()
     for i in range(len(sect_names)):
         if int(sect_names[i][0]) == sect_start:
@@ -343,19 +343,14 @@ def kanban():
                 if parsed[2].decode().upper() == 'U' and sect_start != 0:
                     sect_start = sect_start - 1
                 elif parsed[2].decode().upper() == 'D' and len(sect_names) > 3:
-                    screen.addstr(40,5,str(sect_start), curses.A_REVERSE)
                     sect_start = sect_start+1
                     if sect_start+2 > len(sect_names):
                         sect_start = sect_start-1
-                    screen.addstr(40,3,str(sect_start), curses.A_REVERSE)
-                    refresh_screen()
+
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
-        screen.addstr(41,3,str(1), curses.A_REVERSE)
-        refresh_screen()
         kanban_print(split, max_tasks, split-1)
-        screen.addstr(42,3,str(2), curses.A_REVERSE)
         refresh_screen()
         screen.addstr(41,3," ")
         screen.addstr(42,3," ")
