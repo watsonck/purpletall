@@ -261,7 +261,7 @@ def projlist():
 				'description': row['description']
 			})
                 if request.method is "POST":
-                    return render_template("
+                    return render_template("list.html", data)
                 else:
                     return json.dumps(data) 
 	except:
