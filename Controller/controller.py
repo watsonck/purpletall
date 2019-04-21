@@ -88,6 +88,8 @@ def add(project):
 		bug = request.args.get('bug',False).replace('{','').replace('}','')
 		user = request.args.get('user','0')
 		start = time.asctime(time.localtime(time.time()))
+        else:
+            name = request.getValue(
 
 	db = get_db()
 	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;"%(project))
@@ -146,7 +148,6 @@ def split(project):
 
 	db.execute("INSERT INTO task(projid,name,description,stage,starttime,exptcomptime,actcomptime,contributor) VALUES (%d,'%s','%s','%s','%s','%s','%s',%s)" % (project,name,desc,str(stage),start,ect,act,user))
 	g.db.commit()
-	#might need to fix to explitly grab each thing in the row list
 	return pull_tasks(project)
 
 #Example url
@@ -211,7 +212,7 @@ def login():
 	row = db.fetchone()
 
 	if request.method=="GET":
-	    if row:
+	    if row is not None:
 	        return str(row['userid'])
 	    else:
 	        return '0'
@@ -259,7 +260,10 @@ def projlist():
 				'name': row['name'],
 				'description': row['description']
 			})
-		return json.dumps(data) 
+                if request.method is "POST":
+                    return render_template("
+                else:
+                    return json.dumps(data) 
 	except:
 		return 'Error'
 
