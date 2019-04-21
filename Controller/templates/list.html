@@ -1,16 +1,18 @@
 {% extends "base.html" %}
 {% block content %}
-	<h1>Projects</h1>
-	<ul>
-	{% for projects in List %}
-	<li>
-		{{projects.projid}}
-		{{projects.name}}
-		{{projects.description}}
-		<form method="POST" action="/{{project.projid}}/list">
-			<input type="submit" value="Work in this project" />
-		</form></li>
-	{% endfor %}
-	</ul>
+<body>
+    <h1>Projects</h1>
+    <ul>
+    {% for projects in List %}
+    <li>
+        {{projects.projid}}
+        {{projects.name}}
+        {{projects.description}}
+        <form method="POST" action="/"+{{projects.projid}}+"/list">
+            <input type="submit" value="Work in this project" />
+        </form></li>
+    {% endfor %}
+    </ul>
+</body>
 {% endblock %}
-	
+
