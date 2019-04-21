@@ -1,5 +1,6 @@
+//All tasks from single project
 {
-	stages': 
+	'stages': 
 		{
 		'start': 
 			[
@@ -22,4 +23,15 @@
 		'project': 1,
 		'stagecount': 3
 		}
+}
+
+//All projects
+{
+	'count': 
+		2,
+	'projects': 
+		[
+			{'name': 'Testing Project', 'projid': 1, 'description': 'a project made to test program'}, 
+			{'name': 'Switching Project', 'projid': 2, 'description': 'a project made to test switching'}
+		] 
 }

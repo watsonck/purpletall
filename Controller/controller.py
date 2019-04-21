@@ -42,13 +42,13 @@ def home():
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/LIST
 #Help: https://realpython.com/python-json/
-@app.route("/<int:project>/LIST")
+@app.route("/<string:project>/LIST")
 def pull_tasks(project):
 	json_dict = {}
 	json_dict['metadata'] = {}
 	json_dict['stages'] = {}
 	db = get_db()
-	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%d;"% (project))
+	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%s;"% (project))
 	stages = int(db.fetchone()['count'])
 	if stages == 0:
 		return 'ERROR'
@@ -57,12 +57,12 @@ def pull_tasks(project):
 	json_dict['metadata']['stagecount'] = stages
 	json_dict['metadata']['stages'] = {}
 		
-	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%d;"% (project))
+	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%s;"% (project))
 	for row in db.fetchall():
 		json_dict['metadata']['stages'][row['id']]= row['name']
 
 
-	db.execute("SELECT id,task.name as name,lab_user,stage,is_bug FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%d AND contributor=userid;"% (project))
+	db.execute("SELECT id,task.name as name,lab_user,stage,bugged FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%s AND contributor=userid;"% (project))
 	tasks = db.fetchall()
 	for row in tasks:
 		json_dict['stages'][row['stage']] = []
@@ -71,7 +71,7 @@ def pull_tasks(project):
 			'id': row['id'],
 			'name': row['name'],
 			'user': row['lab_user'],
-			'is_bug':row['is_bug']
+			'is_bug':row['bugged']
 		})
 	return json.dumps(json_dict)
 
@@ -93,7 +93,7 @@ def add(project):
 	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;"%(project))
 	stage = db.fetchone()['stagename']
 
-	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,is_bug,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%s);" % (name,desc,start,ect,stage,project,bug,user))
+	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%s);" % (name,desc,start,ect,stage,project,bug,user))
 	g.db.commit()
 	return pull_tasks(project)
 
@@ -171,11 +171,18 @@ def info(project):
 		json_dict[key] = row[key]
 	return json.dumps(json_dict)
 
-@app.route("/<int:project>/delcol", methods = ["GET","POST"])
+#Example url
+#http://purpletall.cs.longwood.edu:5000/1/delcol?name={TEST}
+@app.route("/<string:project>/delcol", methods = ["GET","POST"])
 def delcol(project):
-	taskid = request.args.get('id',0)
-
-	return pull_tasks(project)
+	stagename = request.args.get('name','').replace('{','').replace('}','')
+	db = get_db()
+	try:
+		db.execute("DELETE FROM stages CASCADE WHERE projid=%s AND stagename='%s';" % (project,stagename))
+		g.db.commit()
+		return pull_tasks(project)
+	except:
+		return 'Error'
 
 @app.route("/<int:project>/rename", methods = ["GET","POST"])
 def rename(project):
@@ -212,6 +219,50 @@ def login():
 	isUser = row is not None
 
 	return render_template("/logincheck.html", title = "Purple Tall", loginUser=isUser)
+
+
+#Example url
+#http://purpletall.cs.longwood.edu:5000/1/addcol?name={TEST}
+@app.route("/<string:project>/addcol", methods=["GET","POST"])
+def addcol(project):
+	db = get_db()
+	db.execute("SELECT MAX(stageorder)+1 AS order FROM stages WHERE projid=%s;" % (project))
+
+	stagename = request.args.get('name','').replace('{','').replace('}','')
+	row = db.fetchone()
+	stageorder = 0
+	if row is not None:
+		stageorder = row['order']
+
+	try:
+		db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'%s',%s);" % (project,stagename,str(stageorder)))
+		g.db.commit()
+		return pull_tasks(project)
+	except:
+		return 'Error'
+
+#Example url
+#http://purpletall.cs.longwood.edu:5000/projlist
+@app.route("/projlist", methods=["GET","POST"])
+def projlist():
+	try:
+		data = {}
+		data['projects'] = []
+		db = get_db()
+		db.execute("SELECT count(*) AS count FROM projects;")
+		data['count'] = int(db.fetchone()['count'])
+		db.execute("SELECT * FROM projects;");
+		rows = db.fetchall()
+		for row in rows:
+			data['projects'].append({
+				'projid': row['projid'],
+				'name': row['name'],
+				'description': row['description']
+			})
+		return json.dumps(data) 
+	except:
+		return 'Error'
+
 
 if __name__ == "__main__":
 	app.run(host='0.0.0.0')
