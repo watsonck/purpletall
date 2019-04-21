@@ -1,9 +1,10 @@
 {% extends "base.html" %}
 {% block content %}
 	{% if not loginUser %}
-		<p><a href=login.html>Invalid login. Click to go back.</a></p>
+		<form method="POST" action="/">
+		<input type="submit" value="Invalid login. Click to go back" />
 	{% else %}
 		<form method="POST" action="/projlist">
-		<input type = "submit" value="Valid login. Click to finish logging in" />
+		<input type="submit" value="Valid login. Click to finish logging in" />
 	{% endif %}
 {% endblock %}
