@@ -42,7 +42,7 @@ def home():
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/LIST
 #Help: https://realpython.com/python-json/
-@app.route("/<string:project>/LIST", methods=["GET","POST"])
+@app.route("/<string:project>/list", methods=["GET","POST"])
 def pull_tasks(project):
         json_dict = {}
         json_dict['metadata'] = {}
