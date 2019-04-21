@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+<body>
 	<h1>Projects</h1>
 	<ul>
 	{% for projects in List %}
@@ -7,10 +8,11 @@
 		{{projects.projid}}
 		{{projects.name}}
 		{{projects.description}}
-		<form method="POST" action="/{{projects.projid}}/list">
-			<input type="sumbit" value="Work in this project" />
+		<form method="POST" action="/"+{{projects.projid}}+"/list">
+			<input type="submit" value="Work in this project" />
 		</form></li>
 	{% endfor %}
 	</ul>
+</body>
 {% endblock %}
 	
