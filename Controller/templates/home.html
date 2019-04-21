@@ -2,5 +2,25 @@
 
 {% block content %}
 <h1>Kanban Board</h1>
-
+<div class=michael>
+	<div class=sidebar></div>
+	{% for num in stages %}
+	<div class=stage>
+		<!--name of stage, then...-->
+		<ul>{% for items in tasks %}
+			<li> {{ items.value }}
+				<!--most likely need to fix variable names-->
+			</li>
+		</ul>
+	</div>
+	{% endfor %}
+	<div class=promptbar><!--css this to be absolute position on bottom-->
+		<p>Message: promptbar</p>
+		<form method="POST" action="/test"> <!--todo: change action based on what was clicked-->
+			<input type="text" name="text" />
+			<!--todo: hide text form for things that don't need it-->
+			<input type="submit" value="submit" />
+		</form>
+	</div>
+</div>
 {% endblock %}
