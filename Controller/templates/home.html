@@ -4,13 +4,14 @@
 <h1>Kanban Board</h1>
 <div class=michael>
 	<div class=sidebar></div>
-	{% for num in stages %}
+	{% for stages in data.metadata %}
 	<div class=stage>
-		<!--name of stage, then...-->
-		<ul>{% for items in tasks %}
-			<li> {{ items.value }}
-				<!--most likely need to fix variable names-->
+		<p>{{ stages.name }} <br>
+		<ul>{% for stage in data.stages %}
+			<li> {{ stage.id }} : {{ stage.name }} <br>
+				{{ stage.user }}, {{ stage.is_bug }}
 			</li>
+			{% endfor %}
 		</ul>
 	</div>
 	{% endfor %}
