@@ -244,27 +244,24 @@ def addcol(project):
 #http://purpletall.cs.longwood.edu:5000/projlist
 @app.route("/projlist", methods=["GET","POST"])
 def projlist():
-        try:
-                data = {}
-                data['projects'] = []
-                db = get_db()
-                db.execute("SELECT count(*) AS count FROM projects;")
-                data['count'] = int(db.fetchone()['count'])
-                db.execute("SELECT * FROM projects;");
-                rows = db.fetchall()
-                for row in rows:
-                        data['projects'].append({
-                                'projid': row['projid'],
-                                'name': row['name'],
-                                'description': row['description']
-                        })
-                if request.method is "POST":
-                        return render_template("list.html", List = data)
-                else:
-                        return json.dumps(data) 
-        except:
-                return 'Error'
-
+    with get_db() as db: #same as try, but with no "else" like exception catch
+        data = {}
+        data['projects'] = []
+        db.execute("SELECT count(*) AS count FROM projects;")
+        data['count'] = int(db.fetchone()['count'])
+        db.execute("SELECT * FROM projects;");
+        rows = db.fetchall()
+        for row in rows:
+                data['projects'].append({
+                        'projid': row['projid'],
+                        'name': row['name'],
+                        'description': row['description']
+                })
+        if request.method == "POST":
+                return render_template("/list.html", List = data['projects'])
+        else:
+                return json.dumps(data) 
+    return 'Error'
 
 if __name__ == "__main__":
         app.run(host='0.0.0.0')

@@ -1,10 +1,16 @@
-{% extends base %}
+{% extends "base.html" %}
 {% block content %}
 	<h1>Projects</h1>
+	<ul>
 	{% for projects in List %}
+	<li>
 		{{projects.projid}}
 		{{projects.name}}
 		{{projects.description}}
+		<form method="POST" action="/"+{{project.projid}}+"/list">
+			<input type="sumbit" value="Work in this project" />
+		</form></li>
 	{% endfor %}
+	</ul>
 {% endblock %}
 	
