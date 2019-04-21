@@ -208,15 +208,13 @@ def login():
                 user = escape(request.form['username'])
         db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
         row = db.fetchone()
+        userid = 0
+        if row is not None:
+            userid = row['userid']
 
         if request.method=="GET":
-            if row is not None:
-                return str(row['userid'])
-            else:
-                return '0'
-
-        isUser = row is not None
-
+            return str(row['userid'])
+        
         return render_template("/logincheck.html", title = "Purple Tall", loginUser=isUser)
 
 

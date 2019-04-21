@@ -7,7 +7,7 @@
 		{{projects.projid}}
 		{{projects.name}}
 		{{projects.description}}
-		<form method="POST" action="/"+{{project.projid}}+"/list">
+		<form method="POST" action="/{{projects.projid}}/list">
 			<input type="sumbit" value="Work in this project" />
 		</form></li>
 	{% endfor %}

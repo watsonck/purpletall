@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-	{% if not loginUser %}
+	{% if loginUser < 1 %}
 		<form method="POST" action="/">
 		<input type="submit" value="Invalid login. Click to go back" />
 	{% else %}
