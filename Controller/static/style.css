@@ -1,0 +1,10 @@
+#login{
+	margin: 0 auto;
+	text-align: center;
+}
+
+#promptbar{
+	position: absolute;
+	width: 25%;
+	bottom: 0;
+}
