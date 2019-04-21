@@ -1,8 +1,10 @@
 {% extends base %}
-<h1>Projects</h1>
-{% for projects in List}
+{% block content %}
+	<h1>Projects</h1>
+	{% for projects in List}
 		{{projects.projid}}
 		{{projects.name}}
 		{{projects.description}}
-{% endfor %}
+	{% endfor %}
+{% endblock %}
 	
