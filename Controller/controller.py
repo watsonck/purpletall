@@ -215,7 +215,7 @@ def login():
         if request.method=="GET":
             return str(row['userid'])
         
-        return render_template("/logincheck.html", title = "Purple Tall", loginUser=isUser)
+        return render_template("/logincheck.html", title = "Purple Tall", loginUser=userid)
 
 
 #Example url
