@@ -44,39 +44,37 @@ def home():
 #Help: https://realpython.com/python-json/
 @app.route("/<string:project>/list", methods=["GET","POST"])
 def pull_tasks(project):
-        json_dict = {}
-        json_dict['metadata'] = {}
-        json_dict['stages'] = {}
-        db = get_db()
-        db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%s;"% (project))
-        stages = int(db.fetchone()['count'])
-        if stages == 0:
-                return 'ERROR'
+	json_dict = {}
+	json_dict['metadata'] = {}
+	json_dict['stages'] = {}
+	db = get_db()
+	db.execute("SELECT count(projid) AS count FROM stages WHERE projid=%s;"% (project))
+	stages = int(db.fetchone()['count'])
+	if stages == 0:
+		return 'ERROR'
 
-        json_dict['metadata']['project'] = project
-        json_dict['metadata']['stagecount'] = stages
-        json_dict['metadata']['stages'] = {}
-                
-        db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%s;"% (project))
-        for row in db.fetchall():
-                json_dict['metadata']['stages'][row['id']]= row['name']
+	json_dict['metadata']['project'] = project
+	json_dict['metadata']['stagecount'] = stages
+	json_dict['metadata']['stages'] = {}
+			
+	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%s;"% (project))
+	for row in db.fetchall():
+		json_dict['metadata']['stages'][row['id']]= row['name']
 
-
-        db.execute("SELECT id,task.name as name,lab_user,stage,bugged FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%s AND contributor=userid;"% (project))
-        tasks = db.fetchall()
-        for row in tasks:
-                json_dict['stages'][row['stage']] = []
-        for row in tasks:
-                json_dict['stages'][row['stage']].append({
-                        'id': row['id'],
-                        'name': row['name'],
-                        'user': row['lab_user'],
-                        'is_bug':row['bugged']
-                })
-        if request.method=="POST":
-            return render_template("/base.html", title = "fgyhuth", data = tasks)    
-        return json.dumps(json_dict)
-
+	db.execute("SELECT id,task.name as name,lab_user,stage,bugged FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%s AND contributor=userid;"% (project))
+	tasks = db.fetchall()
+	for row in tasks:
+		json_dict['stages'][row['stage']] = []
+	for row in tasks:
+		json_dict['stages'][row['stage']].append({
+			'id': row['id'],
+			'name': row['name'],
+			'user': row['lab_user'],
+			'is_bug':row['bugged']
+		})
+	if request.method=="POST":
+		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks)    
+	return json.dumps(json_dict)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
@@ -161,16 +159,23 @@ def modify(project):
 #http://purpletall.cs.longwood.edu:5000/1/info?id=1
 @app.route("/<int:project>/info", methods=["GET", "POST"])
 def info(project):
-        taskid = request.args.get('id',0)
-        if taskid == 0:
-                return 'ERROR'
-        db = get_db()
-        db.execute("SELECT * FROM task WHERE id = %s and projid=%d" % (taskid,project))
-        row = db.fetchone()
-        json_dict = {}
-        for key in row:
-                json_dict[key] = row[key]
-        return json.dumps(json_dict)
+	taskid = 0
+	if project <0:
+		taskid = request.form.getValue('id',0)
+		project = request.form.getValue('proj',0)
+	else:
+		taskid = request.args.get('id',0)
+	if taskid == 0:
+		return 'ERROR'
+	db = get_db()
+	db.execute("SELECT * FROM task WHERE id = %s and projid=%d" % (taskid,project))
+	row = db.fetchone()
+	json_dict = {}
+	for key in row:
+		json_dict[key] = row[key]
+	if request.method=="POST":
+		return render_template()
+	return json.dumps(json_dict)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/delcol?name={TEST}

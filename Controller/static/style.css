@@ -1,10 +1,55 @@
+h1{
+	border-bottom: 3px purple solid;
+}
+
+.title{
+	text-align: center;
+	border-bottom: 1px purple solid;
+}
+
 #login{
 	margin: 0 auto;
 	text-align: center;
+}
+
+#home{
+	margin: 0 auto;
 }
 
 #promptbar{
 	position: absolute;
 	width: 25%;
 	bottom: 0;
+}
+
+.stage{
+	border: solid 1px purple;
+	width: 400px;
+	min-height: 400px;
+
+	display: inline-block;
+	margin: 40px auto;
+}
+
+#sidebar{
+	ul{
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
+		width: 200px;
+		background-color: #f1f1f1;
+
+	}
+
+	li{
+		display: block;
+		color: #000;
+		padding: 9px 16px;
+		text-decoration: none;
+	}
+
+	li:hover {
+		background-color: #555;
+		color: white;
+	}
 }
