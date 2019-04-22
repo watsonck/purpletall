@@ -75,11 +75,15 @@ def proj_change(proj_num = 1):
     global sect_names
     global kanban_start
     global sect_start
+    global cur_proj
     sect_names.clear()
     boards.clear()
     kanban_start = 0
     sect_start = 0
-    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text)
+    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text
+    if task == 'ERROR':
+        return
+    cur_proj = proj_num
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage].upper()])
@@ -268,18 +272,20 @@ def login():
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
-    for y in range(splity,splity+splity):
-        for x in range(splitx,splitx+splitx):
-            screen.addstr(y,x," ", curses.A_REVERSE)
-    
-    screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.A_REVERSE)
-    screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
-    screen.addstr(splity+2, splitx+12, "                ")
-
-
     curses.echo()
-    username = screen.getstr(splity+2,splitx+12,15)
-    user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+    while True:
+        for y in range(splity,splity+splity):
+            for x in range(splitx,splitx+splitx):
+                screen.addstr(y,x," ", curses.A_REVERSE)
+    
+        screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
+        screen.addstr(splity+2, splitx+12, "                ")
+
+        username = screen.getstr(splity+2,splitx+12,15)
+        user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+        if user_id != str(0):
+            break
     curses.noecho()
     screen.clear()
 
