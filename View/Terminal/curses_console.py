@@ -274,10 +274,14 @@ def login():
     while True:
         for y in range(splity,splity+splity):
             for x in range(splitx,splitx+splitx):
-                screen.addstr(y,x," ", curses.color_pair(2))
+                screen.addstr(y,x," ", curses.A_REVERSE)
+                if y == splity or y == splity+splity:
+                    screen.addstr(y,x," ", curses.color_pair(2))
+                elif x == splitx or x == splitx+splitx:
+                    screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.color_pair(2))
-        screen.addstr(splity+2, splitx+1, "Username:", curses.color_pair(2))
+        screen.addstr(splity+1, int((splitx+splitx)/2), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
         screen.addstr(splity+2, splitx+12, "                ")
 
         username = screen.getstr(splity+2,splitx+12,15)
