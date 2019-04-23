@@ -137,7 +137,7 @@ def send_recv(proj, cmd, args):
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
     elif cmd == 'proj' and len(args) >= 1:
-        proj_change(args[0].decode())
+        proj_change(int(args[0].decode()))
         return
     elif cmd == 'acol' and len(args) >= 1:
         url = url + 'addcol?name={' + args[0].decode() +'}' 
