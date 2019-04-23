@@ -55,21 +55,6 @@ def get_text(limit):
 def parse_cmd(cmd):
     return cmd.split() 
 
-
-#Just remakes the rest of the cmd without the leading four letter identifier 
-def remake_cmd(cmd):
-    result = ""
-    for word in cmd:
-        result = result + " " + word.decode()
-    return result
-
-#same as above but for server responses so it doesnt need to be decoded 
-def remake_resp(resp):
-    result = ""
-    for word in resp[1:]:
-        result = result + " " + word
-    return result
-
 def proj_change(proj_num = 1):
     global boards
     global sect_names
@@ -119,35 +104,41 @@ def more_info(url):
 def send_recv(proj, cmd, args):
     global user_id
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
-    if cmd == 'add' and len(args) >= 4:
+    if cmd == 'add':
+        if len(args) < 4:
+            return -3
         url = url + 'add?name={'+ args[0].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + "_"
         url = url[:len(url)-1] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user='+str(user_id)
-    elif cmd == 'move' and len(args) >= 2:
+    elif cmd == 'move':
+        if len(args) < 2:
+            return -3
         url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user='+str(user_id)
-    elif cmd == 'splt' and len(args) >= 1:
+    elif len(args) < 1:
+        return -3
+    elif cmd == 'splt':
         url = url + 'split?id=' +args[0].decode()+'&user='+str(user_id)
-    elif cmd == 'remv' and len(args) >= 1:
+    elif cmd == 'remv':
         url = url + 'remove?id=' + args[0].decode()
     elif cmd == 'modi':
         return
-    elif cmd == 'info' and len(args) >= 1:
+    elif cmd == 'info':
         url = url + 'info?id=' +args[0].decode()
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
-    elif cmd == 'proj' and len(args) >= 1:
+    elif cmd == 'proj':
         proj_change(int(args[0].decode()))
         return
-    elif cmd == 'acol' and len(args) >= 1:
+    elif cmd == 'acol':
         url = url + 'addcol?name={' + args[0].decode() +'}' 
-    elif cmd == 'dcol' and len(args) >= 1:
+    elif cmd == 'dcol':
         url = url + 'delcol?name={' + args[0].decode() +'}'
     else:
         return -1
     result = requests.get(url).text
     if result == 'ERROR':
-        return result
+        return -2#return -2 since server doesnt give error info
     else:
         return json.loads(result)
 
@@ -417,8 +408,16 @@ def kanban():
         else:
             task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
             if task == -1:
-                continue ##Show error in future
+                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.A_REVERSE)
+                continue
+            elif task == -2:
+                screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.A_REVERSE)
+                continue
+            elif task == -3:
+                screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.A_REVERSE)
+                continue
             proc_resp(task)
+        screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
