@@ -80,7 +80,7 @@ def proj_change(proj_num = 1):
     boards.clear()
     kanban_start = 0
     sect_start = 0
-    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(cur_proj)+'/list').text
+    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/list').text
     if task == 'ERROR':
         return
     task = json.loads(task)
