@@ -98,43 +98,43 @@ def send_recv(proj, cmd, args):
     if cmd == 'add':
         if len(args) < 4:
             return -3
-        url = url + 'add?name={'+ args[1].decode() + '}&desc={'
+        url = url + 'add?name={'+ args[1] + '}&desc={'
         for words in args[3:]:
-            url = url + words.decode() + "_"
-        url = url[:len(url)-1] +'}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'+'&user='+str(user_id)
+            url = url + words + "_"
+        url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug={' + args[3] + '}'+'&user='+str(user_id)
     elif cmd == 'move':
         if len(args) < 2:
             return -3
-        url = url + 'move?id=' + args[1].decode() +'&stage={'+args[2].decode()+'}'+'&user='+str(user_id)
+        url = url + 'move?id=' + args[1] +'&stage={'+args[2]+'}'+'&user='+str(user_id)
     elif cmd == 'splt':
         if len(args) < 1:
             return -3
-        url = url + 'split?id=' +args[1].decode()+'&user='+str(user_id)
+        url = url + 'split?id=' +args[1]+'&user='+str(user_id)
     elif cmd == 'remv':
         if len(args) < 1:
             return -3
-        url = url + 'remove?id=' + args[1].decode()
+        url = url + 'remove?id=' + args[1]
     elif cmd == 'modi':
         return
     elif cmd == 'info':
         if len(args) < 1:
             return -3
-        url = url + 'info?id=' +args[1].decode()
+        url = url + 'info?id=' +args[1]
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
     elif cmd == 'proj':
         if len(args) < 1:
             return -3
-        proj_change(int(args[1].decode()))
+        proj_change(int(args[1])
         return
     elif cmd == 'acol':
         if len(args) < 1:
             return -3
-        url = url + 'addcol?name={' + args[1].decode() +'}' 
+        url = url + 'addcol?name={' + args[1] +'}' 
     elif cmd == 'dcol':
         if len(args) < 1:
             return -3
-        url = url + 'delcol?name={' + args[1].decode() +'}'
+        url = url + 'delcol?name={' + args[1] +'}'
     else:
         return -1
     result = requests.get(url).text
@@ -387,26 +387,26 @@ def kanban():
         #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].upper() == "QUIT":
             break
-        elif parsed[0].decode().upper() == "PROJ":
+        elif parsed[0].upper() == "PROJ":
             task = send_recv(cur_proj, 'proj', parsed)
-        elif parsed[0].decode().upper() == "SCRL":
+        elif parsed[0].upper() == "SCRL":
             if len(parsed) < 3:
                 continue
-            if parsed[1].decode().upper() == "T":
-                if parsed[2].decode().upper() == "U" and kanban_start != 0:
+            if parsed[1].upper() == "T":
+                if parsed[2].upper() == "U" and kanban_start != 0:
                     kanban_start = kanban_start-max_tasks
-                elif parsed[2].decode().upper() == 'D' and kanban_start < most_tasks:
+                elif parsed[2].upper() == 'D' and kanban_start < most_tasks:
                     kanban_start = kanban_start+max_tasks
-            elif parsed[1].decode().upper() == "S":
-                if parsed[2].decode().upper() == 'L' and sect_start != 0:
+            elif parsed[1].upper() == "S":
+                if parsed[2].upper() == 'L' and sect_start != 0:
                     sect_start = sect_start - 1
-                elif parsed[2].decode().upper() == 'R' and len(sect_names) > 3:
+                elif parsed[2].upper() == 'R' and len(sect_names) > 3:
                     if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
-        elif parsed[0].decode().upper() == 'PLS':
+        elif parsed[0].upper() == 'PLS':
             proj_list()
         else:
-            task = send_recv(cur_proj, parsed[0].decode().lower(), parsed)
+            task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -1:
                 screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
                 continue
