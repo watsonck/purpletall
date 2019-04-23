@@ -366,9 +366,8 @@ def kanban():
     proj_change(cur_proj)
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-
+    screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
     while True:
-        screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
@@ -408,13 +407,13 @@ def kanban():
         else:
             task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
             if task == -1:
-                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.A_REVERSE)
+                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
                 continue
             elif task == -2:
-                screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.A_REVERSE)
+                screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.color_pair(1))
                 continue
             elif task == -3:
-                screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.A_REVERSE)
+                screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
                 continue
             proc_resp(task)
         screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
