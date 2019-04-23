@@ -285,7 +285,7 @@ def login():
 
         username = screen.getstr(splity+2,splitx+12,15)
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
-        if user_id != str(0):
+        if str(user_id) != '0':
             break
     curses.noecho()
     screen.clear()
