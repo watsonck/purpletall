@@ -262,7 +262,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     if len(sect_names)%3 == 0:
         max_p = len(sect_names)/3
     else:
-        max_p = len(sect_names)/3+1
+        max_p = int(len(sect_names)/3+1)
     pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(max_p)
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
@@ -333,9 +333,14 @@ def proj_list(called_from = 0):
                     screen.addstr(y,x," ", curses.color_pair(1))
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(1))
+            else:
+                if y == splity or y == max_y:
+                    screen.addstr(y,x," ", curses.color_pair(2))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x," ", curses.color_pair(2))
     
     for x in range(size[1]):
-        screen.addstr(size[0]-2,x, " ", curses.A_REVERSE)
+        screen.addstr(size[0]-2,x, " ", curses.color_pair(2))
     cur_y = splity+1
     for proj in projs['projects']:
         str1 = str(proj['projid']) + ': ' + proj['name'] + ' ' + proj['description'] 
