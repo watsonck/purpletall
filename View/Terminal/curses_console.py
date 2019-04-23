@@ -26,6 +26,8 @@ def init_curses():
     screen = curses.initscr()
     curses.start_color()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
+    curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_MAGENTA)
+    curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_CYAN)
     curses.noecho()
     curses.cbreak()
     screen.keypad(True)
@@ -270,10 +272,10 @@ def login():
     while True:
         for y in range(splity,splity+splity):
             for x in range(splitx,splitx+splitx):
-                screen.addstr(y,x," ", curses.A_REVERSE)
+                screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.A_REVERSE)
-        screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
+        screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.color_pair(2))
+        screen.addstr(splity+2, splitx+1, "Username:", curses.color_pair(2))
         screen.addstr(splity+2, splitx+12, "                ")
 
         username = screen.getstr(splity+2,splitx+12,15)
