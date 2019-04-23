@@ -327,8 +327,8 @@ def proj_list():
     for x in range(size[1]):
         screen.addstr(size[0]-2,x, " ", curses.A_REVERSE)
     cur_y = splity+1
-    for proj in range(len(projs['projects'])):
-        str1 = projs[proj]['projid'] + ': ' + projs[proj]['name'] + ' ' + projs[proj]['description'] 
+    for proj in projs['projects']:
+        str1 = proj['projid'] + ': ' + proj['name'] + ' ' + proj['description'] 
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
 
 def proj_choice():
