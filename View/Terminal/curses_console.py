@@ -258,9 +258,11 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
-    max_p = len(sect_names)%3
-    if max_p != 0:
-        max_p = max_p +1
+    max_p = 0
+    if len(sect_names)%3 == 0:
+        max_p = len(sect_names)/3
+    else:
+        max_p = len(sect_names)/3+1
     pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(max_p)
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
@@ -283,9 +285,9 @@ def login():
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity+1, splitx + int(splitx*.66), "Purple Tall Login", curses.A_REVERSE)
-        screen.addstr(splity+3, splitx + int(splitx*.66), "Username:", curses.A_REVERSE)
-        screen.addstr(splity+3, splitx + int(splitx*.66) + 12, "               ")
+        screen.addstr(splity+1, splitx + int(splitx*.33), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx + int(splitx*.33), "Username:", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx + int(splitx*.33) + 12, "               ")
 
         username = screen.getstr(splity+3,splitx + int(splitx*.66)+12,15)
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
