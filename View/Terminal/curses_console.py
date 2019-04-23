@@ -312,7 +312,7 @@ def create_user():
     curses.noecho()
     screen.clear()
 
-def proj_list():
+def proj_list(called_from = 0):
     global screen
     size = screen.getmaxyx()
     splity = int(size[0]/3)
@@ -331,13 +331,16 @@ def proj_list():
         str1 = str(proj['projid']) + ': ' + proj['name'] + ' ' + proj['description'] 
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
+    if called_from == 0:
+        screen.addstr(size[0]-2,1,'Press enter or enter anything to contiune', curses.A_REVERSE)
+        wait = get_text(splitx*3-2)
 
 def proj_choice():
     global screen
     size = screen.getmaxyx()
     splitx = int(size[1]/3)
 
-    proj_list()
+    proj_list(1)
     
     global cur_proj
     curses.echo()
@@ -364,7 +367,7 @@ def kanban():
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
     
-    proj_change()
+    proj_change(cur_proj)
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
 
@@ -404,6 +407,8 @@ def kanban():
                 elif parsed[2].decode().upper() == 'R' and len(sect_names) > 3:
                     if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
+        elif parsed[0].decode().upper() == 'PLS':
+            proj_list()
         else:
             task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
             if task == -1:
