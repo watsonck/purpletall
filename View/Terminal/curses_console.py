@@ -37,12 +37,6 @@ def close_curses():
     curses.echo()
     curses.endwin()
 
-def refresh_screen():
-    screen.refresh()
-    for win in win_list:
-        win.refresh()
-
-
 def get_text(limit):
     curses.echo()
     global screen
@@ -51,9 +45,6 @@ def get_text(limit):
     for i in range(limit):
         screen.addstr(size[0]-1, i, " ")
     return str1
-
-def parse_cmd(cmd):
-    return cmd.split() 
 
 def proj_change(proj_num = 1):
     global boards
@@ -103,43 +94,49 @@ def more_info(url):
 
 def send_recv(proj, cmd, args):
     global user_id
-    err = 0
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add':
         if len(args) < 4:
-            err = -3
+            return -3
         url = url + 'add?name={'+ args[1].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + "_"
         url = url[:len(url)-1] +'}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'+'&user='+str(user_id)
     elif cmd == 'move':
         if len(args) < 2:
-            err = -3
+            return -3
         url = url + 'move?id=' + args[1].decode() +'&stage={'+args[2].decode()+'}'+'&user='+str(user_id)
-    elif len(args) < 1:
-        err = -3
     elif cmd == 'splt':
+        if len(args) < 1:
+            return -3
         url = url + 'split?id=' +args[1].decode()+'&user='+str(user_id)
     elif cmd == 'remv':
+        if len(args) < 1:
+            return -3
         url = url + 'remove?id=' + args[1].decode()
     elif cmd == 'modi':
         return
     elif cmd == 'info':
+        if len(args) < 1:
+            return -3
         url = url + 'info?id=' +args[1].decode()
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
     elif cmd == 'proj':
+        if len(args) < 1:
+            return -3
         proj_change(int(args[1].decode()))
         return
     elif cmd == 'acol':
+        if len(args) < 1:
+            return -3
         url = url + 'addcol?name={' + args[1].decode() +'}' 
     elif cmd == 'dcol':
+        if len(args) < 1:
+            return -3
         url = url + 'delcol?name={' + args[1].decode() +'}'
     else:
         return -1
-
-    if err != 0: 
-        return err
     result = requests.get(url).text
     if result == 'ERROR':
         return -2#return -2 since server doesnt give error info
@@ -375,7 +372,7 @@ def kanban():
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
-        parsed = parse_cmd(str1)
+        parsed = str1.splt()
         
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
@@ -425,15 +422,16 @@ def kanban():
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
         screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
-        refresh_screen()
+        screen.refresh()
 
 
 def main():
+    global screen
     signal.signal(signal.SIGINT, signal_handler)
     login()
     proj_choice()
     kanban()
-    refresh_screen()
+    screen.refresh()
     screen.clear()
 
 init_curses()
