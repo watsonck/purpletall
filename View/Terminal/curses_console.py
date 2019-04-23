@@ -96,43 +96,43 @@ def send_recv(proj, cmd, args):
     global user_id
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add':
-        if len(args) < 4:
+        if len(args) < 5:
             return -3
         url = url + 'add?name={'+ args[1] + '}&desc={'
         for words in args[3:]:
             url = url + words + "_"
         url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug={' + args[3] + '}'+'&user='+str(user_id)
     elif cmd == 'move':
-        if len(args) < 2:
+        if len(args) < 3:
             return -3
         url = url + 'move?id=' + args[1] +'&stage={'+args[2]+'}'+'&user='+str(user_id)
     elif cmd == 'splt':
-        if len(args) < 1:
+        if len(args) < 2:
             return -3
         url = url + 'split?id=' +args[1]+'&user='+str(user_id)
     elif cmd == 'remv':
-        if len(args) < 1:
+        if len(args) < 2:
             return -3
         url = url + 'remove?id=' + args[1]
     elif cmd == 'modi':
         return
     elif cmd == 'info':
-        if len(args) < 1:
+        if len(args) < 2:
             return -3
         url = url + 'info?id=' +args[1]
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
     elif cmd == 'proj':
-        if len(args) < 1:
+        if len(args) < 2:
             return -3
         proj_change(int(args[1]))
         return
     elif cmd == 'acol':
-        if len(args) < 1:
+        if len(args) < 2:
             return -3
         url = url + 'addcol?name={' + args[1] +'}' 
     elif cmd == 'dcol':
-        if len(args) < 1:
+        if len(args) < 2:
             return -3
         url = url + 'delcol?name={' + args[1] +'}'
     else:
