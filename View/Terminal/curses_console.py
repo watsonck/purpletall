@@ -103,20 +103,21 @@ def more_info(url):
 
 def send_recv(proj, cmd, args):
     global user_id
+    err = 0
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add':
         if len(args) < 4:
-            return -3
+            err = -3
         url = url + 'add?name={'+ args[0].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + "_"
         url = url[:len(url)-1] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user='+str(user_id)
     elif cmd == 'move':
         if len(args) < 2:
-            return -3
+            err = -3
         url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user='+str(user_id)
     elif len(args) < 1:
-        return -3
+        err = -3
     elif cmd == 'splt':
         url = url + 'split?id=' +args[0].decode()+'&user='+str(user_id)
     elif cmd == 'remv':
@@ -136,6 +137,8 @@ def send_recv(proj, cmd, args):
         url = url + 'delcol?name={' + args[0].decode() +'}'
     else:
         return -1
+    if err != 0: 
+        return err
     result = requests.get(url).text
     if result == 'ERROR':
         return -2#return -2 since server doesnt give error info
@@ -416,11 +419,11 @@ def kanban():
                 screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
                 continue
             proc_resp(task)
-        screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
+        screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
         refresh_screen()
 
 
