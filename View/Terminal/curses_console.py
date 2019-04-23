@@ -262,7 +262,8 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
-
+    pages = 'Sect PGS: ' + str(sect_start) + '/' + str(len(sect_names)-2)
+    screen.addstr(max_y-2,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
 
 
@@ -313,6 +314,41 @@ def create_user():
 
 def proj_list():
     global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+
+    projs = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/projlist'))
+    max_y = splity+1 + 2(projs['count'])
+    for y in range(splity,max_y+1):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
+    
+    for x in range(size[1]):
+        screen.addstr(size[0]-2,x, " ", curses.A_REVERSE)
+    cur_y = splity+1
+    for proj in projs:
+        str1 = proj['projid'] + ': ' + proj['name'] + ' ' + proj['description'] 
+        screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
+
+def proj_choice():
+    global screen
+    size = screen.getmaxyx()
+    splitx = int(size[1]/3)
+
+    proj_list()
+    
+    global cur_proj
+    curses.echo()
+    while True:
+        choice = get_text(splitx*3-2)
+        resp = requests.get('http://purpletall.cs.longwood.edu:5000/'+choice.decode()+'/list').text
+        if resp != 'ERROR':
+            cur_proj = int(choice.decode())
+            break
+    curses.noecho()
+    screen.clear()
+        
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -336,7 +372,6 @@ def kanban():
             continue
         parsed = parse_cmd(str1)
         
-        #For when typing in input
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
         #EX: MOVE <task_id> <dest> 
@@ -346,34 +381,13 @@ def kanban():
         #EX: DCOL <col_name>
         #EX: ACOL <col_name>
         #EX: PROJ <proj_id>
-        #EX: SCRL <T or S> <U or D>
-        #####REMOVE MOST OF THESE SINCE THEY ARE THE SAME
+        #EX: SCRL <T> <U or D> #To scroll tasks
+        #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].decode().upper() == "QUIT":
             break
-        elif parsed[0].decode().upper() == "ADD":#EX: ADD <name> <expected comp> <is_bug> <desc>
-            task = send_recv(cur_proj, 'add', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "MOVE":#EX: MOVE <task_id> <dest> 
-            task = send_recv(cur_proj, 'move', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "REMV":#EX: REMV <task_id>
-            task = send_recv(cur_proj, 'remv', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "SPLT":#EX: SPLT <task_id>
-            task = send_recv(cur_proj, 'splt', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
-            task = send_recv(cur_proj, 'info', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "DCOL":#EX: DCOL <col_name>
-            task = send_recv(cur_proj, 'dcol', parsed[1:])
-            proc_resp(task)        
-        elif parsed[0].decode().upper() == "ACOL":#EX: ACOL <col_name>
-            task = send_recv(cur_proj, 'acol', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "PROJ":#EX: PROJ <proj_id>
+        elif parsed[0].decode().upper() == "PROJ":
             task = send_recv(cur_proj, 'proj', parsed[1:])
-        elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
+        elif parsed[0].decode().upper() == "SCRL":
             if len(parsed) < 3:
                 continue
             if parsed[1].decode().upper() == "T":
@@ -387,9 +401,11 @@ def kanban():
                 elif parsed[2].decode().upper() == 'R' and len(sect_names) > 3:
                     if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
-        #else:
-        #    task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
-        #    proc_resp()
+        else:
+            task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
+            if task == -1:
+                continue ##Show error in future
+            proc_resp(task)
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
@@ -397,11 +413,10 @@ def kanban():
         refresh_screen()
 
 
-
-
 def main():
     signal.signal(signal.SIGINT, signal_handler)
     login()
+    proj_choice()
     kanban()
     refresh_screen()
     screen.clear()
