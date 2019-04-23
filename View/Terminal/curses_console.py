@@ -260,7 +260,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
     max_p = 0
     if len(sect_names)%3 == 0:
-        max_p = len(sect_names)/3
+        max_p = int(len(sect_names)/3)
     else:
         max_p = int(len(sect_names)/3+1)
     pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(max_p)
