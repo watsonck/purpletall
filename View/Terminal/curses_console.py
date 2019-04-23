@@ -224,14 +224,14 @@ def kanban_print(split, max_tasks, limit):
 
 def draw_kanban(max_x,max_y,split,start = 0):
     for x in range(max_x):
-        screen.addstr(max_y-2, x, " ", curses.A_REVERSE)
-        screen.addstr(0,x, " ", curses.A_REVERSE)
+        screen.addstr(max_y-2, x, " ", curses.color_pair(2))
+        screen.addstr(0,x, " ", curses.color_pair(2))
     for y in range(max_y-1):
-        screen.addstr(y,0+split, " ", curses.A_REVERSE)
-        screen.addstr(y,0+split+split, " ", curses.A_REVERSE)
+        screen.addstr(y,0+split, " ", curses.color_pair(2))
+        screen.addstr(y,0+split+split, " ", curses.color_pair(2))
         if y < max_y-2:
-            screen.addstr(y,0, " ", curses.A_REVERSE)
-            screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
+            screen.addstr(y,0, " ", curses.color_pair(2))
+            screen.addstr(y,max_x-1, " ", curses.color_pair(2))
     global sect_names
     global sect_start
     first = -1
@@ -272,17 +272,17 @@ def login():
     splitx = int(size[1]/3)
     curses.echo()
     while True:
-        for y in range(splity,splity+splity):
+        for y in range(splity,splity+5):
             for x in range(splitx,splitx+splitx):
                 screen.addstr(y,x," ", curses.A_REVERSE)
-                if y == splity or y == splity+splity:
+                if y == splity or y == splity+4:
                     screen.addstr(y,x," ", curses.color_pair(2))
-                elif x == splitx or x == splitx+splitx:
+                elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity+1, int((splitx+splitx)/2), "Purple Tall Login", curses.A_REVERSE)
-        screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
-        screen.addstr(splity+2, splitx+12, "                ")
+        screen.addstr(splity+1, splitx + int(splitx/2), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx+1, "Username:", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx+12, "                ")
 
         username = screen.getstr(splity+2,splitx+12,15)
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
