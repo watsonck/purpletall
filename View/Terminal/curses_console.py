@@ -99,7 +99,7 @@ def send_recv(proj, cmd, args):
         if len(args) < 5:
             return -3
         url = url + 'add?name={'+ args[1] + '}&desc={'
-        for words in args[3:]:
+        for words in args[4:]:
             url = url + words + "_"
         url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug={' + args[3] + '}'+'&user='+str(user_id)
     elif cmd == 'move':
