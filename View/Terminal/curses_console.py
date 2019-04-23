@@ -323,10 +323,11 @@ def proj_list(called_from = 0):
     for y in range(splity,max_y+1):
         for x in range(splitx,splitx+splitx):
             screen.addstr(y,x," ", curses.A_REVERSE)
-            if called_from == 0 and y == splity or y == max_y:
-                screen.addstr(y,x," ", curses.color_pair(1))
-            elif called_from == 0 and x == splitx or x == splitx+splitx-1:
-                screen.addstr(y,x," ", curses.color_pair(1))
+            if called_from == 0:
+                if y == splity or y == max_y:
+                    screen.addstr(y,x," ", curses.color_pair(1))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x," ", curses.color_pair(1))
     
     for x in range(size[1]):
         screen.addstr(size[0]-2,x, " ", curses.A_REVERSE)
