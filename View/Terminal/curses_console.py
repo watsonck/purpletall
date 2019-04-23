@@ -372,7 +372,7 @@ def kanban():
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
-        parsed = str1.splt()
+        parsed = str1.decode().split()
         
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
@@ -385,7 +385,7 @@ def kanban():
         #EX: PROJ <proj_id>
         #EX: SCRL <T> <U or D> #To scroll tasks
         #EX: SCRL <S> <L or R> #To scroll sections
-        if parsed[0].decode().upper() == "QUIT":
+        if parsed[0].upper() == "QUIT":
             break
         elif parsed[0].decode().upper() == "PROJ":
             task = send_recv(cur_proj, 'proj', parsed)
