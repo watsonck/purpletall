@@ -125,7 +125,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj':
         if len(args) < 1:
             return -3
-        proj_change(int(args[1])
+        proj_change(int(args[1]))
         return
     elif cmd == 'acol':
         if len(args) < 1:
