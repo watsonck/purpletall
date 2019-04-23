@@ -387,6 +387,9 @@ def kanban():
     kanban_print(split, max_tasks, split-1)
     screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
     while True:
+        size = screen.getmaxyx()
+        max_tasks = int((size[0]-5)/2)+1
+        split = int(size[1]/3)
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
