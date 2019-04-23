@@ -80,7 +80,7 @@ def proj_change(proj_num = 1):
     boards.clear()
     kanban_start = 0
     sect_start = 0
-    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text
+    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(cur_proj)+'/list').text
     if task == 'ERROR':
         return
     task = json.loads(task)
@@ -135,7 +135,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'info' and len(args) >= 1:
         url = url + 'info?id=' +args[0].decode()
         more_info(url)
-        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/LIST'
+        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode())
         return
