@@ -83,6 +83,7 @@ def proj_change(proj_num = 1):
     task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text
     if task == 'ERROR':
         return
+    task = json.loads(task)
     cur_proj = proj_num
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
@@ -138,10 +139,10 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj' and len(args) >= 1:
         proj_change(args[0].decode())
         return
-    #elif cmd == 'acol' and len(args) >= 1:
-    #    url = 
-    #elif cmd == 'dcol' and len(args) >= 1:
-    #    url = 
+    elif cmd == 'acol' and len(args) >= 1:
+        url = url + 'addcol?name={' + args[0].decode() +'}' 
+    elif cmd == 'dcol' and len(args) >= 1:
+        url = url + 'delcol?name={' + args[0].decode() +'}'
     else:
         return -1
     result = requests.get(url).text
@@ -310,6 +311,8 @@ def create_user():
     curses.noecho()
     screen.clear()
 
+def proj_list():
+    global screen
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -334,6 +337,17 @@ def kanban():
         parsed = parse_cmd(str1)
         
         #For when typing in input
+        #CMD templates
+        #EX: ADD <name> <expected comp> <is_bug> <desc>
+        #EX: MOVE <task_id> <dest> 
+        #EX: REMV <task_id>
+        #EX: SPLT <task_id>
+        #EX: INFO <task_id>
+        #EX: DCOL <col_name>
+        #EX: ACOL <col_name>
+        #EX: PROJ <proj_id>
+        #EX: SCRL <T or S> <U or D>
+        #####REMOVE MOST OF THESE SINCE THEY ARE THE SAME
         if parsed[0].decode().upper() == "QUIT":
             break
         elif parsed[0].decode().upper() == "ADD":#EX: ADD <name> <expected comp> <is_bug> <desc>
@@ -351,12 +365,12 @@ def kanban():
         elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
             task = send_recv(cur_proj, 'info', parsed[1:])
             proc_resp(task)
-        #elif parsed[0].decode().upper() == "DCOL":#EX: DCOL <col_name>
-        #    task = send_recv(cur_proj, 'dcol', parsed[1:])
-        #    proc_resp(task)        
-        #elif parsed[0].decode().upper() == "ACOL":#EX: ACOL <col_name>
-        #    task = send_recv(cur_proj, 'acol', parsed[1:])
-        #    proc_resp(task)
+        elif parsed[0].decode().upper() == "DCOL":#EX: DCOL <col_name>
+            task = send_recv(cur_proj, 'dcol', parsed[1:])
+            proc_resp(task)        
+        elif parsed[0].decode().upper() == "ACOL":#EX: ACOL <col_name>
+            task = send_recv(cur_proj, 'acol', parsed[1:])
+            proc_resp(task)
         elif parsed[0].decode().upper() == "PROJ":#EX: PROJ <proj_id>
             task = send_recv(cur_proj, 'proj', parsed[1:])
         elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
@@ -368,12 +382,14 @@ def kanban():
                 elif parsed[2].decode().upper() == 'D' and kanban_start < most_tasks:
                     kanban_start = kanban_start+max_tasks
             elif parsed[1].decode().upper() == "S":
-                if parsed[2].decode().upper() == 'U' and sect_start != 0:
+                if parsed[2].decode().upper() == 'L' and sect_start != 0:
                     sect_start = sect_start - 1
-                elif parsed[2].decode().upper() == 'D' and len(sect_names) > 3:
+                elif parsed[2].decode().upper() == 'R' and len(sect_names) > 3:
                     if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
-
+        #else:
+        #    task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
+        #    proc_resp()
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
