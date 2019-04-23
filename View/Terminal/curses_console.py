@@ -330,6 +330,7 @@ def proj_list():
     for proj in projs['projects']:
         str1 = str(proj['projid']) + ': ' + proj['name'] + ' ' + proj['description'] 
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
+        cur_y = cur_y + 2
 
 def proj_choice():
     global screen
@@ -340,6 +341,7 @@ def proj_choice():
     
     global cur_proj
     curses.echo()
+    screen.addstr(size[0]-2,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
         choice = get_text(splitx*3-2)
         resp = requests.get('http://purpletall.cs.longwood.edu:5000/'+choice.decode()+'/list').text
@@ -367,6 +369,7 @@ def kanban():
     kanban_print(split, max_tasks, split-1)
 
     while True:
+        screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
