@@ -258,7 +258,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
-    pages = 'Sect PGS: ' + str(sect_start) + '/' + str(len(sect_names)-2)
+    pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(len(sect_names)-3)
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
 
@@ -429,7 +429,7 @@ def kanban():
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
-        screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
+        screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
         screen.refresh()
 
 
