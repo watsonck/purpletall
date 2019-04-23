@@ -318,8 +318,8 @@ def proj_list():
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
 
-    projs = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/projlist'))
-    max_y = splity+1 + 2(projs['count'])
+    projs = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/projlist').text)
+    max_y = splity+1 + 2*projs['count']
     for y in range(splity,max_y+1):
         for x in range(splitx,splitx+splitx):
             screen.addstr(y,x," ", curses.A_REVERSE)
