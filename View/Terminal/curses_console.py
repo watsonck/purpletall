@@ -28,7 +28,8 @@ def init_curses():
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_MAGENTA)
     curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_CYAN)
-    curses.init_color(5, 540, 170, 870)
+    if curses.can_change_color():
+        curses.init_color(5, 540, 170, 870)
     curses.noecho()
     curses.cbreak()
     screen.keypad(True)
