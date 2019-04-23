@@ -108,35 +108,36 @@ def send_recv(proj, cmd, args):
     if cmd == 'add':
         if len(args) < 4:
             err = -3
-        url = url + 'add?name={'+ args[0].decode() + '}&desc={'
+        url = url + 'add?name={'+ args[1].decode() + '}&desc={'
         for words in args[3:]:
             url = url + words.decode() + "_"
-        url = url[:len(url)-1] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user='+str(user_id)
+        url = url[:len(url)-1] +'}&time={' + args[2].decode()  + '}&bug={' + args[3].decode() + '}'+'&user='+str(user_id)
     elif cmd == 'move':
         if len(args) < 2:
             err = -3
-        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user='+str(user_id)
+        url = url + 'move?id=' + args[1].decode() +'&stage={'+args[2].decode()+'}'+'&user='+str(user_id)
     elif len(args) < 1:
         err = -3
     elif cmd == 'splt':
-        url = url + 'split?id=' +args[0].decode()+'&user='+str(user_id)
+        url = url + 'split?id=' +args[1].decode()+'&user='+str(user_id)
     elif cmd == 'remv':
-        url = url + 'remove?id=' + args[0].decode()
+        url = url + 'remove?id=' + args[1].decode()
     elif cmd == 'modi':
         return
     elif cmd == 'info':
-        url = url + 'info?id=' +args[0].decode()
+        url = url + 'info?id=' +args[1].decode()
         more_info(url)
         url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
     elif cmd == 'proj':
-        proj_change(int(args[0].decode()))
+        proj_change(int(args[1].decode()))
         return
     elif cmd == 'acol':
-        url = url + 'addcol?name={' + args[0].decode() +'}' 
+        url = url + 'addcol?name={' + args[1].decode() +'}' 
     elif cmd == 'dcol':
-        url = url + 'delcol?name={' + args[0].decode() +'}'
+        url = url + 'delcol?name={' + args[1].decode() +'}'
     else:
         return -1
+
     if err != 0: 
         return err
     result = requests.get(url).text
@@ -390,7 +391,7 @@ def kanban():
         if parsed[0].decode().upper() == "QUIT":
             break
         elif parsed[0].decode().upper() == "PROJ":
-            task = send_recv(cur_proj, 'proj', parsed[1:])
+            task = send_recv(cur_proj, 'proj', parsed)
         elif parsed[0].decode().upper() == "SCRL":
             if len(parsed) < 3:
                 continue
@@ -408,7 +409,7 @@ def kanban():
         elif parsed[0].decode().upper() == 'PLS':
             proj_list()
         else:
-            task = send_recv(cur_proj, parsed[0].decode().lower(), parsed[1:])
+            task = send_recv(cur_proj, parsed[0].decode().lower(), parsed)
             if task == -1:
                 screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
                 continue
