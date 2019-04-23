@@ -359,7 +359,7 @@ def proj_choice():
     
     global cur_proj
     curses.echo()
-    screen.addstr(size[0]-2,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
+    screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
         choice = get_text(splitx*3-2)
         resp = requests.get('http://purpletall.cs.longwood.edu:5000/'+choice.decode()+'/list').text
