@@ -285,11 +285,11 @@ def login():
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity+1, splitx + int(splitx*.33), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+1, splitx + int(splitx*.38), "Purple Tall Login", curses.A_REVERSE)
         screen.addstr(splity+3, splitx + int(splitx*.33), "Username:", curses.A_REVERSE)
         screen.addstr(splity+3, splitx + int(splitx*.33) + 12, "               ")
 
-        username = screen.getstr(splity+3,splitx + int(splitx*.66)+12,15)
+        username = screen.getstr(splity+3,splitx + int(splitx*.33)+12,15)
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
         if str(user_id) != '0':
             break
