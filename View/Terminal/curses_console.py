@@ -259,7 +259,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
     pages = 'Sect PGS: ' + str(sect_start) + '/' + str(len(sect_names)-2)
-    screen.addstr(max_y-2,max_x-len(pages)-1, pages, curses.A_REVERSE)
+    screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
 
 
@@ -280,11 +280,11 @@ def login():
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity+1, splitx + int(splitx/2), "Purple Tall Login", curses.A_REVERSE)
-        screen.addstr(splity+3, splitx+1, "Username:", curses.A_REVERSE)
-        screen.addstr(splity+3, splitx+12, "                ")
+        screen.addstr(splity+1, splitx + int(splitx*.66), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx + int(splitx*.66), "Username:", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx + int(splitx*.66) + 12, "               ")
 
-        username = screen.getstr(splity+2,splitx+12,15)
+        username = screen.getstr(splity+3,splitx + int(splitx*.66)+12,15)
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
         if str(user_id) != '0':
             break
@@ -337,7 +337,7 @@ def proj_list(called_from = 0):
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
     if called_from == 0:
-        screen.addstr(size[0]-2,1,'Press enter or enter anything to contiune', curses.A_REVERSE)
+        screen.addstr(size[0]-3,1,'Press enter or enter anything to contiune', curses.A_REVERSE)
         wait = get_text(splitx*3-2)
 
 def proj_choice():
@@ -375,7 +375,7 @@ def kanban():
     proj_change(cur_proj)
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-    screen.addstr(size[0]-2, 1, "Please enter a command:", curses.A_REVERSE)
+    screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
     while True:
         str1 = get_text(split+split)
         if len(str1) < 1:
