@@ -196,6 +196,11 @@ def delcol(project):
 def rename(project):
         return pull_tasks(project)
 
+
+def gitpull():
+	return ''
+
+
 #Example url
 #http://purpletall.cs.longwood.edu:5000/ping?user={haddockcl}
 @app.route("/ping", methods=["GET", "POST"])
