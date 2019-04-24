@@ -70,7 +70,7 @@ class Test(unittest.TestCase):
 
     def test_add(self, project):
         @app.route("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}")
-        add(project)
+        add(1)
         db = get_db()
         db.execute("SELECT name FROM Tasks WHERE name = 'unittest1' ")
         name = db.fetchone() 
