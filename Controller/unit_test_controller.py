@@ -2,7 +2,7 @@ from flask import Flask, request, g, redirect, escape, render_template, current_
 import unittest
 import requests, json, git, time
 import controller
-from controller import app, get_db, connect_db, home
+from controller import app, get_db, connect_db, home, pull_tasks, add, move, remove, split, info, delcol, login, addcol, projlist
 import psycopg2
 import psycopg2.extras
 
@@ -41,13 +41,13 @@ class Test(unittest.TestCase):
     def test_user_in_db(self):
         db = get_db()
         db.execute("SELECT fname FROM Users WHERE fname = 'Colin' ")
-        fname = db.fetchall() 
+        fname = db.fetchone() 
         db.execute("SELECT lname FROM Users WHERE lname = 'Watson' ")
-        lname = db.fetchall()
+        lname = db.fetchone()
         db.execute("SELECT email FROM Users WHERE email = 'colin.watson777@yahoo.com'")
-        email = db.fetchall()
+        email = db.fetchone()
         db.execute("SELECT gitname FROM Users WHERE gitname = 'watsonck'")
-        gitname = db.fetchall() 
+        gitname = db.fetchone() 
         self.assertEqual(fname, [{'fname': 'Colin'}])
         self.assertEqual(lname, [{'lname': 'Watson'}])
         self.assertEqual(email, [{'email': 'colin.watson777@yahoo.com'}])
@@ -56,11 +56,11 @@ class Test(unittest.TestCase):
     def test_project_in_db(self):
         db = get_db()
         db.execute("SELECT projId FROM Projects WHERE projId = 1")
-        projId = db.fetchall()
+        projId = db.fetchone()
         db.execute("SELECT name FROM Projects WHERE name = 'Testing Project'")
-        name = db.fetchall()
+        name = db.fetchone()
         db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
-        description = db.fetchall()
+        description = db.fetchone()
         self.assertEqual(projId, [{'projid': 1}])
         self.assertEqual(name, [{'name': 'Testing Project'}])
         self.assertEqual(description, [{'description': 'a project made to test program'}])
@@ -68,8 +68,8 @@ class Test(unittest.TestCase):
     #def test_new_task(task):
         #response = self.app.post('/TASK/<string:task>', data=dict()
 
-    #def test_add(self, project):
-        
+    def test_add(self, project):
+            
 
     #def test_move(self):
         #return self.app.post(
