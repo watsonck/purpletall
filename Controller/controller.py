@@ -28,6 +28,11 @@ def close_db(error):
                 g.db.close()
         return ''
 
+def pick_source(which):
+	if which=="POST":
+		return request.form
+	return request.args
+
 @app.route("/", methods=["GET", "POST"])
 def home():
         #if request.method == "GET":
@@ -81,47 +86,48 @@ def pull_tasks(project):
 #Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
 @app.route("/<int:project>/add", methods=["GET", "POST"])
 def add(project):
-        if request.method=="GET":
-                name = request.args.get('name','N/A').replace('{','').replace('}','')
-                desc = request.args.get('desc','N/A').replace('{','').replace('}','')
-                ect = request.args.get('time','N/A').replace('{','').replace('}','')
-                bug = request.args.get('bug',False).replace('{','').replace('}','')
-                user = request.args.get('user','0')
-                start = time.asctime(time.localtime(time.time()))
+	source = pick_source(request.method)
+	name = source.get('name','N/A').replace('{','').replace('}','')
+	desc = source.get('desc','N/A').replace('{','').replace('}','')
+	ect = source.get('time','N/A').replace('{','').replace('}','')
+	bug = source.get('bug',False).replace('{','').replace('}','')
+	user = source.get('user','0')
+	start = time.asctime(time.localtime(time.time()))
 
-        db = get_db()
-        db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (project))
-        stage = db.fetchone()['stagename']
+	db = get_db()
+	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (project))
+	stage = db.fetchone()['stagename']
 
-        db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%s);" % (name,desc,start,ect,stage,project,bug,user))
-        g.db.commit()
-        return pull_tasks(project)
+	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%s);" % (name,desc,start,ect,stage,project,bug,user))
+	g.db.commit()
+	return pull_tasks(project)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/move?id=1&stage={complete}
 @app.route("/<int:project>/move", methods=["GET", "POST"])
 def move(project):
-        #if request.method=="GET"
-        taskid = request.args.get('id',0)
-        stage = request.args.get('stage','N/A').replace('{','').replace('}','')
-        user = request.args.get('user','0')
+	source = pick_source(request.method)
+	taskid = source.get('id',0)
+	stage = source.get('stage','N/A').replace('{','').replace('}','')
+	user = source.get('user','0')
 
-        db = get_db()
-        db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename ILIKE '%s';"% (project, stage))
-        if db.fetchone()['count'] > 0:
-                db.execute("UPDATE task SET stage='%s',contributor=%s WHERE id=%s AND projid=%d;" % (stage, user, taskid, project))
-                g.db.commit()
-        return pull_tasks(project)
+	db = get_db()
+	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename ILIKE '%s';"% (project, stage))
+	if db.fetchone()['count'] > 0:
+		db.execute("UPDATE task SET stage='%s',contributor=%s WHERE id=%s AND projid=%d;" % (stage, user, taskid, project))
+		g.db.commit()
+	return pull_tasks(project)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/remove?id=1
 @app.route("/<int:project>/remove", methods=["GET", "POST"])
 def remove(project):
-        taskid = request.args.get('id',0)
-        db = get_db()
-        db.execute("DELETE FROM task WHERE id = '%d' AND projid = '%d'" % (int(taskid),project))
-        g.db.commit()
-        return pull_tasks(project)
+	source = pick_source(request.method)
+	taskid = source.get('id',0)
+	db = get_db()
+	db.execute("DELETE FROM task WHERE id = '%d' AND projid = '%d'" % (int(taskid),project))
+	g.db.commit()
+	return pull_tasks(project)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/split?id=1
@@ -159,12 +165,8 @@ def modify(project):
 #http://purpletall.cs.longwood.edu:5000/1/info?id=1
 @app.route("/<int:project>/info", methods=["GET", "POST"])
 def info(project):
-	taskid = 0
-	if project <0:
-		taskid = request.form.getValue('id',0)
-		project = request.form.getValue('proj',0)
-	else:
-		taskid = request.args.get('id',0)
+	source = pick_source(request.method)
+	taskid = source.get('id',0)
 	if taskid == 0:
 		return 'ERROR'
 	db = get_db()
@@ -174,7 +176,7 @@ def info(project):
 	for key in row:
 		json_dict[key] = row[key]
 	if request.method=="POST":
-		return render_template()
+		return render_template("info.html", dump=json_dict)
 	return json.dumps(json_dict)
 
 #Example url
@@ -207,22 +209,20 @@ def ping():
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
 @app.route("/login", methods=["GET", "POST"])
 def login():
-        db = get_db()
-        user = "";
-        if request.method=="GET":
-                user = request.args.get('user','').replace('{','').replace('}','')
-        elif "username" in request.form:
-                user = escape(request.form['username'])
-        db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
-        row = db.fetchone()
-        userid = 0
-        if row is not None:
-            userid = row['userid']
-
-        if request.method=="GET":
-            return str(row['userid'])
-        
-        return render_template("/logincheck.html", title = "Purple Tall", loginUser=userid)
+	db = get_db()
+	user = "";
+	if request.method=="GET":
+		user = request.args.get('user','').replace('{','').replace('}','')
+	elif "username" in request.form:
+		user = escape(request.form['username'])
+	db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
+	row = db.fetchone()
+	userid = 0
+	if row is not None:
+		userid = row['userid']
+	if request.method=="GET":
+		return str(userid)
+	return render_template("/logincheck.html", title = "Purple Tall", loginUser=userid)
 
 
 #Example url
@@ -249,24 +249,27 @@ def addcol(project):
 #http://purpletall.cs.longwood.edu:5000/projlist
 @app.route("/projlist", methods=["GET","POST"])
 def projlist():
-    with get_db() as db: #same as try, but with no "else" like exception catch
-        data = {}
-        data['projects'] = []
-        db.execute("SELECT count(*) AS count FROM projects;")
-        data['count'] = int(db.fetchone()['count'])
-        db.execute("SELECT * FROM projects;");
-        rows = db.fetchall()
-        for row in rows:
-                data['projects'].append({
-                        'projid': row['projid'],
-                        'name': row['name'],
-                        'description': row['description']
-                })
-        if request.method == "POST":
-                return render_template("/list.html", List = data['projects'])
-        else:
-                return json.dumps(data) 
-    return 'Error'
+    #with get_db() as db: #same as try, but with no "else" like exception catch
+	try:
+		data = {}
+		data['projects'] = []
+		db = get_db()
+		db.execute("SELECT count(*) AS count FROM projects;")
+		data['count'] = int(db.fetchone()['count'])
+		db.execute("SELECT * FROM projects;");
+		rows = db.fetchall()
+		for row in rows:
+			data['projects'].append({
+				'projid': row['projid'],
+				'name': row['name'],
+				'description': row['description']
+			})
+		if request.method == "GET":
+			return json.dumps(data) 
+		else:
+			return render_template("/list.html", List = data['projects'])
+	except:
+		return 'Error'
 
 if __name__ == "__main__":
         app.run(host='0.0.0.0')

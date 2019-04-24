@@ -17,39 +17,50 @@ h1{
 }
 
 #promptbar{
-	position: absolute;
+	position: static;
 	width: 25%;
 	bottom: 0;
 }
 
-.stage{
-	border: solid 1px purple;
-	width: 400px;
-	min-height: 400px;
-
-	display: inline-block;
-	margin: 40px auto;
+#main{
+	display: flex;
+	flex-direction: rows;
+	align-items: flex-start;
+	overflow-x: scroll;
 }
 
-#sidebar{
-	ul{
+li{
+	margin-left: -10px;
+	margin-right: 10px;
+}
+
+.stage{
+	/*
+	position: relative;
+	top: 30px;
+	*/
+	border: solid 1px purple;
+	display: inline-block;
+	flex-basis: auto | 120px; /*min length by min width*/
+	/*margin-width: 5px;*/ /*or margin-right*/
+}
+
+#sidebar > ul {
 		list-style-type: none;
 		margin: 0;
 		padding: 0;
 		width: 200px;
 		background-color: #f1f1f1;
-
 	}
 
-	li{
+#sidebar > li {
 		display: block;
 		color: #000;
 		padding: 9px 16px;
 		text-decoration: none;
 	}
 
-	li:hover {
+#sidebar > li:hover {
 		background-color: #555;
 		color: white;
 	}
-}
