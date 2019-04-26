@@ -48,10 +48,10 @@ class Test(unittest.TestCase):
         email = db.fetchone()
         db.execute("SELECT gitname FROM Users WHERE gitname = 'watsonck'")
         gitname = db.fetchone() 
-        self.assertEqual(fname, [{'fname': 'Colin'}])
-        self.assertEqual(lname, [{'lname': 'Watson'}])
-        self.assertEqual(email, [{'email': 'colin.watson777@yahoo.com'}])
-        self.assertEqual(gitname, [{'gitname': 'watsonck'}])
+        self.assertEqual(fname, {'fname': 'Colin'})
+        self.assertEqual(lname, {'lname': 'Watson'})
+        self.assertEqual(email, {'email': 'colin.watson777@yahoo.com'})
+        self.assertEqual(gitname, {'gitname': 'watsonck'})
 
     def test_project_in_db(self):
         db = get_db()
@@ -61,32 +61,21 @@ class Test(unittest.TestCase):
         name = db.fetchone()
         db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
         description = db.fetchone()
-        self.assertEqual(projId, [{'projid': 1}])
-        self.assertEqual(name, [{'name': 'Testing Project'}])
-        self.assertEqual(description, [{'description': 'a project made to test program'}])
+        self.assertEqual(projId, {'projid': 1})
+        self.assertEqual(name, {'name': 'Testing Project'})
+        self.assertEqual(description, {'description': 'a project made to test program'})
     
     #def test_new_task(task):
         #response = self.app.post('/TASK/<string:task>', data=dict()
 
     def test_add(self):     
         resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}").text
-        
         self.assertNotEqual(json.loads(resp), "ERROR")
-        #add()
-        '''db = get_db()
+        db = get_db()
         db.execute("SELECT name FROM Tasks WHERE name = 'unittest1' ")
         name = db.fetchone() 
-        #db.execute("SELECT lname FROM Users WHERE lname = 'Watson' ")
-        #lname = db.fetchone()
-        #db.execute("SELECT email FROM Users WHERE email = 'colin.watson777@yahoo.com'")
-        #email = db.fetchone()
-        #db.execute("SELECT gitname FROM Users WHERE gitname = 'watsonck'")
-        #gitname = db.fetchone() 
         self.assertEqual(fnname, [{'name': 'unittest1'}])
-        #self.assertEqual(lname, [{'lname': 'Watson'}])
-        #self.assertEqual(email, [{'email': 'colin.watson777@yahoo.com'}])
-        #self.assertEqual(gitname, [{'gitname': 'watsonck'}])
-        '''
+        
 
     #def test_move(self):
         #return self.app.post(
