@@ -37,9 +37,10 @@ function drop(ev){
 		<div class=stage>
 			<p class = title>{{ value }} </p>
 			<ul>
+				<li id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></li>
 				{% for task in tasklist %}
 					{% if task.stage.lower() == value.lower() %}
-						<li class="source" ondrop="drop(event)"
+						<li id={{task.id}} ondrop="drop(event)"
 						ondragover="allowDrop(event)">
 							id={{ task.id }}, task name= {{ task.name }} <br>
 							last user= {{ task.lab_user }}
@@ -60,8 +61,6 @@ function drop(ev){
 						<br>
 					{% endif %}
 				{% endfor %}
-				<li id="dest" ondrop="drop(event)"
-				ondragover="allowdrop(event)"></li>
 			</ul>
 		</div>
 	{% endfor %}
