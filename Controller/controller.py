@@ -41,7 +41,7 @@ def home():
         #       return "Hello World"
         #else:
                 #build web page otherwise, sending what it would need in comma list
-        return render_template("/login.html", title = "Login")
+        return render_template("/login.html", title = "Login", loginUser = 0)
                 #might need to move file and rename path, jinja looks for templates
 
 #Example url
@@ -216,23 +216,19 @@ def ping():
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
 @app.route("/login", methods=["GET", "POST"])
 def login():
-	db = get_db()
-	user = "";
-	if request.method=="GET":
-		user = request.args.get('user','').replace('{','').replace('}','')
-	elif "username" in request.form:
-		user = escape(request.form['username'])
-	db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
-	row = db.fetchone()
-	userid = 0
-	if row is not None:
-		userid = row['userid']
-	if request.method=="GET":
-		return str(userid)
-	#add in here if bad (on web login), send to login plus alert
-	#else pass userid through to home page
-	return render_template("/logincheck.html", title = "Purple Tall", loginUser=userid, curUser=user)
-
+    db = get_db()
+    source = pick_source(request.method)
+    user = source.get('user','').replace('{','').replace('}','')
+    db.execute("SELECT userid FROM users WHERE lab_user = '%s';" % (user))
+    row = db.fetchone()
+    userid = 0
+    if row is not None:
+        userid = row['userid']
+    if request.method=="GET":
+        return str(userid)
+    if userid == 0: #if wasn't found AND source is web/post
+        return render_template("/login.html", title = "Purple Tall", loginUser = -1)
+    return projlist()
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/addcol?name={TEST}
