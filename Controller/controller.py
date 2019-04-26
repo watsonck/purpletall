@@ -78,7 +78,8 @@ def pull_tasks(project):
 			'is_bug':row['bugged']
 		})
 	if request.method=="POST":
-		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks)    
+		current = request.form.get("curUser","michael messed up");
+		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks, currentUser=current)
 	return json.dumps(json_dict)
 
 #Example url
@@ -176,6 +177,7 @@ def info(project):
 	for key in row:
 		json_dict[key] = row[key]
 	if request.method=="POST":
+		current = source.get("curUser","michael messed up");
 		return render_template("info.html", dump=json_dict)
 	return json.dumps(json_dict)
 
@@ -227,7 +229,9 @@ def login():
 		userid = row['userid']
 	if request.method=="GET":
 		return str(userid)
-	return render_template("/logincheck.html", title = "Purple Tall", loginUser=userid)
+	#add in here if bad (on web login), send to login plus alert
+	#else pass userid through to home page
+	return render_template("/logincheck.html", title = "Purple Tall", loginUser=userid, curUser=user)
 
 
 #Example url
@@ -272,7 +276,8 @@ def projlist():
 		if request.method == "GET":
 			return json.dumps(data) 
 		else:
-			return render_template("/list.html", List = data['projects'])
+			current = request.form.get("user","michael messed up")
+			return render_template("/list.html", List = data['projects'], curUser = current)
 	except:
 		return 'Error'
 

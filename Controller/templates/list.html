@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome {{ curUser }}</h1>
+<div class=home>
+    <h1>Projects</h1>
+    <ul>
+    {% for projects in List %}
+    <li>
+        {{projects.projid}}:
+        {{projects.name}}<br>
+        {{projects.description}}
+        <form method="POST" action="/{{projects.projid}}/list">
+            <input type="hidden" name="curUser" value={{curUser}} \>
+            <input type="submit" value="Work in this project" />
+        </form></li>
+        <br>
+    {% endfor %}
+    </ul>
+</div>
+{% endblock %}
+
