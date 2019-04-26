@@ -72,9 +72,9 @@ class Test(unittest.TestCase):
         resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}").text
         self.assertNotEqual(json.loads(resp), "ERROR")
         db = get_db()
-        db.execute("SELECT name FROM Tasks WHERE name = 'unittest1' ")
+        db.execute("SELECT * FROM Tasks WHERE name = 'unittest1' ")
         name = db.fetchone() 
-        self.assertEqual(fnname, [{'name': 'unittest1'}])
+        self.assertEqual(fnname, {'name': 'unittest1'})
         
 
     #def test_move(self):
