@@ -26,6 +26,10 @@ def init_curses():
     screen = curses.initscr()
     curses.start_color()
     curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_RED)
+    curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_MAGENTA)
+    curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_CYAN)
+    if curses.can_change_color():
+        curses.init_color(5, 540, 170, 870)
     curses.noecho()
     curses.cbreak()
     screen.keypad(True)
@@ -37,12 +41,6 @@ def close_curses():
     curses.echo()
     curses.endwin()
 
-def refresh_screen():
-    screen.refresh()
-    for win in win_list:
-        win.refresh()
-
-
 def get_text(limit):
     curses.echo()
     global screen
@@ -52,34 +50,21 @@ def get_text(limit):
         screen.addstr(size[0]-1, i, " ")
     return str1
 
-def parse_cmd(cmd):
-    return cmd.split() 
-
-
-#Just remakes the rest of the cmd without the leading four letter identifier 
-def remake_cmd(cmd):
-    result = ""
-    for word in cmd:
-        result = result + " " + word.decode()
-    return result
-
-#same as above but for server responses so it doesnt need to be decoded 
-def remake_resp(resp):
-    result = ""
-    for word in resp[1:]:
-        result = result + " " + word
-    return result
-
 def proj_change(proj_num = 1):
     global boards
     global sect_names
     global kanban_start
     global sect_start
+    global cur_proj
     sect_names.clear()
     boards.clear()
     kanban_start = 0
     sect_start = 0
-    task = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/LIST').text)
+    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/list').text
+    if task == 'ERROR':
+        return
+    task = json.loads(task)
+    cur_proj = proj_num
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage].upper()])
@@ -114,35 +99,51 @@ def more_info(url):
 def send_recv(proj, cmd, args):
     global user_id
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
-    if cmd == 'add' and len(args) >= 4:
-        url = url + 'add?name={'+ args[0].decode() + '}&desc={'
-        for words in args[3:]:
-            url = url + words.decode() + "_"
-        url = url[:len(url)-1] +'}&time={' + args[1].decode()  + '}&bug={' + args[2].decode() + '}'+'&user='+str(user_id)
-    elif cmd == 'move' and len(args) >= 2:
-        url = url + 'move?id=' + args[0].decode() +'&stage={'+args[1].decode()+'}'+'&user='+str(user_id)
-    elif cmd == 'splt' and len(args) >= 1:
-        url = url + 'split?id=' +args[0].decode()+'&user='+str(user_id)
-    elif cmd == 'remv' and len(args) >= 1:
-        url = url + 'remove?id=' + args[0].decode()
+    if cmd == 'add':
+        if len(args) < 5:
+            return -3
+        url = url + 'add?name={'+ args[1] + '}&desc={'
+        for words in args[4:]:
+            url = url + words + "_"
+        url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug={' + args[3] + '}'+'&user='+str(user_id)
+    elif cmd == 'move':
+        if len(args) < 3:
+            return -3
+        url = url + 'move?id=' + args[1] +'&stage={'+args[2]+'}'+'&user='+str(user_id)
+    elif cmd == 'splt':
+        if len(args) < 2:
+            return -3
+        url = url + 'split?id=' +args[1]+'&user='+str(user_id)
+    elif cmd == 'remv':
+        if len(args) < 2:
+            return -3
+        url = url + 'remove?id=' + args[1]
     elif cmd == 'modi':
         return
-    elif cmd == 'info' and len(args) >= 1:
-        url = url + 'info?id=' +args[0].decode()
+    elif cmd == 'info':
+        if len(args) < 2:
+            return -3
+        url = url + 'info?id=' +args[1]
         more_info(url)
-        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/LIST'
-    elif cmd == 'proj' and len(args) >= 1:
-        proj_change(args[0].decode())
+        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
+    elif cmd == 'proj':
+        if len(args) < 2:
+            return -3
+        proj_change(int(args[1]))
         return
-    #elif cmd == 'acol' and len(args) >= 1:
-    #    url = 
-    #elif cmd == 'dcol' and len(args) >= 1:
-    #    url = 
+    elif cmd == 'acol':
+        if len(args) < 2:
+            return -3
+        url = url + 'addcol?name={' + args[1] +'}' 
+    elif cmd == 'dcol':
+        if len(args) < 2:
+            return -3
+        url = url + 'delcol?name={' + args[1] +'}'
     else:
         return -1
     result = requests.get(url).text
     if result == 'ERROR':
-        return result
+        return -2#return -2 since server doesnt give error info
     else:
         return json.loads(result)
 
@@ -223,14 +224,14 @@ def kanban_print(split, max_tasks, limit):
 
 def draw_kanban(max_x,max_y,split,start = 0):
     for x in range(max_x):
-        screen.addstr(max_y-2, x, " ", curses.A_REVERSE)
-        screen.addstr(0,x, " ", curses.A_REVERSE)
+        screen.addstr(max_y-2, x, " ", curses.color_pair(2))
+        screen.addstr(0,x, " ", curses.color_pair(2))
     for y in range(max_y-1):
-        screen.addstr(y,0+split, " ", curses.A_REVERSE)
-        screen.addstr(y,0+split+split, " ", curses.A_REVERSE)
+        screen.addstr(y,0+split, " ", curses.color_pair(2))
+        screen.addstr(y,0+split+split, " ", curses.color_pair(2))
         if y < max_y-2:
-            screen.addstr(y,0, " ", curses.A_REVERSE)
-            screen.addstr(y,max_x-1, " ", curses.A_REVERSE)
+            screen.addstr(y,0, " ", curses.color_pair(2))
+            screen.addstr(y,max_x-1, " ", curses.color_pair(2))
     global sect_names
     global sect_start
     first = -1
@@ -257,7 +258,13 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
-
+    max_p = 0
+    if len(sect_names)%3 == 0:
+        max_p = int(len(sect_names)/3)
+    else:
+        max_p = int(len(sect_names)/3+1)
+    pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(max_p)
+    screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
 
 
@@ -268,18 +275,24 @@ def login():
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
-    for y in range(splity,splity+splity):
-        for x in range(splitx,splitx+splitx):
-            screen.addstr(y,x," ", curses.A_REVERSE)
-    
-    screen.addstr(splity, splitx+(int(splitx/2)), "Purple Tall Login", curses.A_REVERSE)
-    screen.addstr(splity+2, splitx+1, "Username:", curses.A_REVERSE)
-    screen.addstr(splity+2, splitx+12, "                ")
-
-
     curses.echo()
-    username = screen.getstr(splity+2,splitx+12,15)
-    user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+    while True:
+        for y in range(splity,splity+5):
+            for x in range(splitx,splitx+splitx):
+                screen.addstr(y,x," ", curses.A_REVERSE)
+                if y == splity or y == splity+4:
+                    screen.addstr(y,x," ", curses.color_pair(2))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x," ", curses.color_pair(2))
+    
+        screen.addstr(splity+1, splitx + int(splitx*.38), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx + int(splitx*.33), "Username:", curses.A_REVERSE)
+        screen.addstr(splity+3, splitx + int(splitx*.33) + 12, "               ")
+
+        username = screen.getstr(splity+3,splitx + int(splitx*.33)+12,15)
+        user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+        if str(user_id) != '0':
+            break
     curses.noecho()
     screen.clear()
 
@@ -304,6 +317,58 @@ def create_user():
     curses.noecho()
     screen.clear()
 
+def proj_list(called_from = 0):
+    global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+
+    projs = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/projlist').text)
+    max_y = splity+1 + 2*projs['count']
+    for y in range(splity,max_y+1):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
+            if called_from == 0:
+                if y == splity or y == max_y:
+                    screen.addstr(y,x," ", curses.color_pair(1))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x," ", curses.color_pair(1))
+            else:
+                if y == splity or y == max_y:
+                    screen.addstr(y,x," ", curses.color_pair(2))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x," ", curses.color_pair(2))
+    
+    for x in range(size[1]):
+        screen.addstr(size[0]-2,x, " ", curses.color_pair(2))
+    cur_y = splity+1
+    for proj in projs['projects']:
+        str1 = str(proj['projid']) + ': ' + proj['name'] + ' ' + proj['description'] 
+        screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
+        cur_y = cur_y + 2
+    if called_from == 0:
+        screen.addstr(size[0]-3,1,'Press enter or enter anything to contiune', curses.A_REVERSE)
+        wait = get_text(splitx*3-2)
+
+def proj_choice():
+    global screen
+    size = screen.getmaxyx()
+    splitx = int(size[1]/3)
+
+    proj_list(1)
+    
+    global cur_proj
+    curses.echo()
+    screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
+    while True:
+        choice = get_text(splitx*3-2)
+        resp = requests.get('http://purpletall.cs.longwood.edu:5000/'+choice.decode()+'/list').text
+        if resp != 'ERROR':
+            cur_proj = int(choice.decode())
+            break
+    curses.noecho()
+    screen.clear()
+        
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -317,71 +382,77 @@ def kanban():
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
     
-    proj_change()
+    proj_change(cur_proj)
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
-
+    screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
     while True:
+        size = screen.getmaxyx()
+        max_tasks = int((size[0]-5)/2)+1
+        split = int(size[1]/3)
         str1 = get_text(split+split)
         if len(str1) < 1:
             continue
-        parsed = parse_cmd(str1)
+        parsed = str1.decode().split()
         
-        #For when typing in input
-        if parsed[0].decode().upper() == "QUIT":
+        #CMD templates
+        #EX: ADD <name> <expected comp> <is_bug> <desc>
+        #EX: MOVE <task_id> <dest> 
+        #EX: REMV <task_id>
+        #EX: SPLT <task_id>
+        #EX: INFO <task_id>
+        #EX: DCOL <col_name>
+        #EX: ACOL <col_name>
+        #EX: PROJ <proj_id>
+        #EX: SCRL <T> <U or D> #To scroll tasks
+        #EX: SCRL <S> <L or R> #To scroll sections
+        if parsed[0].upper() == "QUIT":
             break
-        elif parsed[0].decode().upper() == "ADD":#EX: ADD <name> <expected comp> <is_bug> <desc>
-            task = send_recv(cur_proj, 'add', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "MOVE":#EX: MOVE <task_id> <dest> 
-            task = send_recv(cur_proj, 'move', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "REMV":#EX: REMV <task_id>
-            task = send_recv(cur_proj, 'remv', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "SPLT":#EX: SPLT <task_id>
-            task = send_recv(cur_proj, 'splt', parsed[1:])
-            proc_resp(task)
-        elif parsed[0].decode().upper() == "INFO":#EX: INFO <task_id>
-            task = send_recv(cur_proj, 'info', parsed[1:])
-            proc_resp(task)
-        #elif parsed[0].decode().upper() == "DCOL":#EX: DCOL <col_name>
-        #    task = send_recv(cur_proj, 'dcol', parsed[1:])
-        #    proc_resp(task)        
-        #elif parsed[0].decode().upper() == "ACOL":#EX: ACOL <col_name>
-        #    task = send_recv(cur_proj, 'acol', parsed[1:])
-        #    proc_resp(task)
-        elif parsed[0].decode().upper() == "PROJ":#EX: PROJ <proj_id>
-            task = send_recv(cur_proj, 'proj', parsed[1:])
-        elif parsed[0].decode().upper() == "SCRL":#EX: SCRL <T or S> <U or D>
+        elif parsed[0].upper() == "PROJ":
+            task = send_recv(cur_proj, 'proj', parsed)
+        elif parsed[0].upper() == "SCRL":
             if len(parsed) < 3:
                 continue
-            if parsed[1].decode().upper() == "T":
-                if parsed[2].decode().upper() == "U" and kanban_start != 0:
+            if parsed[1].upper() == "T":
+                if parsed[2].upper() == "U" and kanban_start != 0:
                     kanban_start = kanban_start-max_tasks
-                elif parsed[2].decode().upper() == 'D' and kanban_start < most_tasks:
+                elif parsed[2].upper() == 'D' and kanban_start < most_tasks:
                     kanban_start = kanban_start+max_tasks
-            elif parsed[1].decode().upper() == "S":
-                if parsed[2].decode().upper() == 'U' and sect_start != 0:
+            elif parsed[1].upper() == "S":
+                if parsed[2].upper() == 'L' and sect_start != 0:
                     sect_start = sect_start - 1
-                elif parsed[2].decode().upper() == 'D' and len(sect_names) > 3:
+                elif parsed[2].upper() == 'R' and len(sect_names) > 3:
                     if sect_start+3 < len(sect_names):
                         sect_start = sect_start+1
-
+        elif parsed[0].upper() == 'PLS':
+            proj_list()
+        else:
+            task = send_recv(cur_proj, parsed[0].lower(), parsed)
+            if task == -1:
+                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
+                continue
+            elif task == -2:
+                screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.color_pair(1))
+                continue
+            elif task == -3:
+                screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
+                continue
+            proc_resp(task)
 
         screen.clear()
         draw_kanban(size[1],size[0],split)
         kanban_print(split, max_tasks, split-1)
-        refresh_screen()
-
-
+        screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
+        screen.refresh()
 
 
 def main():
+    global screen
     signal.signal(signal.SIGINT, signal_handler)
     login()
+    proj_choice()
     kanban()
-    refresh_screen()
+    screen.refresh()
     screen.clear()
 
 init_curses()

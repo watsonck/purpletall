@@ -2,23 +2,39 @@
 
 {% block content %}
 <h1>Kanban Board</h1>
-<div class=michael>
-	<div class=sidebar></div>
-	{% for stages in data.metadata %}
-	<div class=stage>
-		<p>{{ stages.name }} <br>
-		<ul>{% for stage in data.stages %}
-			<li> {{ stage.id }} : {{ stage.name }} <br>
-				{{ stage.user }}, {{ stage.is_bug }}
-			</li>
-			{% endfor %}
-		</ul>
+<div class=home> <!--css flow this by row-->
+	<div class=sidebar>
+		<!--stuff like add, remove, split goes here.  buttons likely and some text-->
 	</div>
+	<div id="main">
+	<!--css flow this by row-->
+	{% for key, value in data.metadata.stages.items() %}
+		<div class=stage>
+			<p class = title>{{ value }} </p>
+			<ul>
+				{% for task in tasklist %}
+					{% if task.stage.lower() == value.lower() %}
+						<li>
+							id={{ task.id }}, is bug? {{ task.bugged }} <br>
+							task name= {{ task.name }} <br>
+							user started= {{ task.lab_user }}
+						</li>
+						<form method="POST" action="/{{ data.metadata.project}}/info">
+							<input type="submit" value="more info" />
+							<input type="hidden" name="id" value="{{ task.id}}" />
+						</form>
+						<br>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
 	{% endfor %}
-	<div class=promptbar><!--css this to be absolute position on bottom-->
+	</div>
+	<div class=option><!--template for add, remove, split-->
 		<p>Message: promptbar</p>
-		<form method="POST" action="/test"> <!--todo: change action based on what was clicked-->
+		<form method="POST" action="/-1/test"> <!--change to matching action-->
 			<input type="text" name="text" />
+			<input type="hidden" name="proj" value={{data.metadata.project}} />
 			<!--todo: hide text form for things that don't need it-->
 			<input type="submit" value="submit" />
 		</form>
