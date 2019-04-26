@@ -41,7 +41,7 @@ li{
 	*/
 	border: solid 1px purple;
 	display: inline-block;
-	flex-basis: auto | 120px; /*min length by min width*/
+	flex-basis: auto | 150px; /*min length by min width*/
 	/*margin-width: 5px;*/ /*or margin-right*/
 }
 

@@ -5,6 +5,8 @@
 		<input type="submit" value="Invalid login. Click to go back" />
 	{% else %}
 		<form method="POST" action="/projlist">
+		<input type="hidden" name="user" value={{ curUser }} \>
 		<input type="submit" value="Valid login. Click to finish logging in" />
 	{% endif %}
+	{{ curUser }}
 {% endblock %}
