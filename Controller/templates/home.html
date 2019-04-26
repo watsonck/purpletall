@@ -1,9 +1,34 @@
 {% extends "base.html" %}
 
 {% block content %}
+<script> <!--w3schools-->
+function allowDrop(ev){
+	ev.preventDefault();
+}
+
+function drag(ev){
+	ev.dataTransfer.setData("text",ev.target.id);
+}
+
+function drop(ev){
+	ev.preventDefault();
+	var data = ev.dataTransfer.getData("text");
+	ev.target.appendChild(document.getElementById(data));
+}
+</script>
+
 <h1>Kanban Board</h1>
 <div class=home> <!--css flow this by row-->
 	<div class=sidebar>
+		<form id=add method="POST" action="/{{data.metadata.project}}/add">
+			task name: <input type="text" name="name" />
+			description: <input type="text" name="desc" />
+			expected complete: <input type="time" name="time" />
+			is it a bug? <input type="checkbox" name="bug" />
+			<input type="hidden" name="user" value={{ currentUser }} />
+			<input type="hidden" name="proj" value={{data.metadata.project}} />
+			<input type="submit" value="Add" />
+		</form>
 		<!--stuff like add, remove, split goes here.  buttons likely and some text-->
 	</div>
 	<div id="main">
@@ -14,30 +39,32 @@
 			<ul>
 				{% for task in tasklist %}
 					{% if task.stage.lower() == value.lower() %}
-						<li>
-							id={{ task.id }}, is bug? {{ task.bugged }} <br>
-							task name= {{ task.name }} <br>
-							user started= {{ task.lab_user }}
+						<li class="source" ondrop="drop(event)"
+						ondragover="allowDrop(event)">
+							id={{ task.id }}, task name= {{ task.name }} <br>
+							last user= {{ task.lab_user }}
+		<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
+			<input type="hidden" name="proj" value={{ task.id }} />
+			<input type="submit" value="del" />
+		</form>
+		<form id=split method="POST" action="/{{data.metadata.project}}/split">
+			<input type="hidden" name="proj" value={{ task.id }} />
+			<input type="hidden" name="proj" value={{ currentUser }} />
+			<input type="submit" value="split" />
+		</form>
 						</li>
 						<form method="POST" action="/{{ data.metadata.project}}/info">
 							<input type="submit" value="more info" />
-							<input type="hidden" name="id" value="{{ task.id}}" />
+							<input type="hidden" name="id" value="{{ task.id }}" />
 						</form>
 						<br>
 					{% endif %}
 				{% endfor %}
+				<li id="dest" ondrop="drop(event)"
+				ondragover="allowdrop(event)"></li>
 			</ul>
 		</div>
 	{% endfor %}
-	</div>
-	<div class=option><!--template for add, remove, split-->
-		<p>Message: promptbar</p>
-		<form method="POST" action="/-1/test"> <!--change to matching action-->
-			<input type="text" name="text" />
-			<input type="hidden" name="proj" value={{data.metadata.project}} />
-			<!--todo: hide text form for things that don't need it-->
-			<input type="submit" value="submit" />
-		</form>
 	</div>
 </div>
 {% endblock %}
