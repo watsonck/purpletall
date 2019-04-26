@@ -68,11 +68,12 @@ class Test(unittest.TestCase):
     #def test_new_task(task):
         #response = self.app.post('/TASK/<string:task>', data=dict()
 
-    def test_add(self, project):     
-        @app.route("/<int:project>/add", methods=["GET", "POST"])
-#@app.route("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}")
-        add(project)
-        db = get_db()
+    def test_add(self):     
+        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}").text
+        
+        self.assertNotEqual(json.loads(resp), "ERROR")
+        #add()
+        '''db = get_db()
         db.execute("SELECT name FROM Tasks WHERE name = 'unittest1' ")
         name = db.fetchone() 
         #db.execute("SELECT lname FROM Users WHERE lname = 'Watson' ")
@@ -85,7 +86,7 @@ class Test(unittest.TestCase):
         #self.assertEqual(lname, [{'lname': 'Watson'}])
         #self.assertEqual(email, [{'email': 'colin.watson777@yahoo.com'}])
         #self.assertEqual(gitname, [{'gitname': 'watsonck'}])
-
+        '''
 
     #def test_move(self):
         #return self.app.post(
