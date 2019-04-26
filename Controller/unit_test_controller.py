@@ -65,17 +65,14 @@ class Test(unittest.TestCase):
         self.assertEqual(name, {'name': 'Testing Project'})
         self.assertEqual(description, {'description': 'a project made to test program'})
     
-    #def test_new_task(task):
-        #response = self.app.post('/TASK/<string:task>', data=dict()
-
     def test_add(self):     
         resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}").text
         self.assertNotEqual(json.loads(resp), "ERROR")
-        db = get_db()
+       ''' db = get_db()
         db.execute("SELECT * FROM Tasks WHERE name = 'unittest1' ")
         name = db.fetchone() 
         self.assertEqual(fnname, {'name': 'unittest1'})
-        
+        '''
 
     #def test_move(self):
         #return self.app.post(
