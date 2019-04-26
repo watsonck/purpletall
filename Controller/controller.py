@@ -106,7 +106,7 @@ def add(project):
 	db.execute("SELECT MAX(id) AS taskid FROM task;")
 	row = db.fetchone()
 	if row is not None:
-		updateLog(user,row['taskid'],project,'Add',False,'')
+		updateLog(user,row['taskid'],project,'Add',False,'Created in stage: ' + stage)
 
 	return pull_tasks(project)
 
@@ -133,9 +133,11 @@ def move(project):
 @app.route("/<int:project>/remove", methods=["GET", "POST"])
 def remove(project):
 	source = pick_source(request.method)
-	taskid = source.get('id',0)
+	taskid = source.get('id','-1')
 	db = get_db()
 	db.execute("DELETE FROM task WHERE id = '%d' AND projid = '%d'" % (int(taskid),project))
+	g.db.commit()
+	db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s" % (str(taskid), project))
 	g.db.commit()
 
 	return pull_tasks(project)
@@ -189,11 +191,11 @@ def info(project):
 	if taskid == 0:
 		return 'ERROR'
 	db = get_db()
-	db.execute("SELECT * FROM task WHERE id = %s and projid=%d" % (taskid,project))
+	db.execute("SELECT name,id as task_id,projid as project_id,description,stage,starttime as start_time,exptcomptime,actcomptime,contributor as recent_contributor,bugged AS is_bugged FROM task WHERE id = %s and projid=%d" % (taskid,project))
 	row = db.fetchone()
 	json_dict = {}
 	for key in row:
-		json_dict[key] = row[key]
+		json_dict[key] = str(row[key])
 	if request.method=="POST":
 		current = source.get("curUser","michael messed up");
 		return render_template("info.html", dump=json_dict)
@@ -221,18 +223,26 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	logtime = time.asctime(time.localtime(time.time()))
 	db = get_db()
 	db.execute("INSERT INTO logs(taskid,projid,contributor,action,time,git,comments) VALUES (%s,%s,%s,'%s','%s',%s,'%s');" % (str(taskID),str(projID),str(userID),str(action),str(logtime),str(isGit),str(comments)))
+	g.db.commit()
 	
 
 
 #Pull all git log since last update and make a new update
+@app.route("/git", methods=["GET","POST"])
 def gitpull():
-	path = '/home/purpletall/purpletall'
-	datetime = '2019-03-30 12:00:00'
+	g = Git('/home/purpletall/purpletall')
+	datetime = '0-0-0 00:00:00'
+	db = get_db()
+	db.execute("SELECT time FROM logs WHERE git=true ORDER BY time DESC LIMIT 1")
+	row = db.fetchone()
+	if row is None:
+		return 'Error'
+	datetime = str(row['time'])
 
-	g = Git(path) 
-	loginfo = g.log('--since='+datetime,'--name-only')
-	print(loginfo)
-	return ''
+
+	loginfo = g.log('--since=' + datetime,"--format=format:{'contributor':'%an','message':'%B'}")
+	#print(loginfo)
+	return loginfo
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/ping?user={haddockcl}
@@ -280,6 +290,12 @@ def addcol(project):
 		return pull_tasks(project)
 	except:
 		return 'Error'
+
+def addproj():
+	return ''
+
+def adduser():
+	return ''
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/projlist
