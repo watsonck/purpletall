@@ -1,6 +1,6 @@
 from flask import Flask, request, g, redirect, escape, render_template
 from git import Git
-import psycopg2, psycopg2.extras, time, json, smtplib
+import psycopg2, psycopg2.extras, time, json, smtplib, re
 
 app = Flask(__name__)
 
@@ -238,10 +238,19 @@ def gitpull():
 	if row is None:
 		return 'Error'
 	datetime = str(row['time'])
+	loginfo = g.log('--since=' + datetime,"--format=format:{\"contributor\":\"%an\",\"message\":\"%B\",\"timestamp\":%ct},")
+	loginfo = loginfo.replace('\n','').replace('},{','},\n{').rstrip(',')
+	loginfo = '[' + loginfo + ']'
+	
+	temp_list = json.loads(loginfo)
+	data = sorted(temp_list, key=lambda k: k['timestamp']) 
 
+	for item in data:
+		item['timestamp'] = str(time.ctime(int(item['timestamp'])))
+		item['message'] = list(re.findall("<[^<>]+>",item['message']))
 
-	loginfo = g.log('--since=' + datetime,"--format=format:{'contributor':'%an','message':'%B'}")
-	#print(loginfo)
+	
+	print(data)
 	return loginfo
 
 #Example url
