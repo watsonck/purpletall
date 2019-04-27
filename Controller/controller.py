@@ -2,6 +2,8 @@ from flask import Flask, request, g, redirect, escape, render_template
 from git import Git
 import psycopg2, psycopg2.extras, time, json, smtplib, re
 
+#TODO *maybe* IMPLEMENT CONFIG FILE LOADING
+
 app = Flask(__name__)
 
 app.config.from_object(__name__)
@@ -139,12 +141,11 @@ def remove(project):
 	g.db.commit()
 	db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s" % (str(taskid), project))
 	g.db.commit()
-
 	return pull_tasks(project)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/split?id=1
-@app.route("/<int:project>/split", methods=["GET", "POST"]) #post still listed for web
+@app.route("/<int:project>/split", methods=["GET", "POST"])
 def split(project):
 	db = get_db()
 	taskid = request.args.get('id',0)
@@ -179,7 +180,7 @@ def split(project):
 #http://purpletall.cs.longwood.edu:5000/1/modify?id=4&name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
 @app.route("/<int:project>/modify", methods=["GET", "POST"])
 def modify(project):
-	#not implemented
+	#TODO IMPLEMENT MODIFY
 	return pull_tasks(project)
 
 #Example url
@@ -199,6 +200,8 @@ def info(project):
 	if request.method=="POST":
 		current = source.get("curUser","michael messed up");
 		return render_template("info.html", dump=json_dict)
+	#TODO RETURN LOG AS WELL
+	pullLog(taskid,project)
 	return json.dumps(json_dict)
 
 #Example url
@@ -214,8 +217,17 @@ def delcol(project):
 	except:
 		return 'Error'
 
-@app.route("/<int:project>/rename", methods = ["GET","POST"])
+#Example url
+#http://purpletall.cs.longwood.edu:5000/2/rename?id=5&name={TESTING}
+@app.route("/<string:project>/rename", methods = ["GET","POST"])
 def rename(project):
+	source = pick_source(request.method)
+	taskid = source.get('id','0')
+	name = source.get('name','').replace('{','').replace('}','')
+	
+	db = get_db()
+	db.execute("UPDATE task SET name = '%s' WHERE id = %s AND projid=%s" % (name,str(taskid),str(project)))
+	g.db.commit()
 	return pull_tasks(project)
 
 
@@ -226,6 +238,12 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	g.db.commit()
 	
 
+def pullLog(taskid,project):
+	#TODO test
+	db = get_db()
+	db.execute("SELECT contributor,time,comments FROM logs WHERE taskid=%s AND projid=%s" % (str(taskid),str(project)))
+	log = db.fetchall()
+	return str(log)
 
 #Pull all git log since last update and make a new update
 @app.route("/git", methods=["GET","POST"])
@@ -244,23 +262,87 @@ def gitpull():
 	
 	temp_list = json.loads(loginfo)
 	data = sorted(temp_list, key=lambda k: k['timestamp']) 
+	data[:] = [item for item in data if re.search("<[^<>]+>",item['message'])]
 
 	for item in data:
-		item['timestamp'] = str(time.ctime(int(item['timestamp'])))
-		item['message'] = list(re.findall("<[^<>]+>",item['message']))
+		item['flags'] = list(re.findall("<[^<>]+>",item['message']))
+		item['timestamp'] = str(time.strftime("%Y-%m-%d %H:%M:%S", time.gmtime(int(item['timestamp']))))
+		del item['message']
 
-	
+		user = 0
+		db.execute("SELECT userid FROM users WHERE lab_user='%s'" % (item['contributor']))
+		result = db.fetchone()
+		if result is not None:
+			user = result['userid']
+		item['contributor'] = user
+		for flag in item['flags']:
+			command = flag.replace('<','').replace('>','')[:4]
+			if command not in ['ADD','MOVE','REMV','SPLT']:
+				continue;
+			#TODO COMMANDS
+			#TODO UPDATE LOG
+
+		
+
 	print(data)
-	return loginfo
+	return str(data)
 
 #Example url
-#http://purpletall.cs.longwood.edu:5000/ping?user={haddockcl}
+#http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}
 @app.route("/ping", methods=["GET", "POST"])
 def ping():
-	sender = request.args.get('sender',0)
-	receiver = request.args.get('receiver',0)
-	#SEND EMAIL
-	return ''
+	user = request.args.get('user',0)
+	rcvr = request.args.get('rcvr',None)
+	if rcvr is None:
+		return 'Error'
+	else:
+		rcvr = rcvr.replace('{','').replace('}','')
+
+	db = get_db()
+	db.execute("SELECT fname,lname,email FROM users WHERE lab_user='%s'" % (rcvr))
+	result1 = db.fetchone();
+	if result1 is None:
+		return 'Error'
+	rcvr = result1['email']
+	getter = result1['fname'] + ' ' + result1['lname']
+
+	pinger = ''
+	if user == 0:
+		pinger = 'an unknown user'
+	else:
+		db.execute("SELECT fname,lname FROM users WHERE userid=%s" % (str(user)))
+		result2 = db.fetchone();
+		if result2 is None:
+			return 'Error'
+		pinger = result2['fname'] + ' ' + result2['lname']
+
+	msg = request.args.get('msg','').replace('{','').replace('}','')
+	unk = ''
+	if msg == '':
+		unk = 'n empty'
+	else:
+		msg = ' It said:\n' + msg
+
+	message = """From Purple Tall <purpletall@outlook.com>
+To: {0} <{1}> 
+Subject: You have been pinged!
+
+You just got a{2} ping from {3}.{4}
+""".format(getter,rcvr,unk,pinger,msg)
+	
+	rcvr = [rcvr]
+	print(rcvr)
+	print(message)
+	server = smtplib.SMTP('smtp.office365.com', 587)
+	server.connect('smtp.office365.com', 587)
+	server.ehlo()
+	server.starttls()
+	server.ehlo()
+	server.login("purpletall@outlook.com", "ProjectManager8")
+
+	server.sendmail('purpletall@outlook.com', rcvr, message)
+	server.quit()
+
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/login?user={haddockcl}
@@ -301,9 +383,15 @@ def addcol(project):
 		return 'Error'
 
 def addproj():
+	#TODO ADD PROJECT
 	return ''
 
 def adduser():
+	#TODO ADD USER
+	return ''
+
+def swpcol():
+	#TODO SWAP COLUMNS
 	return ''
 
 #Example url
