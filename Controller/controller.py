@@ -116,6 +116,7 @@ def add(project):
 #http://purpletall.cs.longwood.edu:5000/1/move?id=1&stage={complete}
 @app.route("/<int:project>/move", methods=["GET", "POST"])
 def move(project):
+	#TODO ADD/REMOVE COLUMNS AS NEEDED
 	source = pick_source(request.method)
 	taskid = source.get('id',0)
 	stage = source.get('stage','N/A').replace('{','').replace('}','')
