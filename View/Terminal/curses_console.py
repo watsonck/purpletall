@@ -189,13 +189,13 @@ def kanban_print(split, max_tasks, limit):
             last = int(sect_names[i][0])
             l_name = sect_names[i][1]
 
-    max_y = screen.getmaxyx()[0]
-    if f_name == "-1":
-        blank(0,split, max_y)
-    elif s_name == "-1":
-        blank(split,split+split, max_y)
-    elif l_name == "-1":
-        blank(split+split,split+split+split, max_y)
+    #max_y = screen.getmaxyx()[0]
+    #if f_name == "-1":
+    #    blank(0,split, max_y)
+    #elif s_name == "-1":
+    #    blank(split,split+split, max_y)
+    #elif l_name == "-1":
+    #    blank(split+split,split+split+split, max_y)
 
     cur_tasks = 0
     cur_board = 0
@@ -252,18 +252,24 @@ def draw_kanban(max_x,max_y,split,start = 0):
             last = sect_names[i][1]
 
     if len(sect_names) < 1:
+        screen.addstr(1,int((split/2))-5, "        ")
+        screen.addstr(1,int((split/2)*3)-5,"      ")
+        screen.addstr(1,int((split/2)*5)-5, "     ")
         return    
     screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
     #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
 
     if len(sect_names) < 2:
+        screen.addstr(1,int((split/2)*3)-5,"      ")
+        screen.addstr(1,int((split/2)*5)-5, "     ")
         return
     screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*3)-5, page, curses.A_REVERSE)
 
     if len(sect_names) < 3:
+        screen.addstr(1,int((split/2)*5)-5, "     ")
         return
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
