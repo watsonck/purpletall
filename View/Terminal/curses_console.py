@@ -465,17 +465,14 @@ def proj_choice():
     while True:
         choice = get_text(splitx*3-2)
         parse = choice.decode().split()
-        screen.addstr(10,2,parse[0], curses.color_pair(1))
         if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
         elif choice.decode().upper() == 'CPROJ':
             create_proj()
             return
-        elif parse[0] == 'DPROJ':
-            screen.addstr(10,2,"TEST   ", curses.color_pair(1))
+        elif parse[0].upper() == 'DPROJ':
             if len(parse) >= 2:
-                screen.addstr(10,2,"TEST   ", curses.color_pair(1))
                 requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
                 curses.noecho()
                 screen.clear()
