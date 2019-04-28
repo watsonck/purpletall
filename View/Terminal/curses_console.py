@@ -233,18 +233,16 @@ def draw_kanban(max_x,max_y,split,start = 0):
     global sect_names
     global sect_start
     first = -1
+    fname = ""
     second = -1
+    sname = ""
     last = -1
+    lname = ""
 
     s_start = -1
     s_start_found = False
     for i in range(len(sect_names)):
-        test = str(sect_names[i][0]) + "  " + str(sect_names[i][1]) + "  "
-        screen.addstr(2+i+1,2,test,curses.A_REVERSE)
-        screen.refresh()
-    exit()
-    for i in range(len(sect_names)):
-        if sect_start == sect_names[i][0]:
+        if sect_start == sect_names[i][1]:
             s_start_found = True
             break
         elif int(sect_names[i][0]) < s_start or s_start == -1:
@@ -253,11 +251,14 @@ def draw_kanban(max_x,max_y,split,start = 0):
         sect_start = s_start
     for i in range(len(sect_names)):
         if int(sect_names[i][0]) == sect_start:
-            first = sect_names[i][1]
+            first = sect_names[i][0]
+            fname = sect_names[i][1]
         elif int(sect_names[i][0]) == sect_start+1:
-            second = sect_names[i][1]
+            second = sect_names[i][0]
+            snmae = sect_names[i][1]
         elif int(sect_names[i][0]) == sect_start+2:
-            last = sect_names[i][1]
+            last = sect_names[i][0]
+            lname = sect_names[i][1]
     if second == -1:
         for i in range(len(sect_names)):
             if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
