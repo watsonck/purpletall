@@ -563,6 +563,7 @@ def kanban():
                 elif parsed[2].upper() == 'R':# and len(sect_names) > 3 and sect_start+1 < len(sect_names):
                     sect_start = sect_start+1
                     screen.addstr(20,4,str(sect_start),curses.color_pair(1))
+            get_text(15)
 
         elif parsed[0].upper() == 'PLS':
             proj_list()
