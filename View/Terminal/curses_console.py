@@ -173,11 +173,11 @@ def kanban_print(split, max_tasks, limit):
     global sect_start
 
     first = -1
-    f_name = ""
+    f_name = "-1"
     second = -1
-    s_name = ""
+    s_name = "-1"
     last = -1
-    l_name = ""
+    l_name = "-1"
     while True:
         for i in range(len(sect_names)):
             if int(sect_names[i][0]) == sect_start:
@@ -189,8 +189,14 @@ def kanban_print(split, max_tasks, limit):
             elif int(sect_names[i][0]) == sect_start+2:
                 last = int(sect_names[i][0])
                 l_name = sect_names[i][1]
-        if first != -1 and second != -1 and last != -1:
-            break
+
+    max_y = screen.getmaxyx()[0]
+    if f_name == "-1":
+        blank(0,split, max_y)
+    elif s_name == "-1":
+        blank(split,split+split, max_y)
+    elif l_name == "-1"
+        blank(split+split,split+split+split, max_y)
 
     cur_tasks = 0
     cur_board = 0
@@ -247,21 +253,18 @@ def draw_kanban(max_x,max_y,split,start = 0):
             last = sect_names[i][1]
 
     if len(sect_names) < 1:
-        blank(3,split,max_y)
         return    
     screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
     #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
 
     if len(sect_names) < 2:
-        blank(2,split, max_y)
         return
     screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*3)-5, page, curses.A_REVERSE)
 
     if len(sect_names) < 3:
-        blank(1,split, max_y)
         return
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
@@ -274,17 +277,10 @@ def draw_kanban(max_x,max_y,split,start = 0):
     pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(max_p)
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
-def blank(n_cols, split_X, max_y):
+def blank(start_x, end_x, max_y):
     for y in range(max_y):
-        if n_cols == 3:
-            for x in range(split_X-split_X, split_X*3-1):
-                screen.addstr(y,x," ",curses.color_pair(2))
-        elif n_cols == 2:
-            for x in range(split_X,split_X*3-1):
-                screen.addstr(y,x," ",curses.color_pair(2))
-        elif n_cols == 1:
-            for x in range(split_X*2,split_X*3-1):
-                screen.addstr(y,x," ",curses.color_pair(2))
+        for x in range(start_x, end_x):
+            screen.addstr(y,x," ",curses.color_pair(2))
 
 def login():
     global username
@@ -341,9 +337,9 @@ def create_user():
     screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall Usercreation", curses.A_REVERSE)
     screen.addstr(splity+2, splitx+1, "Please enter your information", curses.A_REVERSE)
     screen.addstr(splity+4, splitx+1, "First Name:", curses.A_REVERSE)
-    screen.addstr(splity+4, splitx+10, "                ")
+    screen.addstr(splity+4, splitx+11, "                ")
     screen.addstr(splity+6, splitx+1, "Last Name:", curses.A_REVERSE)
-    screen.addstr(splity+6, splitx+10, "                ")
+    screen.addstr(splity+6, splitx+11, "                ")
     screen.addstr(splity+8, splitx+1, "Username:", curses.A_REVERSE)
     screen.addstr(splity+8, splitx+9, "                ")
     screen.addstr(splity+10, splitx+1, "Email:", curses.A_REVERSE)
@@ -352,10 +348,10 @@ def create_user():
 
     
     curses.echo()
-    fname = screen.getstr(splity+4,splitx+10,15)
-    lname = screen.getstr(splity+6,splitx+10,15)
+    fname = screen.getstr(splity+4,splitx+11,15)
+    lname = screen.getstr(splity+6,splitx+11,15)
     username = screen.getstr(splity+8,splitx+9,15)
-    email = screen.getstr(splity+10,splitx+12,34)
+    email = screen.getstr(splity+10,splitx+6,34)
     requests.get("http://purpletall.cs.longwood.edu:5000/user?fname={"+fname.decode()+"}&lname={"+lname.decode()+"}&uname={"+username.decode()+"}&email={"+email.decode()+"}")
     curses.noecho()
     screen.clear()
