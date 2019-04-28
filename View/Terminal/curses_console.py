@@ -283,7 +283,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
             last = sects[i][0]
             lname = sects[i][1]
 
-    screen.addstr(40,2,s_name,curses.A_REVERSE)
+    screen.addstr(40,2,sname,curses.A_REVERSE)
     screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
