@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
 		app.config['DEBUG'] = False
-		self.app = app.test_client()
+		service hoursself.app = app.test_client()
 
 	def tearDown(self):
 		pass
@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
 	def test_connection(self):
 		response = self.app.get('/', follow_redirects=True)
 		self.assertEqual(response.status_code, 200)
-
+service hours
 #test if homepage is displaying correctly
 #    def test_home(self):
 #        with app.test_request_context():
@@ -46,12 +46,12 @@ class Test(unittest.TestCase):
 		lname = db.fetchone()
 		db.execute("SELECT email FROM Users WHERE email = 'colin.watson777@yahoo.com'")
 		email = db.fetchone()
-		db.execute("SELECT gitname FROM Users WHERE gitname = 'watsonck'")
+		db.execute("SELECT lab_user FROM Users WHERE lab_user = 'watsonck'")
 		gitname = db.fetchone() 
 		self.assertEqual(fname, {'fname': 'Colin'})
 		self.assertEqual(lname, {'lname': 'Watson'})
 		self.assertEqual(email, {'email': 'colin.watson777@yahoo.com'})
-		self.assertEqual(gitname, {'gitname': 'watsonck'})
+		self.assertEqual(gitname, {'lab_user': 'watsonck'})
 
 	def test_project_in_db(self):
 		db = get_db()
@@ -85,6 +85,8 @@ class Test(unittest.TestCase):
 				for task in stage:
 						ids.append(task['id'])
 		self.assertNotIn(taskid, ids)
+
+        
 
 
     #def test_move(self):
