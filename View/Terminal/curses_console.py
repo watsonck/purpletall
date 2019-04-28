@@ -297,8 +297,6 @@ def draw_kanban(max_x,max_y,split,start = 0):
         first = sects[0][0]
         fname = sects[0][1]
 
-    tstr = str(first) + "  " + str(second) + "  " + str(last) + "  " + str(sects[2][0]) + "  " + str(sects[2][1])
-    screen.addstr(20,2,tstr, curses.A_REVERSE)
     if first != -1:
         screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     if second != -1:
@@ -559,10 +557,13 @@ def kanban():
                 elif parsed[2].upper() == 'D' and kanban_start < most_tasks:
                     kanban_start = kanban_start+max_tasks
             elif parsed[1].upper() == "S":
+                screen.addstr(20,4,paresed[2],curses.color_pair(1))
                 if parsed[2].upper() == 'L' and sect_start != 0:
                     sect_start = sect_start - 1
                 elif parsed[2].upper() == 'R':# and len(sect_names) > 3 and sect_start+1 < len(sect_names):
                     sect_start = sect_start+1
+                    screen.addstr(20,4,str(sect_start),curses.color_pair(1))
+
         elif parsed[0].upper() == 'PLS':
             proj_list()
         else:
