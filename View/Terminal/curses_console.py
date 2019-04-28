@@ -467,9 +467,6 @@ def proj_choice():
         if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
-        elif choice.decode() in p_list:
-            cur_proj = str(choice.decode())
-            break
         elif choice.decode().upper() == 'CPROJ':
             create_proj()
             return
@@ -482,6 +479,9 @@ def proj_choice():
                 curses.noecho()
                 screen.clear()
                 return
+        elif choice.decode() in p_list:
+            cur_proj = str(choice.decode())
+            break
     curses.noecho()
     screen.clear()
     proj_change(cur_proj)
