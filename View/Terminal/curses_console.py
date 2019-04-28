@@ -293,7 +293,7 @@ def login():
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
         if str(user_id) != '0':
             break
-        elif username.upper() == 'QUIT':
+        elif username.decode().upper() == 'QUIT':
             close_curses()
             exit()
     curses.noecho()
@@ -369,10 +369,10 @@ def proj_choice():
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
         choice = get_text(splitx*3-2)
-        if choice.upper() == 'QUIT':
+        if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
-        if choice not in p_list:
+        if choice.decode() not in p_list:
             continue
         cur_proj = str(choice.decode())
     curses.noecho()
