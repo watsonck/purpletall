@@ -273,16 +273,22 @@ def draw_kanban(max_x,max_y,split,start = 0):
     sname = " "
     last = -1
     lname = " "
-    for i in range(len(sects)):
-        if i == 0:
-            first = sects[i][0]
-            fname = sects[i][1]
-        elif i == 1:
-            second = sects[i][0]
-            sname = sects[i][1]
-        elif i == 2:
-            last = sects[i][0]
-            lname = sects[i][1]
+    if len(sects) >= 3:
+        first = sects[i][0]
+        fname = sects[i][1]
+        second = sects[i][0]
+        sname = sects[i][1]
+        last = sects[i][0]
+        lname = sects[i][1]
+    elif len(sects) == 2:
+        first = sects[i][0]
+        fname = sects[i][1]
+        second = sects[i][0]
+        sname = sects[i][1]
+    elif len(sect) == 1:
+        first = sects[i][0]
+        fname = sects[i][1]
+       
 
     screen.addstr(41,2,str(len(sects)),curses.A_REVERSE)
     screen.addstr(42,2,sname,curses.A_REVERSE)
