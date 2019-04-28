@@ -177,8 +177,8 @@ def get_s_names():
             break
         elif int(sect_names[i][0]) < s_start or s_start == -1:
             s_start = int(sect_names[i][0]) 
-    if s_start_found == False:
-        sect_start = s_start
+    #if s_start_found == False:
+        #sect_start = s_start
     for i in range(len(sect_names)):
         if int(sect_names[i][0]) == sect_start:
             first = sect_names[i][0]
@@ -565,7 +565,6 @@ def kanban():
                     sect_start = sect_start+1
                     screen.addstr(24,4,str(sect_start),curses.color_pair(1))
             get_text(15)
-
         elif parsed[0].upper() == 'PLS':
             proj_list()
         else:
