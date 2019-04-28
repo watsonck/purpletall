@@ -272,11 +272,11 @@ def draw_kanban(max_x,max_y,split,start = 0):
 
     sects = get_s_names()
     first = -1
-    fname = -1
+    fname = " "
     second = -1
-    sname = -1
+    sname = " "
     last = -1
-    lname = -1
+    lname = " "
     for i in range(len(sects)):
         if i == 0:
             first = sects[i][0]
@@ -292,7 +292,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
-        
+
     max_p = 0
     if len(sect_names)%3 == 0:
         max_p = int(len(sect_names)/3)
@@ -419,8 +419,6 @@ def proj_list(called_from = 0):
 
 def create_proj():
     return
-def delete_proj():
-    return
 
 def proj_choice():
     global screen
@@ -443,7 +441,12 @@ def proj_choice():
             create_proj()
             return
         elif choice.decode() == 'DPROJ':
-            delete_proj()
+            parse = choice.decode().split()
+            if len(parse) < 2:
+                continue
+            requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
+            curses.noecho()
+            screen.clear()
             return
     curses.noecho()
     screen.clear()
