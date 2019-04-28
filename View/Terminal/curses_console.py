@@ -475,12 +475,11 @@ def proj_choice():
             return
         elif choice.decode().upper() == 'DPROJ':
             parse = choice.decode().split()
-            if len(parse) < 2:
-                continue
-            requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
-            curses.noecho()
-            screen.clear()
-            return
+            if len(parse) >= 2:
+                requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
+                curses.noecho()
+                screen.clear()
+                return
     curses.noecho()
     screen.clear()
     proj_change(cur_proj)
