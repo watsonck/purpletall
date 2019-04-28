@@ -34,3 +34,17 @@ INFO: Displays more info about Task
 	INFO 1
 	INFO <task_id>
 QUIT : Exits the kanaban loop 
+
+
+COMMANDS NOT YET IMPLEMENTED:
+SCOL: Swap 2 column positions on board
+	SCOL todo done
+	SCOL <col_name1> <col_name2>
+	http://purpletall.cs.longwood.edu:5000/1/swap?stage1={todo}&stage2={Done}
+PING: Send an email to a user
+	PING haddockcl This is a ping
+	PING <recipient> <message>
+	http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}
+LOG: Log has been modified to also return a log of movements done to an item. View for info needs to be updated to display log
+
+

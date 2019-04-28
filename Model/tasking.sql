@@ -22,7 +22,6 @@ CREATE TABLE Users (userId		SERIAL PRIMARY KEY,
   		    fname		TEXT,
 		    lname		TEXT,
 		    email		TEXT,
-		    gitname		TEXT,
 			lab_user	TEXT
     );
 

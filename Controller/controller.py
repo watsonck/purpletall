@@ -90,6 +90,11 @@ def pull_tasks(project):
 #Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
 @app.route("/<int:project>/add", methods=["GET", "POST"])
 def add(project):
+	try:
+		gitpull()
+	except:
+		pass
+
 	source = pick_source(request.method)
 	name = source.get('name','N/A').replace('{','').replace('}','')
 	desc = source.get('desc','N/A').replace('{','').replace('}','')
@@ -117,6 +122,10 @@ def add(project):
 @app.route("/<int:project>/move", methods=["GET", "POST"])
 def move(project):
 	#TODO ADD/REMOVE COLUMNS AS NEEDED
+	try:
+		gitpull()
+	except:
+		pass
 	source = pick_source(request.method)
 	taskid = source.get('id',0)
 	stage = source.get('stage','N/A').replace('{','').replace('}','')
@@ -135,6 +144,10 @@ def move(project):
 #http://purpletall.cs.longwood.edu:5000/1/remove?id=1
 @app.route("/<int:project>/remove", methods=["GET", "POST"])
 def remove(project):
+	try:
+		gitpull()
+	except:
+		pass
 	source = pick_source(request.method)
 	taskid = source.get('id','-1')
 	db = get_db()
@@ -148,6 +161,10 @@ def remove(project):
 #http://purpletall.cs.longwood.edu:5000/1/split?id=1
 @app.route("/<int:project>/split", methods=["GET", "POST"])
 def split(project):
+	try:
+		gitpull()
+	except:
+		pass
 	db = get_db()
 	taskid = request.args.get('id',0)
 	user = request.args.get('user','0')
@@ -201,8 +218,7 @@ def info(project):
 	if request.method=="POST":
 		current = source.get("curUser","michael messed up");
 		return render_template("info.html", dump=json_dict)
-	#TODO RETURN LOG AS WELL
-	pullLog(taskid,project)
+	json_dict['log'] = pullLog(taskid,project)
 	return json.dumps(json_dict)
 
 #Example url
@@ -212,7 +228,7 @@ def delcol(project):
 	stagename = request.args.get('name','').replace('{','').replace('}','')
 	db = get_db()
 	try:
-		db.execute("DELETE FROM stages CASCADE WHERE projid=%s AND stagename='%s';" % (project,stagename))
+		db.execute("DELETE FROM stages WHERE projid=%s AND stagename ILIKE '%s';" % (project,stagename))
 		g.db.commit()
 		return pull_tasks(project)
 	except:
@@ -239,10 +255,10 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	g.db.commit()
 	
 
+@app.route("/log/<string:project>/<string:taskid>",methods = ["GET"])
 def pullLog(taskid,project):
-	#TODO test
 	db = get_db()
-	db.execute("SELECT contributor,time,comments FROM logs WHERE taskid=%s AND projid=%s" % (str(taskid),str(project)))
+	db.execute("SELECT lab_user AS contributor, TO_CHAR(time, 'dd-MM-yyyy HH24:MI:SS') AS time,comments FROM logs JOIN users ON users.userid=logs.contributor WHERE taskid=%s AND projid=%s" % (str(taskid),str(project)))
 	log = db.fetchall()
 	return str(log)
 
@@ -341,8 +357,12 @@ You just got a{2} ping from {3}.{4}
 	server.ehlo()
 	server.login("purpletall@outlook.com", "ProjectManager8")
 
-	server.sendmail('purpletall@outlook.com', rcvr, message)
+	try:
+		server.sendmail('purpletall@outlook.com', rcvr, message)
+	except:
+		return 'Error'
 	server.quit()
+	return ''
 
 
 #Example url
@@ -370,7 +390,7 @@ def addcol(project):
 	db = get_db()
 	db.execute("SELECT MAX(stageorder)+1 AS order FROM stages WHERE projid=%s;" % (project))
 
-	stagename = request.args.get('name','').replace('{','').replace('}','')
+	stagename = upper(request.args.get('name','').replace('{','').replace('}',''))
 	row = db.fetchone()
 	stageorder = 0
 	if row is not None:
@@ -385,15 +405,70 @@ def addcol(project):
 
 def addproj():
 	#TODO ADD PROJECT
-	return ''
+	return projlist()
 
+def delproj():
+	#TODO DELETE PROJECT
+	return projlist()
+
+#Example url
+#http://purpletall.cs.longwood.edu:5000/user?fname={Cameron}&lname={Haddock}&uname={haddockcl}&email={cameron.haddock%40live.longwood.edu}
+@app.route("/user",methods=["GET"])
 def adduser():
 	#TODO ADD USER
-	return ''
 
-def swpcol():
-	#TODO SWAP COLUMNS
-	return ''
+	db = get_db()
+	source = pick_source(request.method)
+	fname = source.get('fname','').replace('{','').replace('}','')
+	lname = source.get('lname','').replace('{','').replace('}','')
+	user = source.get('uname','').replace('{','').replace('}','')
+	email = source.get('email','').replace('{','').replace('}','').replace('%40','@')
+
+	db.execute("SELECT count(lab_user) AS count FROM users WHERE lab_user='%s'" % (user))
+	if db.fetchone()['count'] != 0:
+		return 'Error'
+
+	db.execute("INSERT INTO users(fname,lname,lab_user,email) VALUES ('%s','%s','%s','%s');" % (fname,lname,user,email))
+	g.db.commit()
+	db.execute("SELECT MAX(userid) AS userid FROM users;")
+	row = db.fetchone()
+	if row is None:
+		return 'Error'
+	userid = row['userid']
+	return str(userid)
+
+def username():
+	return ''	
+
+
+#Example url
+#http://purpletall.cs.longwood.edu:5000/1/swap?stage1={todo}&stage2={Done}
+@app.route("/<string:project>/swap", methods=["GET","POST"])
+def swpcol(project):
+	source = pick_source(request.method)
+	stage1 = source.get('stage1','').replace('{','').replace('}','')
+	stage2 = source.get('stage2','').replace('{','').replace('}','')
+	
+	db = get_db()
+	db.execute("SELECT stageorder FROM stages WHERE projid=%s AND stagename ILIKE '%s'" % (project,stage1))
+	row=db.fetchone()
+	if row is None:
+		return 'Error'
+	order1 = row['stageorder']
+
+	db.execute("SELECT stageorder FROM stages WHERE projid=%s AND stagename ILIKE '%s'" % (project,stage2))
+	row = db.fetchone()
+	if row is None:
+		return 'Error'
+	order2 = row['stageorder']
+
+	db.execute("UPDATE stages SET stageorder=%s WHERE projid=%s AND stagename ILIKE '%s'" % (order1,project,stage2))
+	g.db.commit()
+
+	db.execute("UPDATE stages SET stageorder=%s WHERE projid=%s AND stagename ILIKE '%s'" % (order2,project,stage1))
+	g.db.commit()
+
+	return pull_tasks(project)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/projlist
