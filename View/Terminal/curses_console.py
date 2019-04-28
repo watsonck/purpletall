@@ -178,17 +178,16 @@ def kanban_print(split, max_tasks, limit):
     s_name = "-1"
     last = -1
     l_name = "-1"
-    while True:
-        for i in range(len(sect_names)):
-            if int(sect_names[i][0]) == sect_start:
-                first = int(sect_names[i][0])
-                f_name = sect_names[i][1]
-            elif int(sect_names[i][0]) == sect_start+1:
-                second = int(sect_names[i][0])
-                s_name = sect_names[i][1]
-            elif int(sect_names[i][0]) == sect_start+2:
-                last = int(sect_names[i][0])
-                l_name = sect_names[i][1]
+    for i in range(len(sect_names)):
+        if int(sect_names[i][0]) == sect_start:
+            first = int(sect_names[i][0])
+            f_name = sect_names[i][1]
+        elif int(sect_names[i][0]) == sect_start+1:
+            second = int(sect_names[i][0])
+            s_name = sect_names[i][1]
+        elif int(sect_names[i][0]) == sect_start+2:
+            last = int(sect_names[i][0])
+            l_name = sect_names[i][1]
 
     max_y = screen.getmaxyx()[0]
     if f_name == "-1":
@@ -337,21 +336,21 @@ def create_user():
     screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall Usercreation", curses.A_REVERSE)
     screen.addstr(splity+2, splitx+1, "Please enter your information", curses.A_REVERSE)
     screen.addstr(splity+4, splitx+1, "First Name:", curses.A_REVERSE)
-    screen.addstr(splity+4, splitx+11, "                ")
+    screen.addstr(splity+4, splitx+12, "                ")
     screen.addstr(splity+6, splitx+1, "Last Name:", curses.A_REVERSE)
-    screen.addstr(splity+6, splitx+11, "                ")
+    screen.addstr(splity+6, splitx+12, "                ")
     screen.addstr(splity+8, splitx+1, "Username:", curses.A_REVERSE)
-    screen.addstr(splity+8, splitx+9, "                ")
+    screen.addstr(splity+8, splitx+10, "                ")
     screen.addstr(splity+10, splitx+1, "Email:", curses.A_REVERSE)
-    screen.addstr(splity+10, splitx+6, "                                  ")
+    screen.addstr(splity+10, splitx+7, "                                  ")
 
 
     
     curses.echo()
-    fname = screen.getstr(splity+4,splitx+11,15)
-    lname = screen.getstr(splity+6,splitx+11,15)
-    username = screen.getstr(splity+8,splitx+9,15)
-    email = screen.getstr(splity+10,splitx+6,34)
+    fname = screen.getstr(splity+4,splitx+12,15)
+    lname = screen.getstr(splity+6,splitx+12,15)
+    username = screen.getstr(splity+8,splitx+10,15)
+    email = screen.getstr(splity+10,splitx+7,34)
     requests.get("http://purpletall.cs.longwood.edu:5000/user?fname={"+fname.decode()+"}&lname={"+lname.decode()+"}&uname={"+username.decode()+"}&email={"+email.decode()+"}")
     curses.noecho()
     screen.clear()
