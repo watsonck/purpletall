@@ -183,7 +183,7 @@ def get_s_names():
             fname = sect_names[i][1]
         elif int(sect_names[i][0]) == sect_start+1:
             second = sect_names[i][0]
-            snmae = sect_names[i][1]
+            sname = sect_names[i][1]
         elif int(sect_names[i][0]) == sect_start+2:
             last = sect_names[i][0]
             lname = sect_names[i][1]
