@@ -80,6 +80,7 @@ def pull_tasks(project):
 			'user': row['lab_user'],
 			'is_bug':row['bugged']
 		})
+	close_db('')
 	if request.method=="POST":
 		current = request.form.get("curUser","michael messed up");
 		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks, currentUser=current)
@@ -119,7 +120,7 @@ def add(project):
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/move?id=1&stage={complete}
-@app.route("/<int:project>/move", methods=["GET", "POST"])
+@app.route("/<string:project>/move", methods=["GET", "POST"])
 def move(project):
 	#TODO ADD/REMOVE COLUMNS AS NEEDED
 	try:
@@ -132,9 +133,9 @@ def move(project):
 	user = source.get('user','0')
 
 	db = get_db()
-	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%d AND stagename ILIKE '%s';"% (project, stage))
+	db.execute("SELECT count(*) AS count FROM stages WHERE projid=%s AND stagename ILIKE '%s'"% (project, stage))
 	if db.fetchone()['count'] > 0:
-		db.execute("UPDATE task SET stage='%s',contributor=%s WHERE id=%s AND projid=%d;" % (stage, user, taskid, project))
+		db.execute("UPDATE task SET stage='%s',contributor=%s WHERE id=%s AND projid=%s" % (stage, user, taskid, project))
 		g.db.commit()
 
 	updateLog(user,taskid,project,'Move',False,'Moved to stage: ' + str(stage))
@@ -151,9 +152,9 @@ def remove(project):
 	source = pick_source(request.method)
 	taskid = source.get('id','-1')
 	db = get_db()
-	db.execute("DELETE FROM task WHERE id = '%d' AND projid = '%d'" % (int(taskid),project))
-	g.db.commit()
 	db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s" % (str(taskid), project))
+	g.db.commit()
+	db.execute("DELETE FROM task WHERE id = '%d' AND projid = '%d'" % (int(taskid),project))
 	g.db.commit()
 	return pull_tasks(project)
 
@@ -212,6 +213,8 @@ def info(project):
 	db = get_db()
 	db.execute("SELECT name,id as task_id,projid as project_id,description,stage,starttime as start_time,exptcomptime,actcomptime,contributor as recent_contributor,bugged AS is_bugged FROM task WHERE id = %s and projid=%d" % (taskid,project))
 	row = db.fetchone()
+	if row is None:
+		return 'Error'
 	json_dict = {}
 	for key in row:
 		json_dict[key] = str(row[key])
@@ -390,7 +393,7 @@ def addcol(project):
 	db = get_db()
 	db.execute("SELECT MAX(stageorder)+1 AS order FROM stages WHERE projid=%s;" % (project))
 
-	stagename = upper(request.args.get('name','').replace('{','').replace('}',''))
+	stagename = request.args.get('name','').replace('{','').replace('}','').upper()
 	row = db.fetchone()
 	stageorder = 0
 	if row is not None:
@@ -403,20 +406,47 @@ def addcol(project):
 	except:
 		return 'Error'
 
+#Example url
+#http://purpletall.cs.longwood.edu:5000/newproj?name={Project%20Manager}&desc={This%20is%20a%20project%20management%20system}
+@app.route("/newproj",methods=['GET'])
 def addproj():
-	#TODO ADD PROJECT
+	db = get_db()
+	source = pick_source(request.method)
+	name = source.get('name','').replace('{','').replace('}','')
+	desc = source.get('desc','').replace('{','').replace('}','')
+	db.execute("INSERT INTO projects(name,description) VALUES ('%s','%s')" % (name,desc))
+	g.db.commit()
+	db.execute("SELECT Max(projid) AS max FROM projects")
+	projid = db.fetchone()['max']
+
+	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'TODO',0)" % projid)
+	g.db.commit()
+	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'IN PROGRESS',1)" % projid)
+	g.db.commit()
+	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'DONE',2)" % projid)
+	g.db.commit()
 	return projlist()
 
+#Example url
+#http://purpletall.cs.longwood.edu:5000/delproj?id=3
+@app.route("/delproj",methods=['GET'])
 def delproj():
-	#TODO DELETE PROJECT
+	source = pick_source(request.method)
+	projid = source.get('id',0)
+	if projid is 0:
+		return projlist()
+	try:
+		db = get_db()
+		db.execute("DELETE FROM projects WHERE projid=%s" % (projid))
+		g.db.commit()
+	except:	
+		return projlist()
 	return projlist()
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/user?fname={Cameron}&lname={Haddock}&uname={haddockcl}&email={cameron.haddock%40live.longwood.edu}
 @app.route("/user",methods=["GET"])
 def adduser():
-	#TODO ADD USER
-
 	db = get_db()
 	source = pick_source(request.method)
 	fname = source.get('fname','').replace('{','').replace('}','')
@@ -437,9 +467,10 @@ def adduser():
 	userid = row['userid']
 	return str(userid)
 
-def username():
-	return ''	
 
+def username():
+	#TODO change username
+	return ''	
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/swap?stage1={todo}&stage2={Done}
@@ -489,6 +520,7 @@ def projlist():
 				'name': row['name'],
 				'description': row['description']
 			})
+		close_db('')
 		if request.method == "GET":
 			return json.dumps(data) 
 		else:

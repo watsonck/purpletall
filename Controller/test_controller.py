@@ -1,7 +1,7 @@
 import requests,json
 
 #print(json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/login?user=TheBiggerFish').text))
-#print(requests.get('http://purpletall.cs.longwood.edu:5000/1/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
+#print(requests.get('http://purpletall.cs.longwood.edu:5000/3/add?name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}').text)
 #print(requests.get('http://purpletall.cs.longwood.edu:5000/login?user={TheBiggerFish}').text)
 #print(requests.get('http://purpletall.cs.longwood.edu:5000/projlist').text)
 #print(requests.get('http://purpletall.cs.longwood.edu:5000/2/addcol?name={TEST2}').text)
@@ -11,7 +11,10 @@ import requests,json
 #print(requests.get('http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}').text)
 #print(requests.get('http://purpletall.cs.longwood.edu:5000/1/swap?stage1={todo}&stage2={Done}').text)
 #print(requests.get('http://purpletall.cs.longwood.edu:5000/log/1/13').text)
-print(requests.get('http://purpletall.cs.longwood.edu:5000/user?fname={Student}&lname={McStudentpants}&uname={imastudent}&email={student.mcstudentpants%40live.longwood.edu}').text)
+#print(requests.get('http://purpletall.cs.longwood.edu:5000/user?fname={Student}&lname={McStudentpants}&uname={imastudent}&email={student.mcstudentpants%40live.longwood.edu}').text)
+#print(requests.get('http://purpletall.cs.longwood.edu:5000/newproj?name={Project%20Manager}&desc={This%20is%20a%20project%20management%20system}').text)
+print(requests.get('http://purpletall.cs.longwood.edu:5000/delproj?id=3').text)
+print(requests.get('http://purpletall.cs.longwood.edu:5000/delproj?id=4').text)
 #obj = json.loads(json_string)
 #print(obj)
 #print(obj['metadata']['stages']['1'])

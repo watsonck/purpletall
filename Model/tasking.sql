@@ -30,6 +30,7 @@ CREATE TABLE Logs  (taskId		INTEGER,
   		    contributor		INTEGER REFERENCES Users (userId),
 		    action		TEXT,
 		    time		TIMESTAMP,
+			git			BOOLEAN,
 		    comments		TEXT,
 		    PRIMARY KEY(taskId, time)
     );
@@ -45,18 +46,18 @@ CREATE TABLE Stages (projId		INTEGER,
 		     PRIMARY KEY(projId, stageName)
     );
 
-ALTER TABLE Logs ADD FOREIGN KEY (taskId, projId) REFERENCES Task(id, projId);
-ALTER TABLE Stages ADD FOREIGN KEY (projId) REFERENCES Projects(projId);
-ALTER TABLE Task ADD FOREIGN KEY (projId) REFERENCES Projects(projId);
-ALTER TABLE Task ADD FOREIGN KEY (contributor) REFERENCES Users(userId);
+ALTER TABLE Logs ADD FOREIGN KEY (taskId, projId) REFERENCES Task(id, projId) ON DELETE CASCADE;
+ALTER TABLE Stages ADD FOREIGN KEY (projId) REFERENCES Projects(projId) ON DELETE CASCADE;
+ALTER TABLE Task ADD FOREIGN KEY (projId) REFERENCES Projects(projId) ON DELETE CASCADE;
+ALTER TABLE Task ADD FOREIGN KEY (contributor) REFERENCES Users(userId) ON DELETE CASCADE;
 
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Colin', 'Watson', 'colin.watson777@yahoo.com', 'watsonck', 'watsonck');
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Cameron', 'Haddock', 'cameron.haddock@live.longwood.edu', 'TheBiggerFish','haddockcl');
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Ryan', 'White', 'ryan.white@live.longwood.edu','whitebryan','whitebryan');
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Micheal', 'Montgomery', 'soul4hdwn@gmail', 'soul4hdwn','soul4hdwn');
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Brendan', 'Speed', 'brendan.speed@live.longwood.edu','Iridium12','Iridium12');
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Shyheim', 'Williams', 'shyheim.williams@live.longwood.edu', 'steelairship','steelairship');
-INSERT INTO Users (fname, lname, email, gitname, lab_user) VALUES ('Alex', 'Sedgwick', 'alexandra.sedgwick@live.longwood.edu', 'Xefros','sedgwal');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Colin', 'Watson', 'colin.watson777@yahoo.com', 'watsonck');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Cameron', 'Haddock', 'cameron.haddock@live.longwood.edu','haddockcl');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Ryan', 'White', 'ryan.white@live.longwood.edu','whitebryan');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Micheal', 'Montgomery', 'soul4hdwn@gmail','soul4hdwn');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Brendan', 'Speed', 'brendan.speed@live.longwood.edu','Iridium12');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Shyheim', 'Williams', 'shyheim.williams@live.longwood.edu', 'steelairship');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Alex', 'Sedgwick', 'alexandra.sedgwick@live.longwood.edu', 'sedgwal');
 INSERT INTO Users (userid, fname, lname, email, lab_user) VALUES (0,'purple','tall','purpletall@outlook.com','Default');
 
 INSERT INTO Projects(name, description) VALUES ('Testing Project','a project made to test program');
