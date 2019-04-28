@@ -240,7 +240,8 @@ def draw_kanban(max_x,max_y,split,start = 0):
     s_start_found = False
     for i in range(len(sect_names)):
         test = str(sect_names[i][0]) + "  " + str(sect_names[i][1]) + "  "
-        screen.addstr(2+i,2,test,curses.A_REVERSE)
+        screen.addstr(2+i+1,2,test,curses.A_REVERSE)
+        screen.refresh()
     exit()
     for i in range(len(sect_names)):
         if sect_start == sect_names[i][0]:
