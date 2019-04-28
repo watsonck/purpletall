@@ -196,7 +196,9 @@ def get_s_names():
             if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
                 last = int(sect_names[i][0])
 
-    result.append([first,fname],[second,sname],[last,lname])
+    result.append([first,fname])
+    result.append([second,sname])
+    result.append([last,lname])
     return result
 
 
@@ -208,9 +210,17 @@ def kanban_print(split, max_tasks, limit):
     global sect_start
 
     sects = get_s_names()
-    f_name = sects[0][1]
-    s_name = sects[1][1]
-    l_name = sects[2][1]
+    f_name = -1
+    s_name = -1
+    l_name = -1
+    for i in range(len(sects)):
+        if i == 0:
+            f_name = sects[i][1]
+        elif i == 1:
+            s_name = sects[i][1]
+        elif i == 2:
+            l_name = sects[i][1]
+    screen.addstr(40,2,s_name,curses.A_REVERSE)
     cur_tasks = 0
     cur_board = 0
     for key1, board in boards.items():
@@ -254,37 +264,30 @@ def draw_kanban(max_x,max_y,split,start = 0):
     global sect_names
     global sect_start
 
+
     sects = get_s_names()
-    first = sects[0][0]
-    fname = sects[0][1]
-    second = sects[1][0]
-    sname = sects[1][1]
-    last = sects[2][0]
-    lname = sects[2][1]
+    first = -1
+    fname = " "
+    second = -1
+    sname = " "
+    last = -1
+    lname = " "
+    for i in range(len(sects)):
+        if i == 0:
+            first = sects[i][0]
+            fname = sects[i][1]
+        elif i == 1:
+            second = sects[i][0]
+            sname = sects[i][1]
+        elif i == 2:
+            last = sects[i][0]
+            lname = sects[i][1]
 
-    if len(sect_names) < 1:
-        screen.addstr(1,int((split/2))-5, "        ")
-        screen.addstr(1,int((split/2)*3)-5,"      ")
-        screen.addstr(1,int((split/2)*5)-5, "     ")
-        return    
+    screen.addstr(40,2,sname,curses.A_REVERSE)
     screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
-    #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
-    #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
-
-    if len(sect_names) < 2:
-        screen.addstr(1,int((split/2)*3)-5,"      ")
-        screen.addstr(1,int((split/2)*5)-5, "     ")
-        return
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
-    #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
-    #screen.addstr(max_y-1, int((split/2)*3)-5, page, curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
 
-    if len(sect_names) < 3:
-        screen.addstr(1,int((split/2)*5)-5, "     ")
-        return
-    screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)    
-    #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
-    #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
     max_p = 0
     if len(sect_names)%3 == 0:
         max_p = int(len(sect_names)/3)
@@ -409,6 +412,9 @@ def proj_list(called_from = 0):
     elif called_from == 1:
         return p_list
 
+def create_proj():
+    return
+
 def proj_choice():
     global screen
     size = screen.getmaxyx()
@@ -427,6 +433,16 @@ def proj_choice():
             cur_proj = str(choice.decode())
             break
         elif choice.decode() == 'CPROJ':
+            create_proj()
+            return
+        elif choice.decode() == 'DPROJ':
+            parse = choice.decode().split()
+            if len(parse) < 2:
+                continue
+            requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
+            curses.noecho()
+            screen.clear()
+            return
     curses.noecho()
     screen.clear()
     proj_change(cur_proj)

@@ -60,14 +60,16 @@ function drop(ev){
 	{% for key, value in data.metadata.stages.items() %}
 		<div class=stage>
 			<p class = title>{{ value }} </p>
-			<ul>
-				<li> <div id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></div></li>
+			<ul><div id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></div>
+				<li> <div id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></div><p>test</p></li>
+				<li>
 				{% for task in tasklist %}
 					{% if task.stage.lower() == value.lower() %}
-						<li><div id={{task.id}} ondrop="drop(event)"
-						ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event)">
+						<li><div id={{task.id}} ondrop="drop(event)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event)"></div>
 							{{ task.id }}, {{ task.name }} <br>
 							{{ task.lab_user }}
+						</li>
+				</li>
 		<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
 			<input type="hidden" name="id" value={{ task.id }} />
 			<input type="submit" value="del" />
