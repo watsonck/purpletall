@@ -246,15 +246,23 @@ def draw_kanban(max_x,max_y,split,start = 0):
         elif int(sect_names[i][0]) == sect_start+2:
             last = sect_names[i][1]
 
-    
+    if sect_names < 1:
+        blank(3,split,max_y)
+        return    
     screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
     #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
 
+    if sect_names < 2:
+        blank(2,split, max_y)
+        return
     screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*3)-5, page, curses.A_REVERSE)
 
+    if sect_names < 3:
+        blank(1,split, max_y)
+        return
     screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
@@ -266,7 +274,17 @@ def draw_kanban(max_x,max_y,split,start = 0):
     pages = 'Sect PGS: ' + str(sect_start+1) + '/' + str(max_p)
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
-
+def blank(n_cols, split_X, max_y):
+    for y in range(max_y):
+        if n_cols == 3:
+            for x in range(0, split_X*3-1):
+                screen.addstr(y,x," ",curses.color_pair(2))
+        elif n_cols == 2:
+            for x in range(split_X,split_X*3-1):
+                screen.addstr(y,x," ",curses.color_pair(2))
+        elif n_cols == 1:
+            for x in range(split_X*2,split_X*3-1):
+                screen.addstr(y,x," ",curses.color_pair(2))
 
 def login():
     global username
@@ -296,6 +314,12 @@ def login():
         elif username.decode().upper() == 'QUIT':
             close_curses()
             exit()
+        elif username.decode().upper() == 'CREATE':
+            create_user()
+            user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+            break
+        else:
+            screen.addstr(splity-2, splitx, "INVALID USERNAME", curses.color_pair(1))
     curses.noecho()
     screen.clear()
 
@@ -316,7 +340,6 @@ def create_user():
     
     curses.echo()
     username = screen.getstr(splity+4,splitx+12,15)
-    #user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
     curses.noecho()
     screen.clear()
 
