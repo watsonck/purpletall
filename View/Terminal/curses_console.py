@@ -242,7 +242,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
         if sect_start == sect_names[i][0]:
             s_start_found = True
             break
-        elif int(sect_names[i][1) < s_start or s_start == -1:
+        elif int(sect_names[i][1]) < s_start or s_start == -1:
             s_start = int(sect_names[i][1]) 
     if s_start_found == False:
         sect_start = s_start
