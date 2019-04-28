@@ -65,9 +65,14 @@ def proj_change(proj_num = 1):
         return
     task = json.loads(task)
     cur_proj = proj_num
+    test = 0
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage].upper()])
+        tstr = str(stage) + "   " + str(task['metadata']['stages'][stage].upper())
+        screen.addstr(test,2,tstr,curses.A_REVERSE)
+        test = test+2
+    get_text(15)
     proc_resp(task)
 
 def more_info(url):
