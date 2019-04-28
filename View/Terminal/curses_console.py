@@ -473,6 +473,7 @@ def proj_choice():
             return
         elif parse[0] == 'DPROJ':
             if len(parse) >= 2:
+                screen.addstr(10,2,"TEST   ", curses.color_pair(1))
                 requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
                 curses.noecho()
                 screen.clear()
