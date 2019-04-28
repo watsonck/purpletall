@@ -192,7 +192,7 @@ def get_s_names():
             if int(sect_names[i][0]) > int(first) and second == -1 and int(sect_names[i][0]) != last:
                 second = int(sect_names[i][0])             
                 sname = sect_names[i][1]
-            elif if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
+            elif int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last :
                 second = int(sect_names[i][0])
                 sname = sect_names[i][1]
     if last == -1:
