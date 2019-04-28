@@ -195,7 +195,7 @@ def kanban_print(split, max_tasks, limit):
         blank(0,split, max_y)
     elif s_name == "-1":
         blank(split,split+split, max_y)
-    elif l_name == "-1"
+    elif l_name == "-1":
         blank(split+split,split+split+split, max_y)
 
     cur_tasks = 0
