@@ -276,8 +276,8 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
 def blank(start_x, end_x, max_y):
-    for y in range(max_y-2):
-        for x in range(start_x, end_x+1):
+    for y in range(2,max_y-2):
+        for x in range(start_x+1, end_x+1):
             screen.addstr(y,x," ",curses.A_REVERSE)
 
 def login():
