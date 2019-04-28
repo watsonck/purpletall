@@ -274,20 +274,20 @@ def draw_kanban(max_x,max_y,split,start = 0):
     last = -1
     lname = " "
     if len(sects) >= 3:
-        first = sects[i][0]
-        fname = sects[i][1]
-        second = sects[i][0]
-        sname = sects[i][1]
-        last = sects[i][0]
-        lname = sects[i][1]
+        first = sects[0][0]
+        fname = sects[0][1]
+        second = sects[1][0]
+        sname = sects[1][1]
+        last = sects[2][0]
+        lname = sects[2][1]
     elif len(sects) == 2:
-        first = sects[i][0]
-        fname = sects[i][1]
-        second = sects[i][0]
-        sname = sects[i][1]
-    elif len(sect) == 1:
-        first = sects[i][0]
-        fname = sects[i][1]
+        first = sects[0][0]
+        fname = sects[0][1]
+        second = sects[1][0]
+        sname = sects[1][1]
+    elif len(sects) == 1:
+        first = sects[0][0]
+        fname = sects[0][1]
        
 
     screen.addstr(41,2,str(len(sects)),curses.A_REVERSE)
