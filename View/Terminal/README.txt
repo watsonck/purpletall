@@ -29,8 +29,7 @@ DCOL: Delete column on kanban board
 	DCOL Crap
 	DCOL <col_name>
 PROJ: Changes projects
-	PROJ 1
-	PROJ <proj_id>
+	PROJ
 INFO: Displays more info about Task
 	INFO 1
 	INFO <task_id>
