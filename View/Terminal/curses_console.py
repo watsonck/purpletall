@@ -288,10 +288,16 @@ def draw_kanban(max_x,max_y,split,start = 0):
     elif len(sects) == 1:
         first = sects[0][0]
         fname = sects[0][1]
-       
+    test = 26
+    for s in sects:
+        tstr = s[0] + "  :  " + s[1]
+        screen.addstr(test,2,tstr, curses.A_REVERSE)
+        test = test + 2
+    get_text(15) 
 
     screen.addstr(41,2,str(len(sects)),curses.A_REVERSE)
     screen.addstr(42,2,sname,curses.A_REVERSE)
+    screen.addstr(44,2,lname,curses.A_REVERSE)
     screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
