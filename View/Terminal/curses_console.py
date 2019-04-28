@@ -236,6 +236,16 @@ def draw_kanban(max_x,max_y,split,start = 0):
     second = -1
     last = -1
 
+    s_start = -1
+    s_start_found = False
+    for i in range(len(sect_names)):
+        if sect_start == sect_names[i][0]:
+            s_start_found = True
+            break
+        elif int(sect_names[i][0]) < s_start or s_start == -1:
+            s_start = int(sect_names[i][0]) 
+    if s_start_found == False:
+        sect_start = s_start
     for i in range(len(sect_names)):
         if int(sect_names[i][0]) == sect_start:
             first = sect_names[i][1]
@@ -243,7 +253,14 @@ def draw_kanban(max_x,max_y,split,start = 0):
             second = sect_names[i][1]
         elif int(sect_names[i][0]) == sect_start+2:
             last = sect_names[i][1]
-
+    if second == -1:
+        for i in range(len(sect_names)):
+            if int(sect_names[i][0]) > int(sect_start) and int(sect_names[i][0]) != last:
+                second = int(sect_names[i][0])             
+    if last == -1:
+        for i in range(len(sect_names)):
+            if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
+                last = int(sect_names[i][0])
     if len(sect_names) < 1:
         screen.addstr(1,int((split/2))-5, "        ")
         screen.addstr(1,int((split/2)*3)-5,"      ")
