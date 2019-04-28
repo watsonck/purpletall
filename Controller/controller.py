@@ -17,7 +17,7 @@ app.config.update( dict(
 def connect_db():
 	db = psycopg2.connect(database=app.config["DATABASE"],
 	user=app.config["USERNAME"],password=app.config["PASSWORD"],
-	host="localhost", cursor_factory=psycopg2.extras.RealDictCursor)
+	host="purpletall.cs.longwood.edu", cursor_factory=psycopg2.extras.RealDictCursor)
 	return db
 
 def get_db():
@@ -47,6 +47,10 @@ def home():
 	return render_template("/login.html", title = "Login",loginUser = 0)
 		#might need to move file and rename path, jinja looks for templates
 
+@app.route("/addingauser", methods=["POST"])
+def web_add_user():
+	return render_template("/addUser.html")
+
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/LIST
 #Help: https://realpython.com/python-json/
@@ -65,9 +69,17 @@ def pull_tasks(project):
 	json_dict['metadata']['stagecount'] = stages
 	json_dict['metadata']['stages'] = {}
 			
-	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%s;"% (project))
-	for row in db.fetchall():
-		json_dict['metadata']['stages'][row['id']]= row['name']
+	db.execute("SELECT stageorder AS id,stagename AS name FROM stages WHERE projid=%s ORDER BY stageorder;"% (project))
+	rows = db.fetchall();
+	temp = []
+	if rows is None:
+		return ''
+	for row in rows:
+		temp.append(row['name']);
+	for i in range(0,len(temp)):
+		json_dict['metadata']['stages'][i] = temp[i]
+		print(i,temp[i])
+	
 
 	db.execute("SELECT id,task.name as name,lab_user,stage,bugged FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%s AND contributor=userid;"% (project))
 	tasks = db.fetchall()
@@ -81,6 +93,7 @@ def pull_tasks(project):
 			'is_bug':row['bugged']
 		})
 	close_db('')
+	print(json_dict)
 	if request.method=="POST":
 		current = request.form.get("curUser","michael messed up");
 		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks, currentUser=current)
@@ -167,8 +180,9 @@ def split(project):
 	except:
 		pass
 	db = get_db()
-	taskid = request.args.get('id',0)
-	user = request.args.get('user','0')
+	source = pick_source(request.method)
+	taskid = source.get('id',0)
+	user = source.get('user','0')
 	db.execute("SELECT name,description,stage,exptcomptime,actcomptime,lab_user FROM task,users WHERE id = %d AND projid=%d AND userid=contributor;" % (int(taskid),project))
 	row = db.fetchone() #should be a single disctionaly/map object list
 	if row is not None:
@@ -228,14 +242,14 @@ def info(project):
 #http://purpletall.cs.longwood.edu:5000/1/delcol?name={TEST}
 @app.route("/<string:project>/delcol", methods = ["GET","POST"])
 def delcol(project):
-	stagename = request.args.get('name','').replace('{','').replace('}','')
+	source = pick_source(request.method)
+	stagename = source.get('name','').replace('{','').replace('}','')
 	db = get_db()
-	try:
-		db.execute("DELETE FROM stages WHERE projid=%s AND stagename ILIKE '%s';" % (project,stagename))
-		g.db.commit()
-		return pull_tasks(project)
-	except:
-		return 'Error'
+	db.execute("DELETE FROM task WHERE projid=%s AND stage ILIKE '%s';" % (project,stagename))
+	g.db.commit()
+	db.execute("DELETE FROM stages WHERE projid=%s AND stagename ILIKE '%s';" % (project,stagename))
+	g.db.commit()
+	return pull_tasks(project)
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/2/rename?id=5&name={TESTING}
@@ -298,21 +312,24 @@ def gitpull():
 		for flag in item['flags']:
 			command = flag.replace('<','').replace('>','')[:4]
 			if command is 'ADD ':
-				args = flag.split(' ',5)
-				if len(args) is not 5:
+				args = flag.split(' ',6)
+				if len(args) is not 6:
 					continue;
-					
+				proj = args[1]
+				name = args[2];
+
 			elif command is 'MOVE':
+				args = flag.split(' ',4)
+				if len(args) is not 4:
+					continue;
+			elif command is 'REMV':
 				args = flag.split(' ',3)
 				if len(args) is not 3:
 					continue;
-			elif command is 'REMV':
-				args = flag.split(' ',2)
-				if len(args) is not 2:
-					continue;
+				id = args[1]
 			elif command is 'SPLT':
-				args = flag.split(' ',2)
-				if len(args) is not 2:
+				args = flag.split(' ',3)
+				if len(args) is not 3:
 					continue;
 			else:
 				continue;
@@ -330,8 +347,9 @@ def gitpull():
 #http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}
 @app.route("/ping", methods=["GET", "POST"])
 def ping():
-	user = request.args.get('user',0)
-	rcvr = request.args.get('rcvr',None)
+	source = pick_source(request.method)
+	user = source.get('user',0)
+	rcvr = source.get('rcvr',None)
 	if rcvr is None:
 		return 'Error'
 	else:
@@ -355,7 +373,7 @@ def ping():
 			return 'Error'
 		pinger = result2['fname'] + ' ' + result2['lname']
 
-	msg = request.args.get('msg','').replace('{','').replace('}','')
+	msg = source.get('msg','').replace('{','').replace('}','')
 	unk = ''
 	if msg == '':
 		unk = 'n empty'
@@ -412,7 +430,8 @@ def addcol(project):
 	db = get_db()
 	db.execute("SELECT MAX(stageorder)+1 AS order FROM stages WHERE projid=%s;" % (project))
 
-	stagename = request.args.get('name','').replace('{','').replace('}','').upper()
+	source = pick_source(request.method)
+	stagename = source.get('name','').replace('{','').replace('}','').upper()
 	row = db.fetchone()
 	stageorder = 0
 	if row is not None:
@@ -484,6 +503,8 @@ def adduser():
 	if row is None:
 		return 'Error'
 	userid = row['userid']
+	if request.method=="POST":
+		return home()
 	return str(userid)
 
 
