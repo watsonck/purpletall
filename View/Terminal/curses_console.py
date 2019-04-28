@@ -255,7 +255,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
             last = sect_names[i][1]
     if second == -1:
         for i in range(len(sect_names)):
-            if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
+            if int(sect_names[i][1]) > int(first) and int(sect_names[i][1]) != last:
                 second = int(sect_names[i][0])             
     if last == -1:
         for i in range(len(sect_names)):
