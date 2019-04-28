@@ -277,7 +277,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
 def blank(n_cols, split_X, max_y):
     for y in range(max_y):
         if n_cols == 3:
-            for x in range(0, split_X*3-1):
+            for x in range(split_X-split_X, split_X*3-1):
                 screen.addstr(y,x," ",curses.color_pair(2))
         elif n_cols == 2:
             for x in range(split_X,split_X*3-1):
@@ -329,9 +329,10 @@ def create_user():
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
+    screen.addstr(splity-2, splitx, "                 ")
     for y in range(splity,splity+splity):
         for x in range(splitx,splitx+splitx):
-            screen.addstr(y,x," ", curses.color_pair(2))
+            screen.addstr(y,x," ", curses.A_REVERSE)
             if y == splity or y == splity+splity-1:
                 screen.addstr(y,x, " ", curses.color_pair(2))
             elif x == splitx or x == splitx+splitx-1:
@@ -346,7 +347,7 @@ def create_user():
     screen.addstr(splity+8, splitx+1, "Username:", curses.A_REVERSE)
     screen.addstr(splity+8, splitx+9, "                ")
     screen.addstr(splity+10, splitx+1, "Email:", curses.A_REVERSE)
-    screen.addstr(splity+10, splitx+4, "                                  ")
+    screen.addstr(splity+10, splitx+6, "                                  ")
 
 
     
