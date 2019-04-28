@@ -66,7 +66,7 @@ class Test(unittest.TestCase):
         self.assertEqual(description, {'description': 'a project made to test program'})
 
     def test_add_and_del(self):
-        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug={true}").text
+        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug=true").text
         self.assertNotEqual(json.loads(resp), "ERROR")
         db = get_db()
         db.execute("SELECT id FROM Task WHERE name = 'unittest1' AND description = 'This is a unittest' AND exptCompTime = '2019-05-1' AND bugged = True")
@@ -87,18 +87,18 @@ class Test(unittest.TestCase):
         self.assertNotIn(taskid, ids)
 
     def test_move(self): 
-        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/move?id=1?stage={complete}").text
+        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/move?id=3&stage={start}").text
         self.assertNotEqual(json.loads(resp), "ERROR")
         db = get_db()
-        db.execute("SELECT id FROM task WHERE projid = 1 AND stage = 'complete'")
+        db.execute("SELECT id FROM task WHERE projid = 1 AND stage ILIKE 'start'")
         result = db.fetchone()
         resp = json.loads(resp)
-        stageName = none
+        stageName = ''
         for key1, stage in resp['stages'].items():
             for task in stage:
                 if task['name'] == 'unittest1' and task['is_bug'] == True:
                     taskid = task['id']
-        self.assertEqual(stage name, name['id'])
+        self.assertEqual(stageName, taskid)
 
 
 

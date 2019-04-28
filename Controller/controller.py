@@ -78,7 +78,6 @@ def pull_tasks(project):
 		temp.append(row['name']);
 	for i in range(0,len(temp)):
 		json_dict['metadata']['stages'][i] = temp[i]
-		print(i,temp[i])
 	
 
 	db.execute("SELECT id,task.name as name,lab_user,stage,bugged FROM task,projects,users WHERE task.projid = projects.projid AND projects.projid=%s AND contributor=userid;"% (project))
@@ -93,7 +92,6 @@ def pull_tasks(project):
 			'is_bug':row['bugged']
 		})
 	close_db('')
-	print(json_dict)
 	if request.method=="POST":
 		current = request.form.get("curUser","michael messed up");
 		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks, currentUser=current)
@@ -113,13 +111,16 @@ def add(project):
 	name = source.get('name','N/A').replace('{','').replace('}','')
 	desc = source.get('desc','N/A').replace('{','').replace('}','')
 	ect = source.get('time','N/A').replace('{','').replace('}','')
-	bug = source.get('bug',False).replace('{','').replace('}','')
+	bug = source.get('bug',False)
 	user = source.get('user','0')
 	start = time.asctime(time.localtime(time.time()))
 
 	db = get_db()
 	db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (project))
-	stage = db.fetchone()['stagename']
+	row = db.fetchone()
+	if row is None:
+		return 'Error'
+	stage = row['stagename']
 
 	db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,%s);" % (name,desc,start,ect,stage,project,bug,user))
 	g.db.commit()
@@ -268,6 +269,12 @@ def rename(project):
 def updateLog(userID,taskID,projID,action,isGit,comments):
 	logtime = time.asctime(time.localtime(time.time()))
 	db = get_db()
+	db.execute("SELECT count(*) AS count FROM task WHERE id=%s AND projid=%s" % (taskID,projID))
+	row = db.fetchone()
+	if row is None:
+		return
+	if row['count'] == 0:
+		return
 	db.execute("INSERT INTO logs(taskid,projid,contributor,action,time,git,comments) VALUES (%s,%s,%s,'%s','%s',%s,'%s');" % (str(taskID),str(projID),str(userID),str(action),str(logtime),str(isGit),str(comments)))
 	g.db.commit()
 	
@@ -310,37 +317,59 @@ def gitpull():
 			user = result['userid']
 		item['contributor'] = user
 		for flag in item['flags']:
-			command = flag.replace('<','').replace('>','')[:4]
-			if command is 'ADD ':
-				args = flag.split(' ',6)
-				if len(args) is not 6:
-					continue;
-				proj = args[1]
-				name = args[2];
+			try:
+				db = get_db()
+				command = flag.replace('<','').replace('>','')[:4]
+				if command is 'ADD ':
+					args = flag.split(' ',6)
+					if len(args) is not 6:
+						continue;
+					proj = args[1]
+					name = args[2]
+					time = args[3]
+					bugs = args[4]
+					desc = args[5]
+					strt = time.asctime(time.localtime(time.time()))
 
-			elif command is 'MOVE':
-				args = flag.split(' ',4)
-				if len(args) is not 4:
+					db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (proj))
+					row = db.fetchone()
+					if row is None:
+						continue
+					stage = row['stagename']
+					db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,0);" % (name,desc,strt,time,stage,proj,bugs))
+					g.db.commit()
+					db.execute("SELECT MAX(id) AS taskid FROM task;")
+					row = db.fetchone()
+					if row is not None:
+						updateLog(0,row['taskid'],proj,'Add',True,'Created in stage: ' + stage)
+				elif command is 'MOVE':
+					args = flag.split(' ',4)
+					if len(args) is not 4:
+						continue;
+					proj = args[1]
+					task = args[2]
+					clmn = args[3]
+					db.execute("SELECT count(*) AS count FROM stages WHERE projid=%s AND stagename ILIKE '%s'"% (proj, clmn))
+					if db.fetchone()['count'] > 0:
+						db.execute("UPDATE task SET stage='%s',contributor=0 WHERE id=%s AND projid=%s" % (clmn, task, proj))
+						g.db.commit()
+
+					updateLog(0,task,proj,'Move',True,'Moved to stage: ' + str(clmn))
+				elif command is 'REMV':
+					args = flag.split(' ',3)
+					if len(args) is not 3:
+						continue;
+					proj = args[1]
+					task = args[2]
+				else:
 					continue;
-			elif command is 'REMV':
-				args = flag.split(' ',3)
-				if len(args) is not 3:
-					continue;
-				id = args[1]
-			elif command is 'SPLT':
-				args = flag.split(' ',3)
-				if len(args) is not 3:
-					continue;
-			else:
-				continue;
+			except:
+				pass
 
 
 			#TODO COMMANDS
 			#TODO UPDATE LOG
 
-		
-
-	print(data)
 	return str(data)
 
 #Example url
@@ -388,8 +417,6 @@ You just got a{2} ping from {3}.{4}
 """.format(getter,rcvr,unk,pinger,msg)
 	
 	rcvr = [rcvr]
-	print(rcvr)
-	print(message)
 	server = smtplib.SMTP('smtp.office365.com', 587)
 	server.connect('smtp.office365.com', 587)
 	server.ehlo()
