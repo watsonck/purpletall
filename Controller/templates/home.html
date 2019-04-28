@@ -20,18 +20,42 @@ function drop(ev){
 <h1>Kanban Board</h1>
 <div class=home> <!--css flow this by row-->
 	<div class=sidebar>
-		<form id=add method="POST" action="/{{data.metadata.project}}/add">
-			task name: <input type="text" name="name" />
-			description: <input type="text" name="desc" />
-			expected complete: <input type="datetime-local" name="time" />
-			is it a bug? <input type="checkbox" name="bug" />
-			<input type="hidden" name="user" value={{ currentUser }} />
-			<input type="hidden" name="proj" value={{data.metadata.project}} />
-			<input type="submit" value="Add" />
-		</form>
-		<!--stuff like add, remove, split goes here.  buttons likely and some text-->
-	</div><br/>
-	<div id="main">
+		<div if=add>
+			<form method="POST" action="/{{data.metadata.project}}/add">
+				task name: <input type="text" name="name" />
+				description: <input type="text" name="desc" />
+				expected complete: <input type="datetime-local" name="time" />
+				is it a bug? <input type="checkbox" name="bug" />
+				<input type="hidden" name="user" value={{ currentUser }} />
+				<input type="hidden" name="proj" value={{data.metadata.project}} />
+				<input type="submit" value="Add" />
+			</form>
+		</div>
+		<br />
+		<div id=addcol>
+			<form method="POST" action="/{{data.metadata.project}}/addcol">
+				Column name:<input type=text name=name />
+				<input type=submit value="add column"/>
+			</form>
+		</div>
+		<br />
+		<div id=delcol>
+			<form method="POST" action="/{{data.metadata.project}}/delcol">
+				Column name:<input type=text name=name />
+				<input type=submit value="delete column" />
+			</form>
+		</div>
+		<br />
+		<div id=swpcol>
+			<form method="POST" action="/{{data.metadata.project}}/swap">
+				1st column name: <input type=text name=stage1 /> <br/>
+				2nd column swap: <input type=text name=stage2 />
+				<input type=submit value="swap columns" />
+			</form>
+		</div>
+	</div> <!--end of "sidebar"-->
+	<br/>
+	<div id="main">  
 	<!--css flow this by row-->
 	{% for key, value in data.metadata.stages.items() %}
 		<div class=stage>
@@ -41,7 +65,7 @@ function drop(ev){
 				{% for task in tasklist %}
 					{% if task.stage.lower() == value.lower() %}
 						<li><div id={{task.id}} ondrop="drop(event)"
-						ondragover="allowDrop(event)">
+						ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event)">
 							{{ task.id }}, {{ task.name }} <br>
 							{{ task.lab_user }}
 		<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
