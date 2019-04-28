@@ -331,14 +331,14 @@ def create_user():
     splitx = int(size[1]/3)
     for y in range(splity,splity+splity):
         for x in range(splitx,splitx+splitx):
-            screen.addstr(y,x," ", curses.A_REVERSE)
-            if y == splitx or y == splitx+splitx-1:
+            screen.addstr(y,x," ", curses.color_pair(2))
+            if y == splity or y == splity+splity-1:
                 screen.addstr(y,x, " ", curses.color_pair(2))
-            elif x == splity or x == splity+splity-1:
+            elif x == splitx or x == splitx+splitx-1:
                 screen.addstr(y,x, " ", curses.color_pair(2))
     
-    screen.addstr(splity, splitx+(int(splitx*.38)), "Purple Tall Usercreation", curses.A_REVERSE)
-    screen.addstr(splity+2, splitx+1, "Please enter your desired username", curses.A_REVERSE)
+    screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall Usercreation", curses.A_REVERSE)
+    screen.addstr(splity+2, splitx+1, "Please enter your information", curses.A_REVERSE)
     screen.addstr(splity+4, splitx+1, "First Name:", curses.A_REVERSE)
     screen.addstr(splity+4, splitx+10, "                ")
     screen.addstr(splity+6, splitx+1, "Last Name:", curses.A_REVERSE)
@@ -346,7 +346,7 @@ def create_user():
     screen.addstr(splity+8, splitx+1, "Username:", curses.A_REVERSE)
     screen.addstr(splity+8, splitx+9, "                ")
     screen.addstr(splity+10, splitx+1, "Email:", curses.A_REVERSE)
-    screen.addstr(splity+10, splitx+12, "                                  ")
+    screen.addstr(splity+10, splitx+4, "                                  ")
 
 
     
