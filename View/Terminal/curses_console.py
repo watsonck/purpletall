@@ -439,15 +439,15 @@ def kanban():
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -1:
-                screen.addstr(size[0]-2, 1, "                                  ", curses.A_REVERSE)
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
                 continue
             elif task == -2:
-                screen.addstr(size[0]-2, 1, "                                  ", curses.A_REVERSE)
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.color_pair(1))
                 continue
             elif task == -3:
-                screen.addstr(size[0]-2, 1, "                                  ", curses.A_REVERSE)
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
                 continue
             proc_resp(task)
