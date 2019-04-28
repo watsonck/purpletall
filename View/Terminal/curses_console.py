@@ -198,7 +198,7 @@ def get_s_names():
 
     result.append([first,fname])
     result.append([second,sname])
-    result.apped([last,lname])
+    result.append([last,lname])
     return result
 
 
