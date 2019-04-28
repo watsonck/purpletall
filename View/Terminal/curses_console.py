@@ -98,6 +98,7 @@ def more_info(url):
 
 def send_recv(proj, cmd, args):
     global user_id
+    global cur_proj
     url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
     if cmd == 'add':
         if len(args) < 5:
@@ -135,10 +136,16 @@ def send_recv(proj, cmd, args):
         if len(args) < 2:
             return -3
         url = url + 'addcol?name={' + args[1] +'}' 
+        result = requests.get(url).text
+        proj_change(int(cur_proj))
+        return
     elif cmd == 'dcol':
         if len(args) < 2:
             return -3
         url = url + 'delcol?name={' + args[1] +'}'
+        result = requests.get(url).text
+        proj_change(int(cur_proj))
+        return
     else:
         return -1
     result = requests.get(url).text
@@ -189,13 +196,13 @@ def kanban_print(split, max_tasks, limit):
             last = int(sect_names[i][0])
             l_name = sect_names[i][1]
 
-    #max_y = screen.getmaxyx()[0]
-    #if f_name == "-1":
-    #    blank(0,split, max_y)
-    #elif s_name == "-1":
-    #    blank(split,split+split, max_y)
-    #elif l_name == "-1":
-    #    blank(split+split,split+split+split, max_y)
+    max_y = screen.getmaxyx()[0]
+    if f_name == "-1":
+        blank(0,split, max_y)
+    elif s_name == "-1":
+        blank(split,split+split, max_y)
+    elif l_name == "-1":
+        blank(split+split,split+split+split, max_y)
 
     cur_tasks = 0
     cur_board = 0
@@ -283,9 +290,9 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(max_y-3,max_x-len(pages)-1, pages, curses.A_REVERSE)
 
 def blank(start_x, end_x, max_y):
-    for y in range(max_y):
-        for x in range(start_x, end_x):
-            screen.addstr(y,x," ",curses.color_pair(2))
+    for y in range(max_y-2):
+        for x in range(start_x, end_x+1):
+            screen.addstr(y,x," ",curses.A_REVERSE)
 
 def login():
     global username
@@ -339,7 +346,7 @@ def create_user():
             elif x == splitx or x == splitx+splitx-1:
                 screen.addstr(y,x, " ", curses.color_pair(2))
     
-    screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall Usercreation", curses.A_REVERSE)
+    screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall User Creation", curses.A_REVERSE)
     screen.addstr(splity+2, splitx+1, "Please enter your information", curses.A_REVERSE)
     screen.addstr(splity+4, splitx+1, "First Name:", curses.A_REVERSE)
     screen.addstr(splity+4, splitx+12, "                ")
