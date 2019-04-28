@@ -272,7 +272,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
         screen.addstr(1,int((split/2)*3)-5,"      ")
         screen.addstr(1,int((split/2)*5)-5, "     ")
         return    
-    screen.addstr(1,int((split/2))-5, first, curses.A_REVERSE)
+    screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t) Ill comeback to these if i have time to show which page you are on
     #screen.addstr(max_y-1, int((split/2))-5, page, curses.A_REVERSE)
 
@@ -280,14 +280,14 @@ def draw_kanban(max_x,max_y,split,start = 0):
         screen.addstr(1,int((split/2)*3)-5,"      ")
         screen.addstr(1,int((split/2)*5)-5, "     ")
         return
-    screen.addstr(1,int((split/2)*3)-5, second, curses.A_REVERSE)
+    screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*3)-5, page, curses.A_REVERSE)
 
     if len(sect_names) < 3:
         screen.addstr(1,int((split/2)*5)-5, "     ")
         return
-    screen.addstr(1,int((split/2)*5)-5, last, curses.A_REVERSE)    
+    screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)    
     #page =  str(kanban_start/max_t) + "/" + str(total_t/max_t)
     #screen.addstr(max_y-1, int((split/2)*5)-5, page, curses.A_REVERSE)
     max_p = 0
