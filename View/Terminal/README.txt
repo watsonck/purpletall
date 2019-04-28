@@ -8,7 +8,7 @@ MOVE : followed by the task number then destination
 	MOVE 0 comp
 	MOVE <task_id> <to>
 REMV: Removes task
-	REMV 0 comp
+	REMV 0
 	REMV <task_id> 
 SPLT: Splits task into 2 tasks
 	SPLT 0 

@@ -258,7 +258,7 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	g.db.commit()
 	
 
-@app.route("/log/<string:project>/<string:taskid>",methods = ["GET"])
+@app.route("/log/<string:project>/<string:taskid>",methods = ["GET","POST"])
 def pullLog(taskid,project):
 	db = get_db()
 	db.execute("SELECT lab_user AS contributor, TO_CHAR(time, 'dd-MM-yyyy HH24:MI:SS') AS time,comments FROM logs JOIN users ON users.userid=logs.contributor WHERE taskid=%s AND projid=%s" % (str(taskid),str(project)))
@@ -297,8 +297,27 @@ def gitpull():
 		item['contributor'] = user
 		for flag in item['flags']:
 			command = flag.replace('<','').replace('>','')[:4]
-			if command not in ['ADD','MOVE','REMV','SPLT']:
+			if command is 'ADD ':
+				args = flag.split(' ',5)
+				if len(args) is not 5:
+					continue;
+					
+			elif command is 'MOVE':
+				args = flag.split(' ',3)
+				if len(args) is not 3:
+					continue;
+			elif command is 'REMV':
+				args = flag.split(' ',2)
+				if len(args) is not 2:
+					continue;
+			elif command is 'SPLT':
+				args = flag.split(' ',2)
+				if len(args) is not 2:
+					continue;
+			else:
 				continue;
+
+
 			#TODO COMMANDS
 			#TODO UPDATE LOG
 
@@ -408,7 +427,7 @@ def addcol(project):
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/newproj?name={Project%20Manager}&desc={This%20is%20a%20project%20management%20system}
-@app.route("/newproj",methods=['GET'])
+@app.route("/newproj",methods=["GET","POST"])
 def addproj():
 	db = get_db()
 	source = pick_source(request.method)
@@ -429,7 +448,7 @@ def addproj():
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/delproj?id=3
-@app.route("/delproj",methods=['GET'])
+@app.route("/delproj",methods=["GET","POST"])
 def delproj():
 	source = pick_source(request.method)
 	projid = source.get('id',0)
@@ -445,7 +464,7 @@ def delproj():
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/user?fname={Cameron}&lname={Haddock}&uname={haddockcl}&email={cameron.haddock%40live.longwood.edu}
-@app.route("/user",methods=["GET"])
+@app.route("/user",methods=["GET","POST"])
 def adduser():
 	db = get_db()
 	source = pick_source(request.method)
