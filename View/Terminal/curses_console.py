@@ -300,6 +300,12 @@ def draw_kanban(max_x,max_y,split,start = 0):
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
 
+    if first == -1:
+        blank(1,split-1,max_y)
+    elif second == -1:
+        blank(split+1,split+split-1,max_y)
+    elif last == -1:
+        blank(split+split+1,split+split+split-1,max_y)
     max_p = 0
     if len(sect_names)%3 == 0:
         max_p = int(len(sect_names)/3)
