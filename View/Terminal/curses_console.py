@@ -105,7 +105,7 @@ def send_recv(proj, cmd, args):
             return -3
         url = url + 'add?name={'+ args[1] + '}&desc={'
         for words in args[4:]:
-            url = url + words + "_"
+            url = url + words + " "
         url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug=' + args[3] +'&user='+str(user_id)
     elif cmd == 'move':
         if len(args) < 3:
@@ -425,7 +425,33 @@ def proj_list(called_from = 0):
         return p_list
 
 def create_proj():
-    return
+    global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+    screen.addstr(splity-2, splitx, "                 ")
+    for y in range(splity,splity+splity):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
+            if y == splity or y == splity+splity-1:
+                screen.addstr(y,x, " ", curses.color_pair(2))
+            elif x == splitx or x == splitx+splitx-1:
+                screen.addstr(y,x, " ", curses.color_pair(2))
+
+    screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall User Creation", curses.A_REVERSE)
+    screen.addstr(splity+2, splitx+1, "Please enter the project information.")
+    screen.addstr(splity+4, splitx+1, "Proj Name:",curses.A_REVERSE)    
+    screen.addstr(splity+4, splitx+11, "                    ",curses.A_REVERSE)
+    screen.addstr(splity+6, splitx+1, "Proj Desc:",curses.A_REVERSE)
+    screen.addstr(splity+6, splitx+11, "                    ",curses.A_REVERSE)
+    
+    curses.echo()
+    pname = screen.getstr(splity+4,splitx+11,15)
+    desc = screen.getstr(splity+6,splitx+11,15)
+    requests.get("http://purpletall.cs.longwood.edu:5000/newproj?name={"+pname.decode()+"}&desc={"+desc.decode()+"}")
+    curses.noecho()
+    screen.clear()
+
 
 def proj_choice():
     global screen
