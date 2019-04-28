@@ -464,7 +464,8 @@ def proj_choice():
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
         choice = get_text(splitx*3-2)
-        screen.addstr(20,2,choice, curses.A_REVERSE)
+        parse = choice.decode().split()
+        screen.addstr(20,2,parse[1], curses.A_REVERSE)
         if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
