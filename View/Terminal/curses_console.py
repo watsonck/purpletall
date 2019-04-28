@@ -189,12 +189,20 @@ def get_s_names():
             lname = sect_names[i][1]
     if second == -1:
         for i in range(len(sect_names)):
-            if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
+            if int(sect_names[i][0]) > int(first) and second == -1 and int(sect_names[i][0]) != last:
                 second = int(sect_names[i][0])             
+                sname = sect_names[i][1]
+            elif if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
+                second = int(sect_names[i][0])
+                sname = sect_names[i][1]
     if last == -1:
         for i in range(len(sect_names)):
-            if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
+            if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second and last == -1:
                 last = int(sect_names[i][0])
+                lname = sect_names[i][1]
+            elif int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
+                last = int(sect_names[i][0])
+                lname = sect_names[i][1]
 
     result.append([first,fname])
     result.append([second,sname])
