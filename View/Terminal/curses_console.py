@@ -347,7 +347,7 @@ def proj_list(called_from = 0):
     cur_y = splity+1
     p_list = []
     for proj in projs['projects']:
-        p_list.append(str([proj['projid']]))
+        p_list.append(str(proj['projid']))
         str1 = str(proj['projid']) + ': ' + proj['name'] + ': ' + proj['description'] 
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
@@ -363,10 +363,6 @@ def proj_choice():
     splitx = int(size[1]/3)
 
     p_list = proj_list(1)
-    test = 0
-    for p in p_list:
-        screen.addstr(test, 2, p, curses.A_REVERSE)
-        test = test + 2
     global cur_proj
     curses.echo()
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
