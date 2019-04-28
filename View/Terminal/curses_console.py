@@ -303,7 +303,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
     if first == -1:
         blank(0,split-1,max_y)
     if second == -1:
-        blank(split,split+split-2,max_y)
+        blank(split,split+split-1,max_y)
     if last == -1:
         blank(split+split,split+split+split-2,max_y)
     max_p = 0
