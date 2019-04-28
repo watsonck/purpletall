@@ -132,20 +132,6 @@ def send_recv(proj, cmd, args):
             return -3
         proj_change(args[1])
         return
-    elif cmd == 'acol':
-        if len(args) < 2:
-            return -3
-        url = url + 'addcol?name={' + args[1] +'}' 
-        result = requests.get(url).text
-        proj_change(int(cur_proj))
-        return
-    elif cmd == 'dcol':
-        if len(args) < 2:
-            return -3
-        url = url + 'delcol?name={' + args[1] +'}'
-        result = requests.get(url).text
-        proj_change(int(cur_proj))
-        return
     else:
         return -1
     result = requests.get(url).text
@@ -468,6 +454,16 @@ def kanban():
         elif parsed[0].upper() == "PROJ":
             proj_choice()
             #task = send_recv(cur_proj, 'proj', parsed)
+        elif parsed[0].upper() == 'ACOL' or parsed[0].upper() == 'DCOL':
+            if len(args) < 2:
+                return -3
+            url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
+            if parsed[0].upper() == 'ACOL':
+                url = url + 'addcol?name={' + parsed[1] +'}'
+            elif parsed[0].upper() == 'DCOL': 
+                url = url + 'delcol?name={' + parsed[1] +'}'
+            result = requests.get(url).text
+            proj_change(int(cur_proj))
         elif parsed[0].upper() == "SCRL":
             if len(parsed) < 3:
                 continue
