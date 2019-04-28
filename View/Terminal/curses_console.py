@@ -156,6 +156,46 @@ def proc_resp(task):
             most_tasks = len(boards) 
 
 
+def get_s_names():
+    result = []
+    first = -1
+    fname = ""
+    second = -1
+    sname = ""
+    last = -1
+    lname = ""
+
+    s_start = -1
+    s_start_found = False
+    for i in range(len(sect_names)):
+        if sect_start == sect_names[i][1]:
+            s_start_found = True
+            break
+        elif int(sect_names[i][0]) < s_start or s_start == -1:
+            s_start = int(sect_names[i][0]) 
+    if s_start_found == False:
+        sect_start = s_start
+    for i in range(len(sect_names)):
+        if int(sect_names[i][0]) == sect_start:
+            first = sect_names[i][0]
+            fname = sect_names[i][1]
+        elif int(sect_names[i][0]) == sect_start+1:
+            second = sect_names[i][0]
+            snmae = sect_names[i][1]
+        elif int(sect_names[i][0]) == sect_start+2:
+            last = sect_names[i][0]
+            lname = sect_names[i][1]
+    if second == -1:
+        for i in range(len(sect_names)):
+            if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
+                second = int(sect_names[i][0])             
+    if last == -1:
+        for i in range(len(sect_names)):
+            if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
+                last = int(sect_names[i][0])
+
+    result.append([first,fname],[second,sname],[last,lname])
+    return result
 
 
 #Function for printing the kanban sections
@@ -165,31 +205,10 @@ def kanban_print(split, max_tasks, limit):
     global sect_names
     global sect_start
 
-    first = -1
-    f_name = "-1"
-    second = -1
-    s_name = "-1"
-    last = -1
-    l_name = "-1"
-    for i in range(len(sect_names)):
-        if int(sect_names[i][0]) == sect_start:
-            first = int(sect_names[i][0])
-            f_name = sect_names[i][1]
-        elif int(sect_names[i][0]) == sect_start+1:
-            second = int(sect_names[i][0])
-            s_name = sect_names[i][1]
-        elif int(sect_names[i][0]) == sect_start+2:
-            last = int(sect_names[i][0])
-            l_name = sect_names[i][1]
-
-    max_y = screen.getmaxyx()[0]
-    if f_name == "-1":
-        blank(0,split, max_y)
-    elif s_name == "-1":
-        blank(split,split+split, max_y)
-    elif l_name == "-1":
-        blank(split+split,split+split+split, max_y)
-
+    sects = get_s_names()
+    f_name = sects[0][1]
+    s_name = sects[1][1]
+    l_name = sects[2][1]
     cur_tasks = 0
     cur_board = 0
     for key1, board in boards.items():
@@ -232,41 +251,15 @@ def draw_kanban(max_x,max_y,split,start = 0):
             screen.addstr(y,max_x-1, " ", curses.color_pair(2))
     global sect_names
     global sect_start
-    first = -1
-    fname = ""
-    second = -1
-    sname = ""
-    last = -1
-    lname = ""
 
-    s_start = -1
-    s_start_found = False
-    for i in range(len(sect_names)):
-        if sect_start == sect_names[i][1]:
-            s_start_found = True
-            break
-        elif int(sect_names[i][0]) < s_start or s_start == -1:
-            s_start = int(sect_names[i][0]) 
-    if s_start_found == False:
-        sect_start = s_start
-    for i in range(len(sect_names)):
-        if int(sect_names[i][0]) == sect_start:
-            first = sect_names[i][0]
-            fname = sect_names[i][1]
-        elif int(sect_names[i][0]) == sect_start+1:
-            second = sect_names[i][0]
-            snmae = sect_names[i][1]
-        elif int(sect_names[i][0]) == sect_start+2:
-            last = sect_names[i][0]
-            lname = sect_names[i][1]
-    if second == -1:
-        for i in range(len(sect_names)):
-            if int(sect_names[i][0]) > int(first) and int(sect_names[i][0]) != last:
-                second = int(sect_names[i][0])             
-    if last == -1:
-        for i in range(len(sect_names)):
-            if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
-                last = int(sect_names[i][0])
+    sects = get_s_names()
+    first = sects[0][0]
+    fname = sects[0][1]
+    second = sects[1][0]
+    sname = sects[1][1]
+    last = sects[2][0]
+    lname = sects[2][1]
+
     if len(sect_names) < 1:
         screen.addstr(1,int((split/2))-5, "        ")
         screen.addstr(1,int((split/2)*3)-5,"      ")
