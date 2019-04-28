@@ -363,7 +363,10 @@ def proj_choice():
     splitx = int(size[1]/3)
 
     p_list = proj_list(1)
-    
+    test = 0
+    for p in p_list:
+        screen.addstr(test, 2, p, curses.A_REVERSE)
+        test = test + 2
     global cur_proj
     curses.echo()
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
