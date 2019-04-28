@@ -196,7 +196,9 @@ def get_s_names():
             if int(sect_names[i][0]) > int(second) and int(sect_names[i][0]) != second:
                 last = int(sect_names[i][0])
 
-    result.append([first,fname],[second,sname],[last,lname])
+    result.append([first,fname])
+    result.append([second,sname])
+    result.apped([last,lname])
     return result
 
 
