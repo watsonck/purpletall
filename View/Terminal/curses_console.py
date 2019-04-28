@@ -409,6 +409,11 @@ def proj_list(called_from = 0):
     elif called_from == 1:
         return p_list
 
+def create_proj():
+    return
+def delete_proj():
+    return
+
 def proj_choice():
     global screen
     size = screen.getmaxyx()
@@ -427,6 +432,11 @@ def proj_choice():
             cur_proj = str(choice.decode())
             break
         elif choice.decode() == 'CPROJ':
+            create_proj()
+            return
+        elif choice.decode() == 'DPROJ':
+            delete_proj()
+            return
     curses.noecho()
     screen.clear()
     proj_change(cur_proj)
