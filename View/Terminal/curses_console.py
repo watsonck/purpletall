@@ -465,7 +465,9 @@ def proj_choice():
     while True:
         choice = get_text(splitx*3-2)
         parse = choice.decode().split()
-        screen.addstr(20,2,parse[1], curses.A_REVERSE)
+        screen.addstr(20,2,parse[0], curses.A_REVERSE)
+        if len(parse) >=2 :
+            screen.addstr(21,2,parse[1], curses.A_REVERSE)
         if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
