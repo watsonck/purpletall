@@ -299,7 +299,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
 
     if first != -1:
         screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
-    if seccond != -1:
+    if second != -1:
         screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     if last != -1:
         screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
