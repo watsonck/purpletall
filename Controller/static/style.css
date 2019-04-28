@@ -39,8 +39,11 @@ li{
 	position: relative;
 	top: 30px;
 	*/
-	border: solid 1px purple;
+	/*height: 50px;*/
+	bottom: 5%;
+	border: solid 3px purple;
 	display: inline-block;
+	width: 500px;
 	flex-basis: auto | 150px; /*min length by min width*/
 	/*margin-width: 5px;*/ /*or margin-right*/
 }

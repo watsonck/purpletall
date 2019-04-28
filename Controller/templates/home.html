@@ -23,37 +23,37 @@ function drop(ev){
 		<form id=add method="POST" action="/{{data.metadata.project}}/add">
 			task name: <input type="text" name="name" />
 			description: <input type="text" name="desc" />
-			expected complete: <input type="time" name="time" />
+			expected complete: <input type="datetime-local" name="time" />
 			is it a bug? <input type="checkbox" name="bug" />
 			<input type="hidden" name="user" value={{ currentUser }} />
 			<input type="hidden" name="proj" value={{data.metadata.project}} />
 			<input type="submit" value="Add" />
 		</form>
 		<!--stuff like add, remove, split goes here.  buttons likely and some text-->
-	</div>
+	</div><br/>
 	<div id="main">
 	<!--css flow this by row-->
 	{% for key, value in data.metadata.stages.items() %}
 		<div class=stage>
 			<p class = title>{{ value }} </p>
 			<ul>
-				<li id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></li>
+				<li> <div id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></div></li>
 				{% for task in tasklist %}
 					{% if task.stage.lower() == value.lower() %}
-						<li id={{task.id}} ondrop="drop(event)"
+						<li><div id={{task.id}} ondrop="drop(event)"
 						ondragover="allowDrop(event)">
-							id={{ task.id }}, task name= {{ task.name }} <br>
-							last user= {{ task.lab_user }}
+							{{ task.id }}, {{ task.name }} <br>
+							{{ task.lab_user }}
 		<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
-			<input type="hidden" name="proj" value={{ task.id }} />
+			<input type="hidden" name="id" value={{ task.id }} />
 			<input type="submit" value="del" />
 		</form>
 		<form id=split method="POST" action="/{{data.metadata.project}}/split">
-			<input type="hidden" name="proj" value={{ task.id }} />
-			<input type="hidden" name="proj" value={{ currentUser }} />
+			<input type="hidden" name="id" value={{ task.id }} />
+			<input type="hidden" name="user" value={{ currentUser }} />
 			<input type="submit" value="split" />
 		</form>
-						</li>
+						</div></li>
 						<form method="POST" action="/{{ data.metadata.project}}/info">
 							<input type="submit" value="more info" />
 							<input type="hidden" name="id" value="{{ task.id }}" />
