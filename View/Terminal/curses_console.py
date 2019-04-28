@@ -293,6 +293,9 @@ def login():
         user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
         if str(user_id) != '0':
             break
+        elif username.upper() == 'QUIT':
+            close_curses()
+            exit()
     curses.noecho()
     screen.clear()
 
@@ -366,10 +369,12 @@ def proj_choice():
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
         choice = get_text(splitx*3-2)
-        if choice not in p_List:
+        if choice.upper() == 'QUIT':
+            close_curses()
+            exit()
+        if choice not in p_list:
             continue
         cur_proj = str(choice.decode())
-        resp = requests.get('http://purpletall.cs.longwood.edu:5000/'+choice.decode()+'/list').text
     curses.noecho()
     screen.clear()
         
@@ -413,7 +418,8 @@ def kanban():
         if parsed[0].upper() == "QUIT":
             break
         elif parsed[0].upper() == "PROJ":
-            task = send_recv(cur_proj, 'proj', parsed)
+            proj_choice()
+            #task = send_recv(cur_proj, 'proj', parsed)
         elif parsed[0].upper() == "SCRL":
             if len(parsed) < 3:
                 continue
