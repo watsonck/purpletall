@@ -455,15 +455,17 @@ def kanban():
             proj_choice()
             #task = send_recv(cur_proj, 'proj', parsed)
         elif parsed[0].upper() == 'ACOL' or parsed[0].upper() == 'DCOL':
-            if len(args) < 2:
-                return -3
-            url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
-            if parsed[0].upper() == 'ACOL':
-                url = url + 'addcol?name={' + parsed[1] +'}'
-            elif parsed[0].upper() == 'DCOL': 
-                url = url + 'delcol?name={' + parsed[1] +'}'
-            result = requests.get(url).text
-            proj_change(int(cur_proj))
+            if len(parsed) < 2:
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
+                screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
+            elif:
+                url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
+                if parsed[0].upper() == 'ACOL':
+                    url = url + 'addcol?name={' + parsed[1] +'}'
+                elif parsed[0].upper() == 'DCOL': 
+                    url = url + 'delcol?name={' + parsed[1] +'}'
+                requests.get(url).text
+                proj_change(int(cur_proj))
         elif parsed[0].upper() == "SCRL":
             if len(parsed) < 3:
                 continue
