@@ -295,8 +295,9 @@ def gitpull():
 	db.execute("SELECT time FROM logs WHERE git=true ORDER BY time DESC LIMIT 1")
 	row = db.fetchone()
 	if row is None:
-		return 'Error'
-	datetime = str(row['time'])
+		datetime = ('1-1-2019 00:00:00')
+	else:
+		datetime = str(row['time'])
 	loginfo = g.log('--since=' + datetime,"--format=format:{\"contributor\":\"%an\",\"message\":\"%B\",\"timestamp\":%ct},")
 	loginfo = loginfo.replace('\n','').replace('},{','},\n{').rstrip(',')
 	loginfo = '[' + loginfo + ']'
@@ -317,54 +318,58 @@ def gitpull():
 			user = result['userid']
 		item['contributor'] = user
 		for flag in item['flags']:
-			try:
-				db = get_db()
-				command = flag.replace('<','').replace('>','')[:4]
-				if command is 'ADD ':
-					args = flag.split(' ',6)
-					if len(args) is not 6:
-						continue;
-					proj = args[1]
-					name = args[2]
-					time = args[3]
-					bugs = args[4]
-					desc = args[5]
-					strt = time.asctime(time.localtime(time.time()))
-
-					db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (proj))
-					row = db.fetchone()
-					if row is None:
-						continue
-					stage = row['stagename']
-					db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,0);" % (name,desc,strt,time,stage,proj,bugs))
-					g.db.commit()
-					db.execute("SELECT MAX(id) AS taskid FROM task;")
-					row = db.fetchone()
-					if row is not None:
-						updateLog(0,row['taskid'],proj,'Add',True,'Created in stage: ' + stage)
-				elif command is 'MOVE':
-					args = flag.split(' ',4)
-					if len(args) is not 4:
-						continue;
-					proj = args[1]
-					task = args[2]
-					clmn = args[3]
-					db.execute("SELECT count(*) AS count FROM stages WHERE projid=%s AND stagename ILIKE '%s'"% (proj, clmn))
-					if db.fetchone()['count'] > 0:
-						db.execute("UPDATE task SET stage='%s',contributor=0 WHERE id=%s AND projid=%s" % (clmn, task, proj))
-						g.db.commit()
-
-					updateLog(0,task,proj,'Move',True,'Moved to stage: ' + str(clmn))
-				elif command is 'REMV':
-					args = flag.split(' ',3)
-					if len(args) is not 3:
-						continue;
-					proj = args[1]
-					task = args[2]
-				else:
+			db = get_db()
+			flag = flag.replace('<','').replace('>','').upper()
+			command = flag[:4]
+			print(command)
+			print(flag)
+			if command == 'ADD ':
+				print('ADDING')
+				args = flag.split(' ',6)
+				if len(args) is not 6:
 					continue;
-			except:
-				pass
+				proj = args[1]
+				name = args[2]
+				dttm = args[3]
+				bugs = args[4]
+				desc = args[5]
+				strt = time.asctime(time.localtime(time.time()))
+
+				db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (proj))
+				row = db.fetchone()
+				if row is None:
+					continue
+				stage = row['stagename']
+				db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,0);" % (name,desc,strt,dttm,stage,proj,bugs))
+				g.db.commit()
+				db.execute("SELECT MAX(id) AS taskid FROM task;")
+				row = db.fetchone()
+				if row is not None:
+					updateLog(0,row['taskid'],proj,'Add',True,'Created in stage: ' + stage)
+			elif command == 'MOVE':
+				print('MOVING')
+				args = flag.split(' ',4)
+				if len(args) is not 4:
+					continue;
+				proj = args[1]
+				task = args[2]
+				clmn = args[3]
+				db.execute("SELECT count(*) AS count FROM stages WHERE projid=%s AND stagename ILIKE '%s'"% (proj, clmn))
+				if db.fetchone()['count'] > 0:
+					db.execute("UPDATE task SET stage='%s',contributor=0 WHERE id=%s AND projid=%s" % (clmn, task, proj))
+					g.db.commit()
+
+				updateLog(0,task,proj,'Move',True,'Moved to stage: ' + str(clmn))
+			elif command == 'REMV':
+				print('REMOVING')
+				args = flag.split(' ',3)
+				if len(args) is not 3:
+					continue;
+				proj = args[1]
+				task = args[2]
+			else:
+				print('FAILED')
+				continue;
 
 
 			#TODO COMMANDS
@@ -455,7 +460,7 @@ def login():
 @app.route("/<string:project>/addcol", methods=["GET","POST"])
 def addcol(project):
 	db = get_db()
-	db.execute("SELECT MAX(stageorder)+1 AS order FROM stages WHERE projid=%s;" % (project))
+	db.execute("SELECT COALESCE(MAX(stageorder),0)+1 AS order FROM stages WHERE projid=%s;" % (project))
 
 	source = pick_source(request.method)
 	stagename = source.get('name','').replace('{','').replace('}','').upper()
@@ -591,7 +596,8 @@ def projlist():
 		if request.method == "GET":
 			return json.dumps(data) 
 		else:
-			current = request.form.get("user","michael messed up")
+			current = request.form.get("user","michael_messed_up")
+#add fetch for #
 			return render_template("/list.html", List = data['projects'], curUser = current)
 	except:
 		return 'Error'
