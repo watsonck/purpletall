@@ -22,7 +22,7 @@ class Test(unittest.TestCase):
 		app.config['TESTING'] = True
 		app.config['WTF_CSRF_ENABLED'] = False
 		app.config['DEBUG'] = False
-		service hoursself.app = app.test_client()
+		self.app = app.test_client()
 
 	def tearDown(self):
 		pass
