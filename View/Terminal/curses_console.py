@@ -470,10 +470,10 @@ def proj_choice():
         elif choice.decode() in p_list:
             cur_proj = str(choice.decode())
             break
-        elif choice.decode() == 'CPROJ':
+        elif choice.decode().upper() == 'CPROJ':
             create_proj()
             return
-        elif choice.decode() == 'DPROJ':
+        elif choice.decode().upper() == 'DPROJ':
             parse = choice.decode().split()
             if len(parse) < 2:
                 continue
