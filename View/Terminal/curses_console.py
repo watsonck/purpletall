@@ -65,14 +65,9 @@ def proj_change(proj_num = 1):
         return
     task = json.loads(task)
     cur_proj = proj_num
-    test = 0
     for stage in task['metadata']['stages']:
         boards[task['metadata']['stages'][stage].upper()] = {}
         sect_names.append([str(stage),task['metadata']['stages'][stage].upper()])
-        tstr = str(stage) + "   " + str(task['metadata']['stages'][stage].upper())
-        screen.addstr(test,2,tstr,curses.A_REVERSE)
-        test = test+2
-    get_text(15)
     proc_resp(task)
 
 def more_info(url):
@@ -225,7 +220,7 @@ def kanban_print(split, max_tasks, limit):
             s_name = sects[i][1]
         elif i == 2:
             l_name = sects[i][1]
-        
+    screen.addstr(40,2,s_name,curses.A_REVERSE)
     cur_tasks = 0
     cur_board = 0
     for key1, board in boards.items():
@@ -288,7 +283,7 @@ def draw_kanban(max_x,max_y,split,start = 0):
             last = sects[i][0]
             lname = sects[i][1]
 
-
+    screen.addstr(40,2,s_name,curses.A_REVERSE)
     screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
