@@ -89,6 +89,8 @@ def more_info(url):
     y = splity+2
     for key1, val1 in task.items():
         str1 = str(key1) + ": " + str(val1) + " "
+        if len(str1) > splitx-1:
+            str1 = str1[:splitx-4] + '...'
         screen.addstr(y,splitx+1, str1, curses.A_REVERSE)
         y = y+1
     screen.refresh()
@@ -295,10 +297,12 @@ def draw_kanban(max_x,max_y,split,start = 0):
         first = sects[0][0]
         fname = sects[0][1]
 
-
-    screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
-    screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
+    if first != -1:
+        screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
+    if seccond != -1:
+        screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
+    if last != -1:
+        screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
 
     if first == -1:
         blank(0,split-1,max_y)
