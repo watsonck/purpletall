@@ -375,6 +375,7 @@ def proj_choice():
         if choice.decode() not in p_list:
             continue
         cur_proj = str(choice.decode())
+        break
     curses.noecho()
     screen.clear()
         
