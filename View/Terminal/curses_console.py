@@ -157,6 +157,8 @@ def proc_resp(task):
 
 
 def get_s_names():
+    global sect_names
+    global sect_start
     result = []
     first = -1
     fname = ""
@@ -421,9 +423,10 @@ def proj_choice():
         if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
-        if choice.decode() in p_list:
+        elif choice.decode() in p_list:
             cur_proj = str(choice.decode())
             break
+        elif choice.decode() == 'CPROJ':
     curses.noecho()
     screen.clear()
     proj_change(cur_proj)
