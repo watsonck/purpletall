@@ -478,9 +478,9 @@ def kanban():
             else:
                 url = "http://purpletall.cs.longwood.edu:5000/" + str(cur_proj) +'/'
                 if parsed[0].upper() == 'ACOL':
-                    url = url + 'addcol?name={' + parsed[1] +'}'
+                    url = url + 'addcol?name={' + parsed[1].decode() +'}'
                 elif parsed[0].upper() == 'DCOL': 
-                    url = url + 'delcol?name={' + parsed[1] +'}'
+                    url = url + 'delcol?name={' + parsed[1].decode() +'}'
                 requests.get(url).text
                 proj_change(int(cur_proj))
         elif parsed[0].upper() == "SCRL":
