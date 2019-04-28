@@ -525,7 +525,7 @@ def kanban():
                 if parsed[2].upper() == 'L' and sect_start != 0:
                     sect_start = sect_start - 1
                 elif parsed[2].upper() == 'R' and len(sect_names) > 3:
-                    if sect_start+3 < len(sect_names):
+                    if sect_start+3 <= len(sect_names):
                         sect_start = sect_start+1
         elif parsed[0].upper() == 'PLS':
             proj_list()
