@@ -17,7 +17,7 @@ app.config.update( dict(
 def connect_db():
 	db = psycopg2.connect(database=app.config["DATABASE"],
 	user=app.config["USERNAME"],password=app.config["PASSWORD"],
-	host="purpletall.cs.longwood.edu", cursor_factory=psycopg2.extras.RealDictCursor)
+	host="localhost", cursor_factory=psycopg2.extras.RealDictCursor)
 	return db
 
 def get_db():
