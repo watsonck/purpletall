@@ -549,6 +549,7 @@ def kanban():
                 requests.get(url).text
                 proj_change(int(cur_proj))
         elif parsed[0].upper() == "SCRL":
+            screen.addstr(20,4,parsed[2],curses.color_pair(1))
             if len(parsed) < 3:
                 continue
             if parsed[1].upper() == "T":
@@ -557,7 +558,6 @@ def kanban():
                 elif parsed[2].upper() == 'D' and kanban_start < most_tasks:
                     kanban_start = kanban_start+max_tasks
             elif parsed[1].upper() == "S":
-                screen.addstr(20,4,parsed[2],curses.color_pair(1))
                 if parsed[2].upper() == 'L' and sect_start != 0:
                     sect_start = sect_start - 1
                 elif parsed[2].upper() == 'R':# and len(sect_names) > 3 and sect_start+1 < len(sect_names):
