@@ -297,6 +297,8 @@ def draw_kanban(max_x,max_y,split,start = 0):
         first = sects[0][0]
         fname = sects[0][1]
 
+    tstr = str(first) + "  " + str(second) + "  " + str(last)
+    screen.addstr(20,2,tstr, curses.A_REVERSE)
     if first != -1:
         screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     if second != -1:
