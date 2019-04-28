@@ -106,7 +106,7 @@ def send_recv(proj, cmd, args):
         url = url + 'add?name={'+ args[1] + '}&desc={'
         for words in args[4:]:
             url = url + words + "_"
-        url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug=' + args[3] + ''+'&user='+str(user_id)
+        url = url[:len(url)-1] +'}&time={' + args[2]  + '}&bug=' + args[3] +'&user='+str(user_id)
     elif cmd == 'move':
         if len(args) < 3:
             return -3
@@ -228,8 +228,6 @@ def kanban_print(split, max_tasks, limit):
             s_name = sects[i][1]
         elif i == 2:
             l_name = sects[i][1]
-    screen.addstr(39,2,str(len(sects)), curses.A_REVERSE)
-    screen.addstr(40,2,s_name,curses.A_REVERSE)
     cur_tasks = 0
     cur_board = 0
     for key1, board in boards.items():
@@ -296,16 +294,8 @@ def draw_kanban(max_x,max_y,split,start = 0):
     elif len(sects) == 1:
         first = sects[0][0]
         fname = sects[0][1]
-    test = 26
-    for s in sects:
-        tstr = str(s[0]) + "  :  " + s[1]
-        screen.addstr(test,2,tstr, curses.A_REVERSE)
-        test = test + 2
-    get_text(15) 
 
-    screen.addstr(41,2,str(len(sects)),curses.A_REVERSE)
-    screen.addstr(42,2,sname,curses.A_REVERSE)
-    screen.addstr(44,2,lname,curses.A_REVERSE)
+
     screen.addstr(1,int((split/2))-5, fname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*3)-5, sname, curses.A_REVERSE)
     screen.addstr(1,int((split/2)*5)-5, lname, curses.A_REVERSE)
