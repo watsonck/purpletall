@@ -459,7 +459,7 @@ def kanban():
                 screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
             else:
-                url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
+                url = "http://purpletall.cs.longwood.edu:5000/" + str(cur_proj) +'/'
                 if parsed[0].upper() == 'ACOL':
                     url = url + 'addcol?name={' + parsed[1] +'}'
                 elif parsed[0].upper() == 'DCOL': 
