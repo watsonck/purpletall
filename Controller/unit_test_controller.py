@@ -31,7 +31,7 @@ class Test(unittest.TestCase):
 	def test_connection(self):
 		response = self.app.get('/', follow_redirects=True)
 		self.assertEqual(response.status_code, 200)
-service hours
+
 #test if homepage is displaying correctly
 #    def test_home(self):
 #        with app.test_request_context():
