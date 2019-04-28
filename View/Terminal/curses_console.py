@@ -129,7 +129,7 @@ def send_recv(proj, cmd, args):
     elif cmd == 'proj':
         if len(args) < 2:
             return -3
-        proj_change(int(args[1]))
+        proj_change(args[1])
         return
     elif cmd == 'acol':
         if len(args) < 2:
@@ -342,30 +342,34 @@ def proj_list(called_from = 0):
     for x in range(size[1]):
         screen.addstr(size[0]-2,x, " ", curses.color_pair(2))
     cur_y = splity+1
+    p_list = []
     for proj in projs['projects']:
-        str1 = str(proj['projid']) + ': ' + proj['name'] + ' ' + proj['description'] 
+        p_list.append(str([proj['projid']]))
+        str1 = str(proj['projid']) + ': ' + proj['name'] + ': ' + proj['description'] 
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
     if called_from == 0:
         screen.addstr(size[0]-3,1,'Press enter or enter anything to contiune', curses.A_REVERSE)
         wait = get_text(splitx*3-2)
+    elif called_from == 1:
+        return p_list
 
 def proj_choice():
     global screen
     size = screen.getmaxyx()
     splitx = int(size[1]/3)
 
-    proj_list(1)
+    p_list = proj_list(1)
     
     global cur_proj
     curses.echo()
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
         choice = get_text(splitx*3-2)
+        if choice not in p_List:
+            continue
+        cur_proj = str(choice.decode())
         resp = requests.get('http://purpletall.cs.longwood.edu:5000/'+choice.decode()+'/list').text
-        if resp != 'ERROR':
-            cur_proj = int(choice.decode())
-            break
     curses.noecho()
     screen.clear()
         
