@@ -44,10 +44,10 @@ def close_curses():
     curses.echo()
     curses.endwin()
 
-def get_text(limit):
+def get_text(x):
     global screen
     size = screen.getmaxyx()
-    str1 = screen.getch(size[0]-1,0)
+    str1 = screen.getch(size[0]-1,x)
     return str1
 
 def proj_change(proj_num = 1):
@@ -643,7 +643,7 @@ def kanban():
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
             split = int(size[1]/3)
-            ch = get_text(split+split)
+            ch = get_text(len(str1)+1)
             if ch == -1:
                 continue
             elif ch == curses.KEY_ENTER or ch == 10 or ch == 13: #Numbers for enter key helped by: https://stackoverflow.com/questions/32252733/interpreting-enter-keypress-in-stdscr-curses-module-in-python
@@ -663,6 +663,9 @@ def kanban():
                 screen.addstr(size[0]-1,0,str1, curses.A_REVERSE)
                 screen.refresh()
                 continue
+            elif len(str1) == split*3-2:
+                parsed = str(str1).split()
+                str1 = ""
         
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
