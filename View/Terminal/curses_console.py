@@ -685,7 +685,7 @@ def kanban():
         #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].upper() == "QUIT":
             close_curses()
-            os._exit()
+            os._exit(os.EX_OK)
             break
         elif parsed[0].upper() == "HELP":
             help()
