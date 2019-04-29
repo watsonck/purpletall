@@ -513,24 +513,30 @@ def log(t_id):
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
     screen.addstr(splity-2, splitx, "                 ")
-    for y in range(splity,splity+splity):
-        for x in range(splitx,splitx+splitx):
-            screen.addstr(y,x," ", curses.A_REVERSE)
-            if y == splity or y == splity+splity-1:
-                screen.addstr(y,x, " ", curses.color_pair(2))
-            elif x == splitx or x == splitx+splitx-1:
-                screen.addstr(y,x, " ", curses.color_pair(2))    
-    
-    y = splity+1
-    screen.addstr(splity-1,splitx, "Enter anything to continue or enter quit to exit.", curses.color_pair(2))
+    c_act = 0
     for action in resp:
+        act_p = str(c_act) + '/' + str(len(resp))
+        screen.addstr(splity+splity,splitx+splitx-len(act_p)-1, act_p, curses.A_REVERSE)
+        c_act = c_act + 1
+        for y in range(splity,splity+splity):
+            for x in range(splitx,splitx+splitx):
+                screen.addstr(y,x," ", curses.A_REVERSE)
+                if y == splity or y == splity+splity-1:
+                    screen.addstr(y,x, " ", curses.color_pair(2))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x, " ", curses.color_pair(2))    
+    
+        y = splity+1
+        screen.addstr(splity-1,splitx, "Enter anything to continue or enter quit to exit.", curses.color_pair(2))
         for key, val in action.items():
             act_str = str(key) + ': ' + str(val) 
             screen.addstr(y,splitx+1,act_str, curses.A_REVERSE)
             y = y + 2
         text = get_text(4)
+        y = splity+1
         if text.decode().upper() == 'QUIT':
             break
+    
 ##Cannot write to bottom right corner
 def kanban():
     global boards
