@@ -349,7 +349,7 @@ def login():
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
     
-        screen.addstr(splity+1, splitx + int(splitx*.38), "Purple Tall Login", curses.A_REVERSE)
+        screen.addstr(splity, splitx + int(splitx*.38), "Purple Tall Login", curses.A_REVERSE)
         screen.addstr(splity+3, splitx + int(splitx*.33), "Username:", curses.A_REVERSE)
         screen.addstr(splity+3, splitx + int(splitx*.33) + 12, "               ")
 
@@ -427,7 +427,7 @@ def proj_list(called_from = 0):
                     screen.addstr(y,x," ", curses.color_pair(2))
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
-    screen.addstr(splity,int(splitx+(splitx*.3)), "Avalible Projects:", curses.color_pair(2))
+    screen.addstr(splity,int(splitx+(splitx*.3)), "Avalible Projects:", curses.A_REVERSE)
     for x in range(size[1]):
         screen.addstr(size[0]-2,x, " ", curses.color_pair(2))
     cur_y = splity+1
