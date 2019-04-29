@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<script>
+	<!--<script>
 	function scriptLoad() {
-		alert("Invalid login. Please try again.");
+	
 	}
-	</script>
+	</script>-->
 	<div id=login>
 	<svg width="100" height="400">
 		<rect width="100" height="400"
-		style="fill:rgb(128,0,128);stroke-width:10,stroke:rgb(0,0,0" />
+		style="fill:rgb(128,0,128);stroke-width:10,stroke:rgb(0,0,0)" />
 	</svg>
 	<p>Please log in with your lab username</p>
 	<form method="POST" action="/login">
@@ -20,9 +20,11 @@
 			<input type="submit" value="Log In" />
 		</fieldset>
 	</form>
-	<button type="button" onclick="alert('Not done yet')">Add User</button>
+	<form method="POST" action=/addingauser >
+		<input type=submit value="Add User" />
+	</form>
 	</div>
 	{% if loginUser < 0 %}
-		<div onload="scriptLoad()"></div>
+		<div onload="alert("Invalid login. Please try again.")"></div>
 	{% endif %}
 {% endblock %}

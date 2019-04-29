@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block meta %}
+<script type="text/javascript">
+function formAutoSubmit() {
+	var form = document.getElementById("now");
+	form.submit();
+}
+</script>
+{% endblock %}
+{% block content %}
+<form id=now method="POST" action="/projlist">
+	<input type=hidden name=name value={{username}} />
+	<input type=hidden name=id value={{userid}} />
+	<input type=submit value="You shouldn't be seeing this" />
+</form>
+<div onLoad="formAutoSubmit()" >no really, you shouldn't be seeing this :D</div>

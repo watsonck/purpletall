@@ -294,9 +294,7 @@ def gitpull():
 	db = get_db()
 	db.execute("SELECT time FROM logs WHERE git=true ORDER BY time DESC LIMIT 1")
 	row = db.fetchone()
-	if row is None:
-		datetime = ('1-1-2019 00:00:00')
-	else:
+	if row is not None:
 		datetime = str(row['time'])
 	loginfo = g.log('--since=' + datetime,"--format=format:{\"contributor\":\"%an\",\"message\":\"%B\",\"timestamp\":%ct},")
 	loginfo = loginfo.replace('\n','').replace('},{','},\n{').rstrip(',')
@@ -321,10 +319,7 @@ def gitpull():
 			db = get_db()
 			flag = flag.replace('<','').replace('>','').upper()
 			command = flag[:4]
-			print(command)
-			print(flag)
 			if command == 'ADD ':
-				print('ADDING')
 				args = flag.split(' ',6)
 				if len(args) is not 6:
 					continue;
@@ -347,7 +342,6 @@ def gitpull():
 				if row is not None:
 					updateLog(0,row['taskid'],proj,'Add',True,'Created in stage: ' + stage)
 			elif command == 'MOVE':
-				print('MOVING')
 				args = flag.split(' ',4)
 				if len(args) is not 4:
 					continue;
@@ -355,20 +349,18 @@ def gitpull():
 				task = args[2]
 				clmn = args[3]
 				db.execute("SELECT count(*) AS count FROM stages WHERE projid=%s AND stagename ILIKE '%s'"% (proj, clmn))
-				if db.fetchone()['count'] > 0:
+				count = db.fetchone()['count']
+				if count > 0:
 					db.execute("UPDATE task SET stage='%s',contributor=0 WHERE id=%s AND projid=%s" % (clmn, task, proj))
-					g.db.commit()
-
+				g.db.commit()
 				updateLog(0,task,proj,'Move',True,'Moved to stage: ' + str(clmn))
 			elif command == 'REMV':
-				print('REMOVING')
 				args = flag.split(' ',3)
 				if len(args) is not 3:
 					continue;
 				proj = args[1]
 				task = args[2]
 			else:
-				print('FAILED')
 				continue;
 
 
@@ -453,7 +445,8 @@ def login():
 		return str(userid)
 	if userid == 0: #if wasn't found AND source is web/post
 		return render_template("/login.html", title = "Purple Tall", loginUser = -1)
-	return projlist()
+	return render_template("/valid.html", iduser = userid, username= user)	
+	#return projlist()
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/1/addcol?name={TEST}

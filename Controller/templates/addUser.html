@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-	<form method="POST" action="/addUser">
+	<form method="POST" action="/user">
 		<fieldset>
 			<legend>New User</legend>
 			<label for="firstname">First Name:</label><br />
@@ -9,9 +9,9 @@
 			<label for="lastname">Last Name:</label><br />
 			<input type="text" name="lname" id="lastname" /><br />
 			<label for="newusername">Username:</label><br />
-			<input type="text" name="newuser" id="newusername" /><br />
-			<label for="eemail">Email:</label><br />
-			<input type="email" name="mail" id="eemail" /><br />
+			<input type="text" name="uname" id="newusername" /><br />
+			<label for="email">Email:</label><br />
+			<input type="email" name="email" id="email" /><br />
 			<input type="submit" value="Submit" />
 		</fieldset>
 	</form>

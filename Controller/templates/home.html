@@ -14,11 +14,54 @@ function drop(ev){
 	ev.preventDefault();
 	var data = ev.dataTransfer.getData("text");
 	ev.target.appendChild(document.getElementById(data));
+	document.getElementById("dest").action="/{{data.metadata.project}}/move";
 }
 </script>
-
 <h1>Kanban Board</h1>
-<div class=home> <!--css flow this by row-->
+	<form method="POST" action=/listproj >
+		<input type=submit value="Back to Projects" />
+	</form>
+<div class=home>
+	<br/>
+	<div id="main">  
+	{% for key, value in data.metadata.stages.items() %}
+		<div class=stage>
+			<p class = title>{{ value }} </p>
+			<ul>
+				<li>
+					<div id="dest" ondrop="drop(event)" ondragover="allowDrop(event)">
+						<p>[drag to here to move]</p>
+					</div>
+				</li>
+				{% for task in tasklist %}
+					{% if task.stage.lower() == value.lower() %}
+						<li>
+							<div id={{task.id}} draggable="true" ondragstart="drag(event)">
+								{{ task.id }}, {{ task.name }} <br>
+								{{ task.lab_user }}
+							
+								<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
+									<input type="hidden" name="id" value={{ task.id }} />
+									<input type="submit" value="X" />
+								</form>
+								<form id=split method="POST" action="/{{data.metadata.project}}/split">
+									<input type="hidden" name="id" value={{ task.id }} />
+									<input type="hidden" name="user" value={{ userid }} />
+									<input type="submit" value="Y" />
+								</form>
+							<form method="POST" action="/{{ data.metadata.project}}/info">
+							<input type="submit" value="?" />
+							<input type="hidden" name="id" value="{{ task.id }}" />
+						</form>
+						</div>
+						</li>
+						<br>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	{% endfor %}
+	</div>
 	<div class=sidebar>
 		<div if=add>
 			<form method="POST" action="/{{data.metadata.project}}/add">
@@ -26,7 +69,7 @@ function drop(ev){
 				description: <input type="text" name="desc" />
 				expected complete: <input type="datetime-local" name="time" />
 				is it a bug? <input type="checkbox" name="bug" />
-				<input type="hidden" name="user" value={{ currentUser }} />
+				<input type="hidden" name="user" value={{ userid }} />
 				<input type="hidden" name="proj" value={{data.metadata.project}} />
 				<input type="submit" value="Add" />
 			</form>
@@ -54,42 +97,5 @@ function drop(ev){
 			</form>
 		</div>
 	</div> <!--end of "sidebar"-->
-	<br/>
-	<div id="main">  
-	<!--css flow this by row-->
-	{% for key, value in data.metadata.stages.items() %}
-		<div class=stage>
-			<p class = title>{{ value }} </p>
-			<ul><div id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></div>
-				<li> <div id="dest" ondrop="drop(event)"ondragover="allowdrop(event)"></div><p>test</p></li>
-				<li>
-				{% for task in tasklist %}
-					{% if task.stage.lower() == value.lower() %}
-						<li><div id={{task.id}} ondrop="drop(event)" ondragover="allowDrop(event)" draggable="true" ondragstart="drag(event)"></div>
-							{{ task.id }}, {{ task.name }} <br>
-							{{ task.lab_user }}
-						</li>
-				</li>
-		<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
-			<input type="hidden" name="id" value={{ task.id }} />
-			<input type="submit" value="del" />
-		</form>
-		<form id=split method="POST" action="/{{data.metadata.project}}/split">
-			<input type="hidden" name="id" value={{ task.id }} />
-			<input type="hidden" name="user" value={{ currentUser }} />
-			<input type="submit" value="split" />
-		</form>
-						</div></li>
-						<form method="POST" action="/{{ data.metadata.project}}/info">
-							<input type="submit" value="more info" />
-							<input type="hidden" name="id" value="{{ task.id }}" />
-						</form>
-						<br>
-					{% endif %}
-				{% endfor %}
-			</ul>
-		</div>
-	{% endfor %}
-	</div>
 </div>
 {% endblock %}

@@ -12,7 +12,29 @@ h1{
 	text-align: center;
 }
 
+#remove{
+	border: 1px solid black;
+	text: center;
+	width: 15px;
+	color: red;
+}
+
+#split{
+	border: 1px solid black;
+	text: center;
+	width: 15px;
+	color: green;
+}
+
+.fakebuttonsplit{
+	border: 1px solid black;
+	text: center;
+	width: 15px;
+	color: green;
+}
+
 #home{
+	display: flex;
 	margin: 0 auto;
 }
 
@@ -24,14 +46,17 @@ h1{
 
 #main{
 	display: flex;
+	overflow-x: auto;
 	flex-direction: rows;
 	align-items: flex-start;
-	overflow-x: scroll;
+	white-space: nowrap;
 }
 
 li{
 	margin-left: -10px;
 	margin-right: 10px;
+	padding: 10px;
+	list-style-type: none;
 }
 
 .stage{
@@ -43,27 +68,17 @@ li{
 	bottom: 5%;
 	border: solid 3px purple;
 	display: inline-block;
-	width: 500px;
-	flex-basis: auto | 150px; /*min length by min width*/
-	/*margin-width: 5px;*/ /*or margin-right*/
+	width: 300px;
+	flex-shrink: 0;
+	flex-grow: 0;
 }
 
-#sidebar > ul {
-		list-style-type: none;
-		margin: 0;
-		padding: 0;
-		width: 200px;
-		background-color: #f1f1f1;
-	}
+.sidebar{
+	border-top: 3px purple solid;
+	position: absolute;
+	bottom: 5px;
+}
 
-#sidebar > li {
-		display: block;
-		color: #000;
-		padding: 9px 16px;
-		text-decoration: none;
-	}
-
-#sidebar > li:hover {
-		background-color: #555;
-		color: white;
-	}
+.sidebar > form{
+	border-bottom: 1px solid purple;
+}
