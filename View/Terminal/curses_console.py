@@ -721,7 +721,7 @@ def kanban():
                 msg = msg + " " + word
             requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
         elif parsed[0] == 'UPT':
-            #Do nothing
+            useless = " "
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -2:
