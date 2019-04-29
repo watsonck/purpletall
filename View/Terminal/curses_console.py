@@ -510,8 +510,8 @@ def log(t_id):
     resp = requests.get(url).text
     resp = json.loads(resp)
     test = 0
-    for key, val in resp.items():
-        screen.addstr(test,0,str(key), curses.A_REVERSE)
+    for val in resp:
+        screen.addstr(test,0,str(val), curses.A_REVERSE)
         test = test + 2
     get_text(15)
     size = screen.getmaxyx()
