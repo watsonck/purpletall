@@ -98,7 +98,7 @@ def more_info(url):
         y = y+1
     screen.refresh()
     screen.addstr(splity+splity-1, splitx+1, "Press Enter To Contiune", curses.color_pair(1))
-    get_text(splitx+splitx)
+    choice = screen.getstr(size[0]-1,0, splitx*3-2)
 
 
 def send_recv(proj, cmd, args):
@@ -451,7 +451,7 @@ def proj_list(called_from = 0):
         cur_y = cur_y + 2
     if called_from == 0:
         screen.addstr(size[0]-3,1,'Press enter or enter anything to contiune', curses.A_REVERSE)
-        wait = get_text(splitx*3-2)
+        choice = screen.getstr(size[0]-1,0, splitx*3-2)
     elif called_from == 1:
         return p_list
 
@@ -496,8 +496,8 @@ def proj_choice():
     curses.echo()
     screen.addstr(size[0]-3,1,'Please Type the ID of the Proj you would like:', curses.A_REVERSE)
     while True:
-        choice = get_text(splitx*3-2)
-        parse = choice.decode().split()
+        choice = screen.getstr(size[0]-1,0, splitx*3-2)
+        parse = str(choice).decode().split()
         if choice.decode().upper() == 'QUIT':
             close_curses()
             exit()
@@ -549,7 +549,7 @@ def log(t_id):
                 act_str = act_str[:len(act_str)-4] + '...' 
             screen.addstr(y,splitx+1,act_str, curses.A_REVERSE)
             y = y + 2
-        text = get_text(4)
+        text = screen.getstr(size[0]-1,0, splitx*3-2)
         y = splity+1
         if text.decode().upper() == 'QUIT':
             break
@@ -586,7 +586,7 @@ def help():
         screen.addstr(splity+13, splitx+1, "Info: More info about task",curses.A_REVERSE)
         screen.addstr(splity+14, splitx+1, "Ping: Ping user with email",curses.A_REVERSE)
         screen.addstr(splity+15, splitx+1, "Quit: Exit program",curses.A_REVERSE)
-        choice = get_text(15)
+        choice = screen.getstr(size[0]-1,0, splitx*3-2)
         if choice.decode().lower() == 'quit':
             return
         elif choice.decode().lower() in cmd_map:
@@ -605,7 +605,7 @@ def help():
             else:    
                 screen.addstr(splity+1,splitx+1,cmd_map[choice.decode().lower()], curses.A_REVERSE)
             screen.addstr(splity-1, splitx, "Press enter to continue", curses.A_REVERSE)
-            get_text(15)
+            choice = screen.getstr(size[0]-1,0, splitx*3-2)
 
 def update():
     global updated
