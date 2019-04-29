@@ -1,6 +1,6 @@
 import curses, time, requests, json, signal
 from sys import exit
-from threading
+import threading
 
 win_list = []
 screen = -1
