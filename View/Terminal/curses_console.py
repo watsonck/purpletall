@@ -509,6 +509,11 @@ def log(t_id):
     url = 'http://purpletall.cs.longwood.edu:5000/log/'+str(cur_proj)+'/'+str(t_id)
     resp = requests.get(url).text
     resp = json.loads(resp)
+    test = 0
+    for key, val in resp:
+        screen.addstr(test,0,str(key), curses.A_REVERSE)
+        test = test + 2
+    get_text(15)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
