@@ -513,7 +513,7 @@ def log(t_id):
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
     screen.addstr(splity-2, splitx, "                 ")
-    c_act = 0
+    c_act = 1
     for action in resp:
         act_p = str(c_act) + '/' + str(len(resp))
         screen.addstr(splity+splity,splitx+splitx-len(act_p)-1, act_p, curses.A_REVERSE)
