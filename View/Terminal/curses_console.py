@@ -442,7 +442,7 @@ def proj_list(called_from = 0):
         tstr = str(len(str1)) + " " + str(splitx-1)
         screen.addstr(20,2,tstr,curses.A_REVERSE)
         if len(str1)+1 >= splitx-1:
-            str1 = str1[:splitx-4] + '...'
+            str1 = str1[:splitx-5] + '...'
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
     if called_from == 0:
