@@ -640,6 +640,8 @@ def kanban():
             updated = False
             parsed = ['UPT']
         else:
+            if len(str1) > 0:
+                screen.addstr(size[0]-1,0,str1, curses.A_REVERSE)
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
             split = int(size[1]/3)
@@ -681,6 +683,8 @@ def kanban():
         #EX: SCRL <T> <U or D> #To scroll tasks
         #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].upper() == "QUIT":
+            close_curses()
+            exit()
             break
         elif parsed[0].upper() == "HELP":
             help()
