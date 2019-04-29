@@ -648,9 +648,9 @@ def kanban():
                 continue
             elif ch == curses.KEY_ENTER or ch == 10 or ch == 13: #Numbers for enter key helped by: https://stackoverflow.com/questions/32252733/interpreting-enter-keypress-in-stdscr-curses-module-in-python
                 parsed = str(str1).split()
-                str1 = ""
                 for i in range(len(str1)+2):
                     screen.addstr(size[0]-1,i," ")    
+                str1 = ""
             elif ch >= 0 and ch <= 255:
                 str1 = str1 + chr(ch)
                 for i in range(len(str1)+2):
