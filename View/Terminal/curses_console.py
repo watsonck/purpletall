@@ -35,6 +35,7 @@ def init_curses():
         curses.init_color(5, 540, 170, 870)
     curses.noecho()
     curses.cbreak()
+    curses.nodelay(True)
     screen.keypad(True)
 
 def close_curses():
@@ -48,9 +49,8 @@ def get_text(limit):
     curses.echo()
     global screen
     size = screen.getmaxyx()
-    str1 = screen.getstr(size[0]-1,0,limit)
-    for i in range(limit):
-        screen.addstr(size[0]-1, i, " ")
+    str1 = screen.getch(size[0]-1,0)
+    curses.noecho()
     return str1
 
 def proj_change(proj_num = 1):
@@ -624,11 +624,11 @@ def kanban():
     screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
     updater = threading.Timer(30,update)
     updater.start()
-    paresed = ""
+    parsed = ""
     while True:
         if updated:
             updater.start()
-            paresed = ["UPT"]
+            parsed = ["UPT"]
         else:
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
