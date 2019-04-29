@@ -138,6 +138,11 @@ def send_recv(proj, cmd, args):
         if len(args) < 3:
             return -3
         url = url + 'swap?stage1={'+args[1]+"}&stage2={"+args[2]+"}"
+    elif cmd == 'rnam':
+        if len(args) < 3:
+            return -3
+        url = url + 'rename?id='+args[1]+'&name={'+args[2]+'}'
+
     else:
         return -1
     result = requests.get(url).text
