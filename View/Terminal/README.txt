@@ -11,6 +11,9 @@ While in Kanban board:
 	MOVE : followed by the task number then destination
 		MOVE 0 comp
 		MOVE <task_id> <to>
+	RNAM: Rename a tasl
+		RNAM 8 Bug2
+		RNAM <task_id> <task_name>
 	REMV: Removes task
 		REMV 0
 		REMV <task_id> 
@@ -32,6 +35,9 @@ While in Kanban board:
 	DCOL: Delete column on kanban board
 		DCOL Crap
 		DCOL <col_name>
+	SCOL: Swap column positions
+		SCOL Todo Done
+		SCOL <col_1> <col_2>
 	PROJ: Changes projects
 		PROJ
 			While In proj screen:
@@ -45,14 +51,8 @@ While in Kanban board:
 	QUIT : Exits the kanaban loop 
 
 COMMANDS NOT YET IMPLEMENTED:
-SCOL: Swap 2 column positions on board
-	SCOL todo done
-	SCOL <col_name1> <col_name2>
-	http://purpletall.cs.longwood.edu:5000/1/swap?stage1={todo}&stage2={Done}
 PING: Send an email to a user
 	PING haddockcl This is a ping
 	PING <recipient> <message>
 	http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}
 LOG: Log has been modified to also return a log of movements done to an item. View for info needs to be updated to display log
-RENAME TASK: 
-	http://purpletall.cs.longwood.edu:5000/2/rename?id=5&name={testing}
