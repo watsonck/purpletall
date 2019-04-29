@@ -16,11 +16,23 @@ function drop(ev){
 	ev.target.appendChild(document.getElementById(data));
 	document.getElementById("dest").action="/{{data.metadata.project}}/move";
 }
+
+function formAutoSubmit() {
+	var form = document.getElementById("now");
+	form.submit();
+	Window.setTimeout(formQutoSubmit, 0);
+}
+function dofunction(){
+	formAutoSubmit();
+}
 </script>
 <h1>Kanban Board</h1>
 	<form method="POST" action=/projlist >
-		<input type=submit value="Back to Projects" />
 		<input type="hidden" name="userid" value={{ userid }} />
+		<input type=submit value="Back to Projects" />
+	</form>
+	<form method="POST" action=/ >
+		<input type=submit value="Logout" />
 	</form>
 <div class=home>
 	<br/>
@@ -40,7 +52,13 @@ function drop(ev){
 							<div id={{task.id}} draggable="true" ondragstart="drag(event)">
 								{{ task.id }}, {{ task.name }} <br>
 								{{ task.lab_user }}
-							
+								<div ondrop="dofunction()">	
+								<form id=now method="POST" action="/{{data.metadata.project}}/move" ondrop="dofunction()">
+									<input type="hidden" name="id" value={{task.id}} />
+									<input type="hidden" name="stage" value={{task.stage}} />
+									<input type="hidden" name="user" value={{ userid }} />
+								</form>	
+								</div>
 								<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
 									<input type="hidden" name="id" value={{ task.id }} />
 									<input type="hidden" name="user" value={{ userid }} />
@@ -71,7 +89,7 @@ function drop(ev){
 				task name: <input type="text" name="name" />
 				description: <input type="text" name="desc" />
 				expected complete: <input type="datetime-local" name="time" />
-				is it a bug? <input type="checkbox" name="bug" />
+				is it a bug? <input type="test" name="bug" /> (true or false)
 				<input type="hidden" name="user" value={{ userid }} />
 				<input type="hidden" name="proj" value={{ data.metadata.project }} />
 				<input type="submit" value="Add" />
