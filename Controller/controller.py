@@ -136,7 +136,7 @@ def add(project):
 #http://purpletall.cs.longwood.edu:5000/1/move?id=1&stage={complete}
 @app.route("/<string:project>/move", methods=["GET", "POST"])
 def move(project):
-	#TODO ADD/REMOVE COLUMNS AS NEEDED
+	#TODO *maybe* ADD/REMOVE COLUMNS AS NEEDED
 	try:
 		gitpull()
 	except:
@@ -166,10 +166,13 @@ def remove(project):
 	source = pick_source(request.method)
 	taskid = source.get('id','-1')
 	db = get_db()
-	db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s" % (str(taskid), project))
-	g.db.commit()
-	db.execute("DELETE FROM task WHERE id = '%d' AND projid = '%d'" % (int(taskid),project))
-	g.db.commit()
+	try:
+		db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s" % (taskid, project))
+		g.db.commit()
+		db.execute("DELETE FROM task WHERE id = %s AND projid = %s" % (taskid,project))
+		g.db.commit()
+	except:
+		pass
 	return pull_tasks(project)
 
 #Example url
@@ -214,7 +217,7 @@ def split(project):
 #http://purpletall.cs.longwood.edu:5000/1/modify?id=4&name={Bug1}&desc={This%20bug%20is%20in%20controller}&time={2019-05-1}&bug={true}
 @app.route("/<int:project>/modify", methods=["GET", "POST"])
 def modify(project):
-	#TODO IMPLEMENT MODIFY
+	#TODO *maybe* IMPLEMENT MODIFY
 	return pull_tasks(project)
 
 #Example url
@@ -361,6 +364,11 @@ def gitpull():
 					continue;
 				proj = args[1]
 				task = args[2]
+				url = 'http://purpletall.cs.longwood.edu:5000/' + proj + '/remove?id=' + task
+				requests.get(url)
+			elif command == 'PING':
+				args = flag.split(' ',3)
+
 			else:
 				continue;
 
