@@ -503,6 +503,23 @@ def proj_choice():
     screen.clear()
     proj_change(cur_proj)
         
+def log(t_id):
+    global cur_proj
+    global screen
+    url = 'http://purpletall.cs.longwood.edu:5000/log/'+str(cur_proj)+'/'+str(t_id)
+    resp = requests.get(url).text
+    resp = json.loads(resp)
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+    screen.addstr(splity-2, splitx, "                 ")
+    for y in range(splity,splity+splity):
+        for x in range(splitx,splitx+splitx):
+            screen.addstr(y,x," ", curses.A_REVERSE)
+            if y == splity or y == splity+splity-1:
+                screen.addstr(y,x, " ", curses.color_pair(2))
+            elif x == splitx or x == splitx+splitx-1:
+                screen.addstr(y,x, " ", curses.color_pair(2))    
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -543,6 +560,10 @@ def kanban():
         #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].upper() == "QUIT":
             break
+        elif parsed[0].upper() == "LOG":
+            if len(parsed) < 2):
+                continue
+            log(parsed[1])
         elif parsed[0].upper() == "PROJ":
             proj_choice()
             #task = send_recv(cur_proj, 'proj', parsed)
