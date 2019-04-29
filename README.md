@@ -27,7 +27,10 @@ How to use:
 3) Start the view:
 	cd View/Terminal
 	python3 curses_console.py
-	
+----Using the web----
+4)Using the website:
+    open your browser (in the lab)
+	put this in your address bar: purpletall.cs.longwood.edu:5000
 Here are the view controls:
 
 ALL CMDS NON CASE SENSISTIVE
