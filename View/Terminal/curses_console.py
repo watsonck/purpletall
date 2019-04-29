@@ -632,6 +632,7 @@ def kanban():
     updater = threading.Timer(30,update)
     updater.start()
     parsed = ""
+    str1 = ""
     while True:
         screen.nodelay(True)
         if updated:
@@ -641,10 +642,13 @@ def kanban():
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
             split = int(size[1]/3)
-            str1 = get_text(split+split)
-            if str1 == -1:
+            ch = get_text(split+split)
+            if ch == -1:
                 continue
-            parsed = str1.decode().split()
+            elif ch == curses.KEY_ENTER:
+                parsed = str(str1).split()
+            else
+                str1 = str1 + chr(ch)
         
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
