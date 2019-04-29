@@ -590,7 +590,7 @@ def kanban():
             msg = " "
             for word in parsed[3:]:
                 msg = msg + " " + word
-            requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+word+"}")
+            requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -2:
