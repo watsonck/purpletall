@@ -647,7 +647,7 @@ def kanban():
                 continue
             elif ch == curses.KEY_ENTER:
                 parsed = str(str1).split()
-            else
+            else:
                 str1 = str1 + chr(ch)
         
         #CMD templates
