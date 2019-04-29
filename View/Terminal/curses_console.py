@@ -35,7 +35,7 @@ def init_curses():
         curses.init_color(5, 540, 170, 870)
     curses.noecho()
     curses.cbreak()
-    curses.nodelay(True)
+    screen.nodelay(True)
     screen.keypad(True)
 
 def close_curses():
