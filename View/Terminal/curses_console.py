@@ -544,7 +544,55 @@ def log(t_id):
         y = splity+1
         if text.decode().upper() == 'QUIT':
             break
+
+def help():
+    global screen
+    size = screen.getmaxyx()
+    splity = int(size[0]/3)
+    splitx = int(size[1]/3)
+    screen.addstr(splity-2, splitx, "                 ")
+    cmd_map = {'add' : 'Add <name> <expected_comp> <is_bug> <dec>', 'move' : 'Move <task_id> <to>', 'rnam' : 'Rnam <task_id> <task_name>', 'remv' : 'Remv <task_id>', 'splt' : 'Splt <task_id>', 'log' : 'Log <task_id>', 'scrl' : ['scrl <T> <U or D>','scrl <S> <L or R>'], 'pls' : 'Pls', 'acol' : 'Acol <col_name>', 'dcol' : 'Dcol <col_name>', 'scol' : 'Scol <col_1> <col_2>', 'proj' : ['Cproj', 'Dproj <proj_id>'], 'info' : 'Info <task_id>', 'ping' : 'Ping <username> <msg>'}
+    while True:
+        for y in range(splity,splity+splity):
+            for x in range(splitx,splitx+splitx):
+                screen.addstr(y,x," ", curses.A_REVERSE)
+                if y == splity or y == splity+splity-1:
+                    screen.addstr(y,x, " ", curses.color_pair(2))
+                elif x == splitx or x == splitx+splitx-1:
+                    screen.addstr(y,x, " ", curses.color_pair(2))
+        screen.addstr(splity-1, splitx, "Type a task name for more info or quit.",curses.A_REVERSE)
+        screen.addstr(splity+2, splitx+1, "Add: Create task",curses.A_REVERSE)
+        screen.addstr(splity+4, splitx+1, "Move: Move task between sections",curses.A_REVERSE)
+        screen.addstr(splity+6, splitx+1, "Rnam: Rename task",curses.A_REVERSE)
+        screen.addstr(splity+8, splitx+1, "Remv: Delete task",curses.A_REVERSE)
+        screen.addstr(splity+10, splitx+1, "Splt: Split task into 2",curses.A_REVERSE)
+        screen.addstr(splity+12, splitx+1, "Log: View the log of actions on task",curses.A_REVERSE)
+        screen.addstr(splity+14, splitx+1, "Scrl: Scroll tasks or cols",curses.A_REVERSE)
+        screen.addstr(splity+16, splitx+1, "Pls: list projects",curses.A_REVERSE)
+        screen.addstr(splity+18, splitx+1, "Acol: Add column",curses.A_REVERSE)
+        screen.addstr(splity+20, splitx+1, "Dcol: Delete column",curses.A_REVERSE)
+        screen.addstr(splity+22, splitx+1, "Scol: Swap col position",curses.A_REVERSE)
+        screen.addstr(splity+24, splitx+1, "Proj: Change projects",curses.A_REVERSE)
+        screen.addstr(splity+26, splitx+1, "Info: More info about task",curses.A_REVERSE)
+        screen.addstr(splity+28, splitx+1, "Ping: Ping user with email",curses.A_REVERSE)
+        screen.addstr(splity+30, splitx+1, "Quit: Exit program",curses.A_REVERSE)
+        choice = get_text(15)
+        if choice.decode().lower() == 'quit':
+            return
+        elif choice.decode().lower() in cmd_map:
+            for y in range(splity,splity+splity):
+                for x in range(splitx,splitx+splitx):
+                    screen.addstr(y,x," ", curses.A_REVERSE)
+                    if y == splity or y == splity+splity-1:
+                        screen.addstr(y,x, " ", curses.color_pair(2))
+                    elif x == splitx or x == splitx+splitx-1:
+                        screen.addstr(y,x, " ", curses.color_pair(2))
+            screen.addstr(splity+1,splitx+1,cmd_map[choice.decode().lower()], curses.A_REVERSE)
+            screen.addstr(splity-1, splitx, "Press enter to continue", curses.A_REVERSE)
+            get_text()
+
     
+
 ##Cannot write to bottom right corner
 def kanban():
     global boards
@@ -584,6 +632,8 @@ def kanban():
         #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].upper() == "QUIT":
             break
+        elif parsed[0].upper() == "HELP":
+            help()
         elif parsed[0].upper() == "LOG":
             if len(parsed) < 2:
                 continue
