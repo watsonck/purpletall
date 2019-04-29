@@ -54,7 +54,7 @@ ALTER TABLE Task ADD FOREIGN KEY (contributor) REFERENCES Users(userId) ON DELET
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Colin', 'Watson', 'colin.watson777@yahoo.com', 'watsonck');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Cameron', 'Haddock', 'cameron.haddock@live.longwood.edu','haddockcl');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Ryan', 'White', 'ryan.white@live.longwood.edu','whitery');
-INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Micheal', 'Montgomery', 'soul4hdwn@gmail','montgmi');
+INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Micheal', 'Montgomery', 'michael.montgomery1@live.longwood.edu','montgmi');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Brendan', 'Speed', 'brendan.speed@live.longwood.edu','speedbr');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Shyheim', 'Williams', 'shyheim.williams@live.longwood.edu', 'willish');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Alex', 'Sedgwick', 'alexandra.sedgwick@live.longwood.edu', 'sedgwal');

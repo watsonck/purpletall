@@ -18,8 +18,9 @@ function drop(ev){
 }
 </script>
 <h1>Kanban Board</h1>
-	<form method="POST" action=/listproj >
+	<form method="POST" action=/projlist >
 		<input type=submit value="Back to Projects" />
+		<input type="hidden" name="userid" value={{ userid }} />
 	</form>
 <div class=home>
 	<br/>
@@ -42,16 +43,18 @@ function drop(ev){
 							
 								<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
 									<input type="hidden" name="id" value={{ task.id }} />
-									<input type="submit" value="X" />
+									<input type="hidden" name="user" value={{ userid }} />
+									<input type="submit" value="Del" />
 								</form>
 								<form id=split method="POST" action="/{{data.metadata.project}}/split">
 									<input type="hidden" name="id" value={{ task.id }} />
 									<input type="hidden" name="user" value={{ userid }} />
-									<input type="submit" value="Y" />
+									<input type="submit" value="Split" />
 								</form>
 							<form method="POST" action="/{{ data.metadata.project}}/info">
-							<input type="submit" value="?" />
+							<input type="submit" value="Info" />
 							<input type="hidden" name="id" value="{{ task.id }}" />
+							<input type="hidden" name="user" value={{ userid }} />
 						</form>
 						</div>
 						</li>
@@ -70,7 +73,7 @@ function drop(ev){
 				expected complete: <input type="datetime-local" name="time" />
 				is it a bug? <input type="checkbox" name="bug" />
 				<input type="hidden" name="user" value={{ userid }} />
-				<input type="hidden" name="proj" value={{data.metadata.project}} />
+				<input type="hidden" name="proj" value={{ data.metadata.project }} />
 				<input type="submit" value="Add" />
 			</form>
 		</div>
@@ -78,6 +81,7 @@ function drop(ev){
 		<div id=addcol>
 			<form method="POST" action="/{{data.metadata.project}}/addcol">
 				Column name:<input type=text name=name />
+				<input type="hidden" name="user" value={{ userid }} />
 				<input type=submit value="add column"/>
 			</form>
 		</div>
@@ -85,6 +89,7 @@ function drop(ev){
 		<div id=delcol>
 			<form method="POST" action="/{{data.metadata.project}}/delcol">
 				Column name:<input type=text name=name />
+				<input type="hidden" name="user" value={{ userid }} />
 				<input type=submit value="delete column" />
 			</form>
 		</div>
@@ -93,6 +98,7 @@ function drop(ev){
 			<form method="POST" action="/{{data.metadata.project}}/swap">
 				1st column name: <input type=text name=stage1 /> <br/>
 				2nd column swap: <input type=text name=stage2 />
+				<input type="hidden" name="user" value={{ userid }} />
 				<input type=submit value="swap columns" />
 			</form>
 		</div>

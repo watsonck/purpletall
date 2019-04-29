@@ -93,8 +93,8 @@ def pull_tasks(project):
 		})
 	close_db('')
 	if request.method=="POST":
-		current = request.form.get("curUser","michael messed up");
-		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks, currentUser=current)
+		current = request.form.get("userid","0");
+		return render_template("/home.html", title = "Project Kanban", data = json_dict, tasklist=tasks, userid=current)
 	return json.dumps(json_dict)
 
 #Example url
@@ -590,8 +590,9 @@ def projlist():
 			return json.dumps(data) 
 		else:
 			current = request.form.get("user","michael_messed_up")
-#add fetch for #
-			return render_template("/list.html", List = data['projects'], curUser = current)
+			number = request.form.get("userid","0")
+			print(number)
+			return render_template("/list.html", List = data['projects'], curUser = current, uid=number)
 	except:
 		return 'Error'
 

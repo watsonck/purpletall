@@ -5,13 +5,18 @@
 function formAutoSubmit() {
 	var form = document.getElementById("now");
 	form.submit();
+	window.setTimeout(formQutoSubmit, 0);
+}
+function dofunction(){
+	formAutoSubmit()
 }
 </script>
 {% endblock %}
 {% block content %}
 <form id=now method="POST" action="/projlist">
-	<input type=hidden name=name value={{username}} />
-	<input type=hidden name=id value={{userid}} />
-	<input type=submit value="You shouldn't be seeing this" />
+	<input type=hidden name=user value={{username}} />
+	<input type=hidden name=userid value={{iduser}} />
+	<input type=submit value="click here to continue" />
 </form>
-<div onLoad="formAutoSubmit()" >no really, you shouldn't be seeing this :D</div>
+<div onLoad="dofunction()" >you're a user, congrats :D</div>
+{% endblock %}
