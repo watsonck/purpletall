@@ -641,7 +641,6 @@ def kanban():
             proj_change(cur_proj)
             updated = False
             parsed = ['UPT']
-            screen.addstr(20,2,"ALARM", curses.A_REVERSE)
         else:
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
@@ -654,9 +653,17 @@ def kanban():
                 str1 = ""
             elif ch >= 0 and ch <= 255:
                 str1 = str1 + chr(ch)
+                for i in range(len(str1)+2):
+                    screen.addstr(size[0]-1,i," ")                    
+                screen.addstr(size[0]-1,0,str1, curses.A_REVERSE)
+                screen.refresh()
                 continue
             elif ch == curses.KEY_BACKSPACE or ch == '^?' or ch == 'KEY_BACKSPACE':
                 str1 = str1[0:len(str1)-1]
+                for i in range(len(str1)+2):
+                    screen.addstr(size[0]-1,i," ")                    
+                screen.addstr(size[0]-1,0,str1, curses.A_REVERSE)
+                screen.refresh()
                 continue
         
         #CMD templates
