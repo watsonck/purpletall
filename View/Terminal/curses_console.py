@@ -651,7 +651,7 @@ def kanban():
                 continue
             elif ch == curses.KEY_ENTER or ch == 10 or ch == 13:
                 parsed = str(str1).split()
-                screen.addstr(20,2,str1, curses.A_REVERSE)
+                str1 = ""
             else:
                 str1 = str1 + chr(ch)
                 continue
