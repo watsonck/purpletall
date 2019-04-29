@@ -561,7 +561,7 @@ def kanban():
         if parsed[0].upper() == "QUIT":
             break
         elif parsed[0].upper() == "LOG":
-            if len(parsed) < 2):
+            if len(parsed) < 2:
                 continue
             log(parsed[1])
         elif parsed[0].upper() == "PROJ":
