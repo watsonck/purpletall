@@ -510,7 +510,7 @@ def log(t_id):
     resp = requests.get(url).text
     resp = json.loads(resp)
     test = 0
-    for key, val in resp:
+    for key, val in resp.items():
         screen.addstr(test,0,str(key), curses.A_REVERSE)
         test = test + 2
     get_text(15)
