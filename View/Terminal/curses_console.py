@@ -523,7 +523,7 @@ def log(t_id):
     
     y = 0
     for action in resp:
-        for key, val in action:
+        for key, val in action.items():
             act_str = str(key) + ': ' + str(val) 
             screen.addstr(y,2,act_str, curses.A_REVERSE)
             y = y + 2
