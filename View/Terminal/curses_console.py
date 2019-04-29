@@ -643,7 +643,7 @@ def kanban():
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
             split = int(size[1]/3)
-            ch = get_text(len(str1)+1)
+            ch = get_text(len(str1))
             if ch == -1:
                 continue
             elif ch == curses.KEY_ENTER or ch == 10 or ch == 13: #Numbers for enter key helped by: https://stackoverflow.com/questions/32252733/interpreting-enter-keypress-in-stdscr-curses-module-in-python
