@@ -460,9 +460,9 @@ def create_proj():
     screen.addstr(splity, splitx+(int(splitx*.3)), "Purple Tall User Creation", curses.A_REVERSE)
     screen.addstr(splity+2, splitx+1, "Please enter the project information.")
     screen.addstr(splity+4, splitx+1, "Proj Name:",curses.A_REVERSE)    
-    screen.addstr(splity+4, splitx+11, "                    ",curses.A_REVERSE)
+    screen.addstr(splity+4, splitx+11, "                    ")
     screen.addstr(splity+6, splitx+1, "Proj Desc:",curses.A_REVERSE)
-    screen.addstr(splity+6, splitx+11, "                    ",curses.A_REVERSE)
+    screen.addstr(splity+6, splitx+11, "                    ")
     
     curses.echo()
     pname = screen.getstr(splity+4,splitx+11,15)
