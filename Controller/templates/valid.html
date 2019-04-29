@@ -1,6 +1,8 @@
-{% extends "base.html" %}
-
-{% block meta %}
+<!DOCTYPE html>
+<html lang=en>
+<head>
+<title> user is valid </title>
+<meta charset=utf-8 />
 <script type="text/javascript">
 function formAutoSubmit() {
 	var form = document.getElementById("now");
@@ -11,12 +13,12 @@ function dofunction(){
 	formAutoSubmit()
 }
 </script>
-{% endblock %}
-{% block content %}
+</head>
+<body onLoad="dofunction()" >you're a user, congrats :D
 <form id=now method="POST" action="/projlist">
 	<input type=hidden name=user value={{username}} />
 	<input type=hidden name=userid value={{iduser}} />
 	<input type=submit value="click here to continue" />
 </form>
-<div onLoad="dofunction()" >you're a user, congrats :D</div>
-{% endblock %}
+</body>
+</html>

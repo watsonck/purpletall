@@ -110,7 +110,7 @@ def add(project):
 	source = pick_source(request.method)
 	name = source.get('name','N/A').replace('{','').replace('}','')
 	desc = source.get('desc','N/A').replace('{','').replace('}','')
-	ect = source.get('time','N/A').replace('{','').replace('}','')
+	ect = source.get('time','1-1-2019').replace('{','').replace('}','')
 	bug = source.get('bug',False)
 	user = source.get('user','0')
 	start = time.asctime(time.localtime(time.time()))
@@ -236,7 +236,6 @@ def info(project):
 	if request.method=="POST":
 		current = source.get("curUser","michael messed up");
 		return render_template("info.html", dump=json_dict)
-	json_dict['log'] = pullLog(taskid,project)
 	return json.dumps(json_dict)
 
 #Example url
@@ -279,12 +278,14 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	g.db.commit()
 	
 
+#http://purpletall.cs.longwood.edu/log/1/2
 @app.route("/log/<string:project>/<string:taskid>",methods = ["GET","POST"])
 def pullLog(taskid,project):
 	db = get_db()
-	db.execute("SELECT lab_user AS contributor, TO_CHAR(time, 'dd-MM-yyyy HH24:MI:SS') AS time,comments FROM logs JOIN users ON users.userid=logs.contributor WHERE taskid=%s AND projid=%s" % (str(taskid),str(project)))
+
+	db.execute("SELECT lab_user AS contributor, TO_CHAR(time, 'dd-MM-yyyy HH24:MI:SS') AS time,comments FROM logs JOIN users ON users.userid=logs.contributor WHERE taskid=%s AND projid=%s ORDER BY time DESC" % (str(taskid),str(project)))
 	log = db.fetchall()
-	return str(log)
+	return json.dumps(log)
 
 #Pull all git log since last update and make a new update
 @app.route("/git", methods=["GET","POST"])
@@ -484,7 +485,7 @@ def addproj():
 
 	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'TODO',0)" % projid)
 	g.db.commit()
-	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'IN PROGRESS',1)" % projid)
+	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'DOING',1)" % projid)
 	g.db.commit()
 	db.execute("INSERT INTO stages(projid,stagename,stageorder) VALUES (%s,'DONE',2)" % projid)
 	g.db.commit()
@@ -589,9 +590,8 @@ def projlist():
 		if request.method == "GET":
 			return json.dumps(data) 
 		else:
-			current = request.form.get("user","michael_messed_up")
+			current = request.form.get("user","back!")
 			number = request.form.get("userid","0")
-			print(number)
 			return render_template("/list.html", List = data['projects'], curUser = current, uid=number)
 	except:
 		return 'Error'

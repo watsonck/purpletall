@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <h1>Welcome {{ curUser }}</h1>
+<form method="POST" action=/ >
+	<input type=submit value="Logout" />
+</form>
 <div class=home>
     <h1>Projects</h1>
     <ul>

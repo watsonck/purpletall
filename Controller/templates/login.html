@@ -1,4 +1,9 @@
 {% extends "base.html" %}
+{% block func %}
+	{% if loginUser < 0 %}
+		onload="alert("Invalid login. Please try again.")"
+	{% endif %}
+{% endblock %}
 
 {% block content %}
 	<!--<script>
@@ -24,7 +29,4 @@
 		<input type=submit value="Add User" />
 	</form>
 	</div>
-	{% if loginUser < 0 %}
-		<div onload="alert("Invalid login. Please try again.")"></div>
-	{% endif %}
 {% endblock %}

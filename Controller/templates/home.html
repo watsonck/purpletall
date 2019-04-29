@@ -18,7 +18,7 @@ function drop(ev){
 }
 
 function formAutoSubmit() {
-	var form = document.getElementById("now");
+	var form = document.getElementById("move");
 	form.submit();
 	Window.setTimeout(formQutoSubmit, 0);
 }
@@ -42,7 +42,7 @@ function dofunction(){
 			<p class = title>{{ value }} </p>
 			<ul>
 				<li>
-					<div id="dest" ondrop="drop(event)" ondragover="allowDrop(event)">
+					<div id="dest" ondrop="drop(event)" ondrop="dofunction()" ondragover="allowDrop(event)">
 						<p>[drag to here to move]</p>
 					</div>
 				</li>
@@ -53,9 +53,9 @@ function dofunction(){
 								{{ task.id }}, {{ task.name }} <br>
 								{{ task.lab_user }}
 								<div ondrop="dofunction()">	
-								<form id=now method="POST" action="/{{data.metadata.project}}/move" ondrop="dofunction()">
-									<input type="hidden" name="id" value={{task.id}} />
-									<input type="hidden" name="stage" value={{task.stage}} />
+								<form id=move method="POST" action="/{{data.metadata.project}}/move">
+									<input type="hidden" name="id" value={{ task.id }} />
+									<input type="hidden" name="stage" value={{ value }} />
 									<input type="hidden" name="user" value={{ userid }} />
 								</form>	
 								</div>

@@ -6,7 +6,7 @@
 		{% block meta %}{% endblock %}
 		<link rel="stylesheet" href="/static/style.css"/>
 	</head>
-	<body>
+	<body{% block func %}{% endblock %}>
 		{% block content %}{% endblock %}
 	</body>
 </html>
