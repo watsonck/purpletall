@@ -636,8 +636,8 @@ def kanban():
     while True:
         screen.nodelay(True)
         if updated:
-            updater.start()
-            parsed = ["UPT"]
+            proj_change(cur_proj)
+            updated = False
         else:
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
@@ -719,9 +719,6 @@ def kanban():
             for word in parsed[2:]:
                 msg = msg + " " + word
             requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
-        elif parsed[0] == 'UPT':
-            proj_change(cur_proj)
-            updated = False
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -2:
