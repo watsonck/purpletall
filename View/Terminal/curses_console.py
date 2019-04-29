@@ -90,7 +90,7 @@ def more_info(url):
     for key1, val1 in task.items():
         str1 = str(key1) + ": " + str(val1) + " "
         if len(str1) > splitx-1:
-            str1 = str1[:splitx-4] + '...'
+            str1 = str1[:len(str1)-4] + '...'
         screen.addstr(y,splitx+1, str1, curses.A_REVERSE)
         y = y+1
     screen.refresh()
@@ -256,10 +256,14 @@ def kanban_print(split, max_tasks, limit):
                 str1 = ""
                 if task[2] == True: 
                     str1 = str(key2) + ": " + task[0]
+                    if len(str1) > split-1:
+                        str1 = str1[:len(str1)-4] + '...'
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.color_pair(1))
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.color_pair(1))
                 else:
                     str1 = str(key2) + ": " + task[0]
+                    if len(str1) > split-1:
+                        str1 = str1[:len(str1)-4] + '...'
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
 
@@ -435,6 +439,8 @@ def proj_list(called_from = 0):
     for proj in projs['projects']:
         p_list.append(str(proj['projid']))
         str1 = str(proj['projid']) + ': ' + proj['name'] + ': ' + proj['description'] 
+        if len(str1) > splitx+splitx-1:
+            str1 = str1[:len(str1)-4] + '...'
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
     if called_from == 0:
@@ -529,7 +535,9 @@ def log(t_id):
         y = splity+1
         screen.addstr(splity-1,splitx, "Enter anything to continue or enter quit to exit.", curses.color_pair(2))
         for key, val in action.items():
-            act_str = str(key) + ': ' + str(val) 
+            act_str = str(key) + ': ' + str(val)
+            if len(act_str) > splitx+splitx-1:
+                act_str = act_str[:len(act_str)-4] + '...' 
             screen.addstr(y,splitx+1,act_str, curses.A_REVERSE)
             y = y + 2
         text = get_text(4)
