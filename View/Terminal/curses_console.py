@@ -647,6 +647,7 @@ def kanban():
                 continue
             elif ch == curses.KEY_ENTER:
                 parsed = str(str1).split()
+                screen.addstr(20,2,str1, curses.A_REVERSE)
             else:
                 str1 = str1 + chr(ch)
                 continue
