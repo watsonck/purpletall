@@ -638,6 +638,7 @@ def kanban():
         if updated:
             proj_change(cur_proj)
             updated = False
+            continue
         else:
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
