@@ -439,7 +439,9 @@ def proj_list(called_from = 0):
     for proj in projs['projects']:
         p_list.append(str(proj['projid']))
         str1 = str(proj['projid']) + ': ' + proj['name'] + ': ' + proj['description'] 
-        if len(str1) > splitx+splitx-1:
+        tstr = len(str1) + " " + len(splitx+splitx)
+        screen.addstr(20,2,tstr,curses.A_REVERSE)
+        if len(str1)+1 >= splitx+splitx-1:
             str1 = str1[:len(str1)-4] + '...'
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
         cur_y = cur_y + 2
