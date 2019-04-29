@@ -649,6 +649,7 @@ def kanban():
                 parsed = str(str1).split()
             else:
                 str1 = str1 + chr(ch)
+                continue
         
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
