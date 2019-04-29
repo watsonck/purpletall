@@ -78,11 +78,10 @@ While in Kanban board:
 	INFO: Displays more info about Task
 		INFO 1
 		INFO <task_id>
+	PING: Ping a user with an email
+		PING whitery Hello i fixed the bug
+		PING <username> <msg>
 	QUIT : Exits the kanaban loop 
 
 COMMANDS NOT YET IMPLEMENTED:
-PING: Send an email to a user
-	PING haddockcl This is a ping
-	PING <recipient> <message>
-	http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}
 LOG: Log has been modified to also return a log of movements done to an item. View for info needs to be updated to display log
