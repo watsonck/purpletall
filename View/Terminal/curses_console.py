@@ -427,7 +427,7 @@ def proj_list(called_from = 0):
                     screen.addstr(y,x," ", curses.color_pair(2))
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x," ", curses.color_pair(2))
-    
+    screen.addstr(splity,int(splitx+(splitx*.3)), "Avalible Projects:", curses.color_pair(2))
     for x in range(size[1]):
         screen.addstr(size[0]-2,x, " ", curses.color_pair(2))
     cur_y = splity+1
