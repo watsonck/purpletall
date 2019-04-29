@@ -90,7 +90,7 @@ def more_info(url):
     for key1, val1 in task.items():
         str1 = str(key1) + ": " + str(val1) + " "
         if len(str1) > splitx-1:
-            str1 = str1[:len(str1)-4] + '...'
+            str1 = str1[:splitx-5] + '...'
         screen.addstr(y,splitx+1, str1, curses.A_REVERSE)
         y = y+1
     screen.refresh()
@@ -257,13 +257,13 @@ def kanban_print(split, max_tasks, limit):
                 if task[2] == True: 
                     str1 = str(key2) + ": " + task[0]
                     if len(str1) > split-1:
-                        str1 = str1[:len(str1)-4] + '...'
+                        str1 = str1[:split-5] + '...'
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.color_pair(1))
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.color_pair(1))
                 else:
                     str1 = str(key2) + ": " + task[0]
                     if len(str1) > split-1:
-                        str1 = str1[:len(str1)-4] + '...'
+                        str1 = str1[:split-5] + '...'
                     screen.addstr(2+(cur_tasks*2), 2+(split*cur_board), str1, curses.A_REVERSE)
                     screen.addstr(3+(cur_tasks*2), 3+(split*cur_board), str(task[1]), curses.A_REVERSE)
 
@@ -439,8 +439,6 @@ def proj_list(called_from = 0):
     for proj in projs['projects']:
         p_list.append(str(proj['projid']))
         str1 = str(proj['projid']) + ': ' + proj['name'] + ': ' + proj['description'] 
-        tstr = str(len(str1)) + " " + str(splitx-1)
-        screen.addstr(20,2,tstr,curses.A_REVERSE)
         if len(str1)+1 >= splitx-1:
             str1 = str1[:splitx-5] + '...'
         screen.addstr(cur_y,splitx+1,str1, curses.A_REVERSE)
