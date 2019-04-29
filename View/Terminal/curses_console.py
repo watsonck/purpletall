@@ -642,7 +642,7 @@ def kanban():
             max_tasks = int((size[0]-5)/2)+1
             split = int(size[1]/3)
             str1 = get_text(split+split)
-            if len(str1) < 1:
+            if str1 == -1:
                 continue
             parsed = str1.decode().split()
         
