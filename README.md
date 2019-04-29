@@ -53,6 +53,9 @@ While in Kanban board:
 	SPLT: Splits task into 2 tasks
 		SPLT 0 
 		SPLT <task_id>
+	LOG: Gives you the log of all actions applied to a task
+		LOG 19
+		LOG <task_id>
 	SCRL: Scroll either columns or tasks
 		For Tasks:
 			SCRL T U
@@ -85,6 +88,3 @@ While in Kanban board:
 		PING whitery Hello i fixed the bug
 		PING <username> <msg>
 	QUIT : Exits the kanaban loop 
-
-COMMANDS NOT YET IMPLEMENTED:
-LOG: Log has been modified to also return a log of movements done to an item. View for info needs to be updated to display log
