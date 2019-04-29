@@ -556,7 +556,7 @@ def help():
         for y in range(splity,splity+splity+4):
             for x in range(splitx,splitx+splitx):
                 screen.addstr(y,x," ", curses.A_REVERSE)
-                if y == splity or y == splity+splity-1:
+                if y == splity or y == splity+splity+3:
                     screen.addstr(y,x, " ", curses.color_pair(2))
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x, " ", curses.color_pair(2))
