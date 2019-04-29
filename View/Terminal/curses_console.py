@@ -35,7 +35,6 @@ def init_curses():
         curses.init_color(5, 540, 170, 870)
     curses.noecho()
     curses.cbreak()
-    screen.nodelay(True)
     screen.keypad(True)
 
 def close_curses():
@@ -75,6 +74,7 @@ def proj_change(proj_num = 1):
 
 def more_info(url):
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -343,6 +343,7 @@ def login():
     global username
     global user_id
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -379,6 +380,7 @@ def login():
 #user creation screen for once thats in the controller
 def create_user():
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -415,6 +417,7 @@ def create_user():
 
 def proj_list(called_from = 0):
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -454,6 +457,7 @@ def proj_list(called_from = 0):
 
 def create_proj():
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -483,6 +487,7 @@ def create_proj():
 
 def proj_choice():
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splitx = int(size[1]/3)
 
@@ -515,6 +520,7 @@ def proj_choice():
 def log(t_id):
     global cur_proj
     global screen
+    screen.nodelay(False)
     url = 'http://purpletall.cs.longwood.edu:5000/log/'+str(cur_proj)+'/'+str(t_id)
     resp = requests.get(url).text
     resp = json.loads(resp)
@@ -550,6 +556,7 @@ def log(t_id):
 
 def help():
     global screen
+    screen.nodelay(False)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -626,6 +633,7 @@ def kanban():
     updater.start()
     parsed = ""
     while True:
+        screen.nodelay(True)
         if updated:
             updater.start()
             parsed = ["UPT"]
