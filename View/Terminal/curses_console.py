@@ -509,11 +509,6 @@ def log(t_id):
     url = 'http://purpletall.cs.longwood.edu:5000/log/'+str(cur_proj)+'/'+str(t_id)
     resp = requests.get(url).text
     resp = json.loads(resp)
-    test = 0
-    for val in resp:
-        screen.addstr(test,0,str(val), curses.A_REVERSE)
-        test = test + 2
-    get_text(15)
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -525,7 +520,14 @@ def log(t_id):
                 screen.addstr(y,x, " ", curses.color_pair(2))
             elif x == splitx or x == splitx+splitx-1:
                 screen.addstr(y,x, " ", curses.color_pair(2))    
-
+    
+    y = 0
+    for action in resp:
+        for key, val in action:
+            act_str = str(key) + ': ' + str(val) 
+            screen.addstr(y,2,act_str, curses.A_REVERSE)
+            y = y + 2
+    get_text(15)
 ##Cannot write to bottom right corner
 def kanban():
     global boards
