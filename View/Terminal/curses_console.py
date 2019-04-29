@@ -580,14 +580,20 @@ def help():
         if choice.decode().lower() == 'quit':
             return
         elif choice.decode().lower() in cmd_map:
-            for y in range(splity,splity+splity):
+            for y in range(splity,splity+splity+4):
                 for x in range(splitx,splitx+splitx):
                     screen.addstr(y,x," ", curses.A_REVERSE)
-                    if y == splity or y == splity+splity-1:
+                    if y == splity or y == splity+splity+3:
                         screen.addstr(y,x, " ", curses.color_pair(2))
                     elif x == splitx or x == splitx+splitx-1:
                         screen.addstr(y,x, " ", curses.color_pair(2))
-            screen.addstr(splity+1,splitx+1,cmd_map[choice.decode().lower()], curses.A_REVERSE)
+            if choice.decode().lower() == 'scrl' or choice.decode().lower() == 'proj':
+                y = splity+1
+                for cmd in cmd_map[choice.decode().lower()]:
+                    screen.addstr(y,splitx+1,cmd, curses.A_REVERSE)
+                    y = y + 2
+            else:    
+                screen.addstr(splity+1,splitx+1,cmd_map[choice.decode().lower()], curses.A_REVERSE)
             screen.addstr(splity-1, splitx, "Press enter to continue", curses.A_REVERSE)
             get_text(15)
 
