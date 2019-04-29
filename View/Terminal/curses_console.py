@@ -512,6 +512,7 @@ def kanban():
     global most_tasks
     global sect_start
     global screen
+    global user_id
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
@@ -574,11 +575,7 @@ def kanban():
             proj_list()
         elif parsed[0].upper() == 'SCOL':
             task = send_recv(cur_proj,parsed[0].lower(), parsed)
-            if task == -1:
-                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
-                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
-                continue
-            elif task == -2:
+            if task == -2:
                 screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.color_pair(1))
                 continue
@@ -587,13 +584,16 @@ def kanban():
                 screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
                 continue
             proj_change(cur_proj)
+        elif parsed[0].upper() == 'PING':
+            if len(parsed) < 3:
+                continue
+            msg = " "
+            for word in parsed[3:]:
+                msg = msg + " " + word
+            requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+word+"}")
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
-            if task == -1:
-                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
-                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
-                continue
-            elif task == -2:
+            if task == -2:
                 screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.color_pair(1))
                 continue
