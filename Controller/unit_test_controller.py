@@ -55,15 +55,15 @@ class Test(unittest.TestCase):
 
     def test_project_in_db(self):
         db = get_db()
-        db.execute("SELECT projId FROM Projects WHERE projId = 1")
+        db.execute("SELECT projId FROM Projects WHERE projId = 2")
         projId = db.fetchone()
-        db.execute("SELECT name FROM Projects WHERE name = 'Testing Project'")
+        db.execute("SELECT name FROM Projects WHERE name = 'Switching Project'")
         name = db.fetchone()
-        db.execute("SELECT description FROM Projects WHERE description = 'a project made to test program'")
+        db.execute("SELECT description FROM Projects WHERE description = 'a project made to test switching'")
         description = db.fetchone()
-        self.assertEqual(projId, {'projid': 1})
-        self.assertEqual(name, {'name': 'Testing Project'})
-        self.assertEqual(description, {'description': 'a project made to test program'})
+        self.assertEqual(projId, {'projid': 2})
+        self.assertEqual(name, {'name': 'Switching Project'})
+        self.assertEqual(description, {'description': 'a project made to test switching'})
 
     def test_add_and_del(self):
         resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug=true").text
