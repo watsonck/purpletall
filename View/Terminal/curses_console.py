@@ -553,7 +553,7 @@ def help():
     screen.addstr(splity-2, splitx, "                 ")
     cmd_map = {'add' : 'Add <name> <expected_comp> <is_bug> <dec>', 'move' : 'Move <task_id> <to>', 'rnam' : 'Rnam <task_id> <task_name>', 'remv' : 'Remv <task_id>', 'splt' : 'Splt <task_id>', 'log' : 'Log <task_id>', 'scrl' : ['scrl <T> <U or D>','scrl <S> <L or R>'], 'pls' : 'Pls', 'acol' : 'Acol <col_name>', 'dcol' : 'Dcol <col_name>', 'scol' : 'Scol <col_1> <col_2>', 'proj' : ['Cproj', 'Dproj <proj_id>'], 'info' : 'Info <task_id>', 'ping' : 'Ping <username> <msg>'}
     while True:
-        for y in range(splity,splity+splity):
+        for y in range(splity,splity+splity+4):
             for x in range(splitx,splitx+splitx):
                 screen.addstr(y,x," ", curses.A_REVERSE)
                 if y == splity or y == splity+splity-1:
@@ -561,21 +561,21 @@ def help():
                 elif x == splitx or x == splitx+splitx-1:
                     screen.addstr(y,x, " ", curses.color_pair(2))
         screen.addstr(splity-1, splitx, "Type a task name for more info or quit.",curses.A_REVERSE)
-        screen.addstr(splity+2, splitx+1, "Add: Create task",curses.A_REVERSE)
-        screen.addstr(splity+3, splitx+1, "Move: Move task between sections",curses.A_REVERSE)
-        screen.addstr(splity+4, splitx+1, "Rnam: Rename task",curses.A_REVERSE)
-        screen.addstr(splity+5, splitx+1, "Remv: Delete task",curses.A_REVERSE)
-        screen.addstr(splity+6, splitx+1, "Splt: Split task into 2",curses.A_REVERSE)
-        screen.addstr(splity+7, splitx+1, "Log: View the log of actions on task",curses.A_REVERSE)
-        screen.addstr(splity+8, splitx+1, "Scrl: Scroll tasks or cols",curses.A_REVERSE)
-        screen.addstr(splity+9, splitx+1, "Pls: list projects",curses.A_REVERSE)
-        screen.addstr(splity+10, splitx+1, "Acol: Add column",curses.A_REVERSE)
-        screen.addstr(splity+11, splitx+1, "Dcol: Delete column",curses.A_REVERSE)
-        screen.addstr(splity+12, splitx+1, "Scol: Swap col position",curses.A_REVERSE)
-        screen.addstr(splity+13, splitx+1, "Proj: Change projects",curses.A_REVERSE)
-        screen.addstr(splity+14, splitx+1, "Info: More info about task",curses.A_REVERSE)
-        screen.addstr(splity+15, splitx+1, "Ping: Ping user with email",curses.A_REVERSE)
-        screen.addstr(splity+16, splitx+1, "Quit: Exit program",curses.A_REVERSE)
+        screen.addstr(splity+1, splitx+1, "Add: Create task",curses.A_REVERSE)
+        screen.addstr(splity+2, splitx+1, "Move: Move task between sections",curses.A_REVERSE)
+        screen.addstr(splity+3, splitx+1, "Rnam: Rename task",curses.A_REVERSE)
+        screen.addstr(splity+4, splitx+1, "Remv: Delete task",curses.A_REVERSE)
+        screen.addstr(splity+5, splitx+1, "Splt: Split task into 2",curses.A_REVERSE)
+        screen.addstr(splity+6, splitx+1, "Log: View the log of actions on task",curses.A_REVERSE)
+        screen.addstr(splity+7, splitx+1, "Scrl: Scroll tasks or cols",curses.A_REVERSE)
+        screen.addstr(splity+8, splitx+1, "Pls: list projects",curses.A_REVERSE)
+        screen.addstr(splity+9, splitx+1, "Acol: Add column",curses.A_REVERSE)
+        screen.addstr(splity+10, splitx+1, "Dcol: Delete column",curses.A_REVERSE)
+        screen.addstr(splity+11, splitx+1, "Scol: Swap col position",curses.A_REVERSE)
+        screen.addstr(splity+12, splitx+1, "Proj: Change projects",curses.A_REVERSE)
+        screen.addstr(splity+13, splitx+1, "Info: More info about task",curses.A_REVERSE)
+        screen.addstr(splity+14, splitx+1, "Ping: Ping user with email",curses.A_REVERSE)
+        screen.addstr(splity+15, splitx+1, "Quit: Exit program",curses.A_REVERSE)
         choice = get_text(15)
         if choice.decode().lower() == 'quit':
             return
