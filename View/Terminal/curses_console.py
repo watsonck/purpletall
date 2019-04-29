@@ -589,7 +589,7 @@ def help():
                         screen.addstr(y,x, " ", curses.color_pair(2))
             screen.addstr(splity+1,splitx+1,cmd_map[choice.decode().lower()], curses.A_REVERSE)
             screen.addstr(splity-1, splitx, "Press enter to continue", curses.A_REVERSE)
-            get_text()
+            get_text(15)
 
     
 
