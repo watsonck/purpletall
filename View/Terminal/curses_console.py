@@ -636,9 +636,12 @@ def kanban():
     while True:
         screen.nodelay(True)
         if updated:
+            c_upt = threading.Timer(30,update)
+            c_upt.start()
             proj_change(cur_proj)
             updated = False
             parsed = ['UPT']
+            screen.addstr(20,2,"ALARM", curses.A_REVERSE)
         else:
             size = screen.getmaxyx()
             max_tasks = int((size[0]-5)/2)+1
