@@ -649,11 +649,14 @@ def kanban():
             ch = get_text(split+split)
             if ch == -1:
                 continue
-            elif ch == curses.KEY_ENTER or ch == 10 or ch == 13:
+            elif ch == curses.KEY_ENTER or ch == 10 or ch == 13: #Numbers for enter key helped by: https://stackoverflow.com/questions/32252733/interpreting-enter-keypress-in-stdscr-curses-module-in-python
                 parsed = str(str1).split()
                 str1 = ""
-            else:
+            elif ch >= 0 and ch <= 255:
                 str1 = str1 + chr(ch)
+                continue
+            elif ch == curses.KEY_BACKSPACE or ch == '^?' or ch == 'KEY_BACKSPACE':
+                str1 = str1[0:len(str1)-1]
                 continue
         
         #CMD templates
