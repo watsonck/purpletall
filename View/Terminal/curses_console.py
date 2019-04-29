@@ -588,7 +588,7 @@ def kanban():
             if len(parsed) < 3:
                 continue
             msg = " "
-            for word in parsed[3:]:
+            for word in parsed[2:]:
                 msg = msg + " " + word
             requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
         else:
