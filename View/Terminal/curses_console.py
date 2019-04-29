@@ -521,13 +521,16 @@ def log(t_id):
             elif x == splitx or x == splitx+splitx-1:
                 screen.addstr(y,x, " ", curses.color_pair(2))    
     
-    y = 0
+    y = splity+1
+    screen.addstr(splity-1,splitx, "Enter anything to continue or enter quit to exit.", curses.color_pair(2))
     for action in resp:
         for key, val in action.items():
             act_str = str(key) + ': ' + str(val) 
-            screen.addstr(y,2,act_str, curses.A_REVERSE)
+            screen.addstr(y,splitx+1,act_str, curses.A_REVERSE)
             y = y + 2
-    get_text(15)
+        text = get_text(4)
+        if text.decode().upper() == 'QUIT':
+            break
 ##Cannot write to bottom right corner
 def kanban():
     global boards
