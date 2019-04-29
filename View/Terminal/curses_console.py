@@ -1,5 +1,6 @@
 import curses, time, requests, json, signal
 from sys import exit
+from threading import Timer
 
 win_list = []
 screen = -1
@@ -13,6 +14,8 @@ sect_start = 0 # where to start displaying sections from
 boards = {}
 sect_names = []
 most_tasks = -1 # the most tasks in any column, used to prevent scrolling down super far
+updated = False
+u_resp = {}
 
 #prevents CTRL+C from breaking the terminal
 #Lines 16-19 and Line 257 Helped by :https://stackoverflow.com/questions/1112343/how-do-i-capture-sigint-in-python
@@ -597,7 +600,9 @@ def help():
             screen.addstr(splity-1, splitx, "Press enter to continue", curses.A_REVERSE)
             get_text(15)
 
-    
+def update():
+    global updated
+    updated = True
 
 ##Cannot write to bottom right corner
 def kanban():
@@ -608,6 +613,7 @@ def kanban():
     global sect_start
     global screen
     global user_id
+    global updated
     size = screen.getmaxyx()
     max_tasks = int((size[0]-5)/2)+1
     split = int(size[1]/3)
@@ -616,14 +622,21 @@ def kanban():
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
     screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
+    updater = threading.Timer(30,update)
+    updater.start()
+    paresed = ""
     while True:
-        size = screen.getmaxyx()
-        max_tasks = int((size[0]-5)/2)+1
-        split = int(size[1]/3)
-        str1 = get_text(split+split)
-        if len(str1) < 1:
-            continue
-        parsed = str1.decode().split()
+        if updated:
+            updater.start()
+            paresed = ["UPT"]
+        else:
+            size = screen.getmaxyx()
+            max_tasks = int((size[0]-5)/2)+1
+            split = int(size[1]/3)
+            str1 = get_text(split+split)
+            if len(str1) < 1:
+                continue
+            parsed = str1.decode().split()
         
         #CMD templates
         #EX: ADD <name> <expected comp> <is_bug> <desc>
@@ -692,6 +705,9 @@ def kanban():
             for word in parsed[2:]:
                 msg = msg + " " + word
             requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
+        elif parsed[0] == 'UPT':
+            proj_change(cur_proj)
+            updated = False
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -2:
