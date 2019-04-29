@@ -45,11 +45,9 @@ def close_curses():
     curses.endwin()
 
 def get_text(limit):
-    curses.echo()
     global screen
     size = screen.getmaxyx()
     str1 = screen.getch(size[0]-1,0)
-    curses.noecho()
     return str1
 
 def proj_change(proj_num = 1):
@@ -658,7 +656,7 @@ def kanban():
                 screen.addstr(size[0]-1,0,str1, curses.A_REVERSE)
                 screen.refresh()
                 continue
-            elif ch == curses.KEY_BACKSPACE or ch == '^?' or ch == 'KEY_BACKSPACE':
+            elif ch == curses.KEY_BACKSPACE or ch == '^?' or ch == 'KEY_BACKSPACE':#How to detect backspace from: https://stackoverflow.com/questions/47481955/python-curses-detecting-the-backspace-key
                 str1 = str1[0:len(str1)-1]
                 for i in range(len(str1)+2):
                     screen.addstr(size[0]-1,i," ")                    
