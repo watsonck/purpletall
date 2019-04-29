@@ -134,6 +134,10 @@ def send_recv(proj, cmd, args):
             return -3
         proj_change(args[1])
         return
+    elif cmd == 'scol':
+        if len(args) < 3:
+            return -3
+        url = url + 'swap?stage1={'+args[1]+"}&stage2={"+args[2]+"}"
     else:
         return -1
     result = requests.get(url).text
@@ -528,7 +532,7 @@ def kanban():
         #EX: INFO <task_id>
         #EX: DCOL <col_name>
         #EX: ACOL <col_name>
-        #EX: PROJ <proj_id>
+        #EX: PROJ
         #EX: SCRL <T> <U or D> #To scroll tasks
         #EX: SCRL <S> <L or R> #To scroll sections
         if parsed[0].upper() == "QUIT":
@@ -563,6 +567,21 @@ def kanban():
                     sect_start = sect_start+1
         elif parsed[0].upper() == 'PLS':
             proj_list()
+        elif parsed[0].upper() == 'SCOL':
+            task = send_recv(cur_proj,parsed[0].lower(), parsed)
+            if task == -1:
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
+                screen.addstr(size[0]-2, 1, "ERROR: NOT A VALID COMMAND", curses.color_pair(1))
+                continue
+            elif task == -2:
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
+                screen.addstr(size[0]-2, 1, "ERROR: ERROR RECEIVED FROM SERVER", curses.color_pair(1))
+                continue
+            elif task == -3:
+                screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
+                screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
+                continue
+            proj_change(cur_proj)
         else:
             task = send_recv(cur_proj, parsed[0].lower(), parsed)
             if task == -1:
