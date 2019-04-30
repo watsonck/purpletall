@@ -262,8 +262,6 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	if row['count'] == 0:
 		return
 	db.execute("INSERT INTO logs(taskid,projid,contributor,action,time,git,comments) VALUES (%s,%s,%s,'%s','%s',%s,'%s');" % (str(taskID),str(projID),str(userID),str(action),str(logtime),str(isGit),str(comments)))
-	print(comments)
-	g.db.commit()
 	
 
 #http://purpletall.cs.longwood.edu/log/1/2
@@ -310,7 +308,6 @@ def gitpull():
 			if command == 'ADD ':
 				args = flag.split(' ',5)
 				if len(args) is not 6:
-					print(len(args))
 					continue;
 				proj = args[1]
 				name = args[2]
@@ -318,7 +315,6 @@ def gitpull():
 				bugs = args[4]
 				desc = args[5]
 				strt = time.asctime(time.localtime(time.time()))
-				print(proj,name,dttm,bugs,desc,strt)
 
 				db.execute("SELECT stagename FROM stages WHERE projid=%s ORDER BY stageorder LIMIT 1;" % (str(proj)))
 				row = db.fetchone()
@@ -333,7 +329,7 @@ def gitpull():
 			elif command == 'MOVE':
 				args = flag.split(' ',4)
 				if len(args) is not 4:
-					continue;
+					continue
 				proj = args[1]
 				task = args[2]
 				clmn = args[3]
@@ -345,31 +341,40 @@ def gitpull():
 			elif command == 'REMV':
 				args = flag.split(' ',2)
 				if len(args) is not 3:
-					print(len(args))
-					continue;
+					continue
 				proj = args[1]
 				task = args[2]
-				print(proj,task)
 				db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s;" % (task, proj))
 				db.execute("DELETE FROM task WHERE id = %s AND projid = %s;" % (task,proj))
+
+				t = time.asctime(time.localtime(time.time()))
+				db.execute("SELECT time FROM logs WHERE taskid=-1 AND projid=-1 AND comments='DELETED'")
+				row = db.fetchone()
+				if row is None:
+					db.execute("INSERT INTO logs(taskid,projid,contributor,time,git,comments) VALUES (-1,-1,0,'%s',true,'DELETED')" % t)
 			elif command == 'PING':
 				args = flag.split(' ',2)
-
+				if len(args) is not 3:
+					continue
+				user = args[1]
+				message = args[2]
+				t = time.asctime(time.localtime(time.time()))
+				url = 'http://purpletall.cs.longwood.edu:5000/ping?user=0&rcvr={' + user + '}&msg={' + message + '}'
+				requests.get(url)
+				db.execute("SELECT time FROM logs WHERE taskid=-1 AND projid=-1 AND comments='PINGED'")
+				row = db.fetchone()
+				if row is None:
+					db.execute("INSERT INTO logs(taskid,projid,contributor,time,git,comments) VALUES (-1,-1,0,'%s',true,'PINGED')" % t)
 			else:
-				continue;
-
-
-			#TODO COMMANDS
-			#TODO UPDATE LOG
-
-	return str(data)
+				continue
+	return ''
 
 #Example url
 #http://purpletall.cs.longwood.edu:5000/ping?user=2&rcvr={haddockcl}&msg={This%20is%20a%20ping}
 @app.route("/ping", methods=["GET", "POST"])
 def ping():
 	source = pick_source(request.method)
-	user = source.get('user',0)
+	user = source.get('user','0')
 	rcvr = source.get('rcvr',None)
 	if rcvr is None:
 		return 'Error'
@@ -385,7 +390,7 @@ def ping():
 	getter = result1['fname'] + ' ' + result1['lname']
 
 	pinger = ''
-	if user == 0:
+	if user == '0':
 		pinger = 'an unknown user'
 	else:
 		db.execute("SELECT fname,lname FROM users WHERE userid=%s" % (str(user)))
@@ -421,6 +426,7 @@ You just got a{2} ping from {3}.{4}
 	except:
 		return 'Error'
 	server.quit()
+	print(rcvr,message)
 	return ''
 
 
