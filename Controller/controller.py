@@ -37,14 +37,15 @@ def pick_source(which):
 		return request.form
 	return request.args
 
+@app.route("/test")
+def test():
+	return 'Connected'
+
 @app.route("/", methods=["GET", "POST"])
 def home():
-	if request.method == "GET":
-	   return "Connected"
-	elif request.method == "POST":
-		return render_template("/login.html", title = "Login",loginUser = 0)
-		#build web page otherwise, sending what it would need in comma list
-		#might need to move file and rename path, jinja looks for templates
+	return render_template("/login.html", title = "Login",loginUser = 0)
+	#build web page otherwise, sending what it would need in comma list
+	#might need to move file and rename path, jinja looks for templates
 
 @app.route("/addingauser", methods=["POST"])
 def web_add_user():
