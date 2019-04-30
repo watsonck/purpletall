@@ -14,7 +14,6 @@ function drop(ev){
 	ev.preventDefault();
 	var data = ev.dataTransfer.getData("text");
 	ev.target.appendChild(document.getElementById(data));
-	document.getElementById("dest").action="/{{data.metadata.project}}/move";
 }
 
 function formAutoSubmit() {
@@ -119,7 +118,7 @@ function dofunction(){
 		</div>
 		task move:
 		<form id=move method="POST" action="/{{data.metadata.project}}/move">
-			which one:<input type="text" name="taskid" />
+			which one:<input type="text" name="id" />
 			to what column:<input type="text" name="stage" />
 			<input type="hidden" name="user" value={{ userid }} />
 			<input type=submit value="move it" />

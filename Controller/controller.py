@@ -39,13 +39,11 @@ def pick_source(which):
 
 @app.route("/", methods=["GET", "POST"])
 def home():
-	#if request.method == "GET":
-		#example for other actual functions below,
-		#give plain/JSON output here
-#	   return "Hello World"
-	#else:
+	if request.method == "GET":
+	   return "Connected"
+	elif request.method == "POST":
+		return render_template("/login.html", title = "Login",loginUser = 0)
 		#build web page otherwise, sending what it would need in comma list
-	return render_template("/login.html", title = "Login",loginUser = 0)
 		#might need to move file and rename path, jinja looks for templates
 
 @app.route("/addingauser", methods=["POST"])
