@@ -32,7 +32,7 @@ CREATE TABLE Logs  (taskId		INTEGER,
 		    time		TIMESTAMP,
 			git			BOOLEAN,
 		    comments		TEXT,
-		    PRIMARY KEY(taskId, time)
+		    PRIMARY KEY(taskId, projId, time)
     );
 
 CREATE TABLE Projects (projId		SERIAL PRIMARY KEY,
