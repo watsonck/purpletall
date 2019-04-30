@@ -75,7 +75,7 @@ li{
 
 .sidebar{
 	border-top: 3px purple solid;
-	position: absolute;
+	/*position: absolute;*/
 	bottom: 5px;
 }
 

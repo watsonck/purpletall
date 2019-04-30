@@ -57,6 +57,10 @@ def web_add_user():
 #Help: https://realpython.com/python-json/
 @app.route("/<string:project>/list", methods=["GET","POST"])
 def pull_tasks(project):
+	try:
+		gitpull()
+	except:
+		pass
 	json_dict = {}
 	json_dict['metadata'] = {}
 	json_dict['stages'] = {}
@@ -354,6 +358,8 @@ def gitpull():
 				row = db.fetchone()
 				if row is None:
 					db.execute("INSERT INTO logs(taskid,projid,contributor,time,git,comments) VALUES (-1,-1,0,'%s',true,'DELETED')" % t)
+				else:
+					db.execute("UPDATE logs SET time='%s' WHERE comments='PINGED'" % t)
 			elif command == 'PING':
 				args = flag.split(' ',2)
 				if len(args) is not 3:
@@ -368,6 +374,8 @@ def gitpull():
 				row = db.fetchone()
 				if row is None:
 					db.execute("INSERT INTO logs(taskid,projid,contributor,time,git,comments) VALUES (-1,-1,0,'%s',true,'PINGED')" % t)
+				else:
+					db.execute("UPDATE logs SET time='%s' WHERE comments='PINGED'" % t)
 			else:
 				continue
 	return ''
