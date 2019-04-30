@@ -1,6 +1,6 @@
 from flask import Flask, request, g, redirect, escape, render_template
 from git import Git
-import psycopg2, psycopg2.extras, time, json, smtplib, re
+import psycopg2, psycopg2.extras, time, requests, json, smtplib, re
 
 #TODO *maybe* IMPLEMENT CONFIG FILE LOADING
 
@@ -18,6 +18,7 @@ def connect_db():
 	db = psycopg2.connect(database=app.config["DATABASE"],
 	user=app.config["USERNAME"],password=app.config["PASSWORD"],
 	host="localhost", cursor_factory=psycopg2.extras.RealDictCursor)
+	db.autocommit = True
 	return db
 
 def get_db():
@@ -102,11 +103,6 @@ def pull_tasks(project):
 #Help: https://support.clickmeter.com/hc/en-us/articles/211032666-URL-parameters-How-to-pass-it-to-the-destination-URL
 @app.route("/<int:project>/add", methods=["GET", "POST"])
 def add(project):
-	try:
-		gitpull()
-	except:
-		pass
-
 	source = pick_source(request.method)
 	name = source.get('name','N/A').replace('{','').replace('}','')
 	desc = source.get('desc','N/A').replace('{','').replace('}','')
@@ -137,10 +133,6 @@ def add(project):
 @app.route("/<string:project>/move", methods=["GET", "POST"])
 def move(project):
 	#TODO *maybe* ADD/REMOVE COLUMNS AS NEEDED
-	try:
-		gitpull()
-	except:
-		pass
 	source = pick_source(request.method)
 	taskid = source.get('id',0)
 	stage = source.get('stage','N/A').replace('{','').replace('}','')
@@ -159,10 +151,6 @@ def move(project):
 #http://purpletall.cs.longwood.edu:5000/1/remove?id=1
 @app.route("/<int:project>/remove", methods=["GET", "POST"])
 def remove(project):
-	try:
-		gitpull()
-	except:
-		pass
 	source = pick_source(request.method)
 	taskid = source.get('id','-1')
 	db = get_db()
@@ -179,10 +167,6 @@ def remove(project):
 #http://purpletall.cs.longwood.edu:5000/1/split?id=1
 @app.route("/<int:project>/split", methods=["GET", "POST"])
 def split(project):
-	try:
-		gitpull()
-	except:
-		pass
 	db = get_db()
 	source = pick_source(request.method)
 	taskid = source.get('id',0)
@@ -278,6 +262,7 @@ def updateLog(userID,taskID,projID,action,isGit,comments):
 	if row['count'] == 0:
 		return
 	db.execute("INSERT INTO logs(taskid,projid,contributor,action,time,git,comments) VALUES (%s,%s,%s,'%s','%s',%s,'%s');" % (str(taskID),str(projID),str(userID),str(action),str(logtime),str(isGit),str(comments)))
+	print(comments)
 	g.db.commit()
 	
 
@@ -321,11 +306,13 @@ def gitpull():
 		item['contributor'] = user
 		for flag in item['flags']:
 			db = get_db()
-			flag = flag.replace('<','').replace('>','').upper()
-			command = flag[:4]
+			flag = flag.replace('<','').replace('>','')
+			command = flag[:4].upper()
 			if command == 'ADD ':
-				args = flag.split(' ',6)
+				print('hullo')
+				args = flag.split(' ',5)
 				if len(args) is not 6:
+					print(len(args))
 					continue;
 				proj = args[1]
 				name = args[2]
@@ -333,14 +320,14 @@ def gitpull():
 				bugs = args[4]
 				desc = args[5]
 				strt = time.asctime(time.localtime(time.time()))
+				print(proj,name,dttm,bugs,desc,strt)
 
-				db.execute("SELECT stagename FROM stages WHERE projid=%d ORDER BY stageorder LIMIT 1;" % (proj))
+				db.execute("SELECT stagename FROM stages WHERE projid=%s ORDER BY stageorder LIMIT 1;" % (str(proj)))
 				row = db.fetchone()
 				if row is None:
 					continue
 				stage = row['stagename']
-				db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s',%d,%s,0);" % (name,desc,strt,dttm,stage,proj,bugs))
-				g.db.commit()
+				db.execute("INSERT INTO task (name,description,startTime,exptCompTime,stage,projid,bugged,contributor) VALUES ('%s','%s','%s','%s','%s','%s',%s,0);" % (name,desc,strt,dttm,stage,proj,bugs))
 				db.execute("SELECT MAX(id) AS taskid FROM task;")
 				row = db.fetchone()
 				if row is not None:
@@ -356,7 +343,6 @@ def gitpull():
 				count = db.fetchone()['count']
 				if count > 0:
 					db.execute("UPDATE task SET stage='%s',contributor=0 WHERE id=%s AND projid=%s" % (clmn, task, proj))
-				g.db.commit()
 				updateLog(0,task,proj,'Move',True,'Moved to stage: ' + str(clmn))
 			elif command == 'REMV':
 				args = flag.split(' ',3)
@@ -364,8 +350,8 @@ def gitpull():
 					continue;
 				proj = args[1]
 				task = args[2]
-				url = 'http://purpletall.cs.longwood.edu:5000/' + proj + '/remove?id=' + task
-				requests.get(url)
+				db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s;" % (task, proj))
+				db.execute("DELETE FROM task WHERE id = %s AND projid = %s;" % (task,proj))
 			elif command == 'PING':
 				args = flag.split(' ',3)
 

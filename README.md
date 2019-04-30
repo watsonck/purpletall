@@ -88,3 +88,7 @@ While in Kanban board:
 		PING whitery Hello i fixed the bug
 		PING <username> <msg>
 	QUIT : Exits the kanaban loop 
+
+Git Flags:
+	To perform actions, place this flags in your git commits
+	
