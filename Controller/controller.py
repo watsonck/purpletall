@@ -305,6 +305,8 @@ def gitpull():
 		for flag in item['flags']:
 			flag = flag.replace('<','').replace('>','')
 			command = flag[:4].upper()
+			print(command)
+			print(flag)
 			if command == 'ADD ':
 				args = flag.split(' ',5)
 				if len(args) is not 6:
@@ -355,12 +357,13 @@ def gitpull():
 			elif command == 'PING':
 				args = flag.split(' ',2)
 				if len(args) is not 3:
+					print(args)
 					continue
 				user = args[1]
 				message = args[2]
 				t = time.asctime(time.localtime(time.time()))
 				url = 'http://purpletall.cs.longwood.edu:5000/ping?user=0&rcvr={' + user + '}&msg={' + message + '}'
-				requests.get(url)
+				print(requests.get(url))
 				db.execute("SELECT time FROM logs WHERE taskid=-1 AND projid=-1 AND comments='PINGED'")
 				row = db.fetchone()
 				if row is None:
