@@ -7,6 +7,7 @@ win_list = []
 screen = -1
 username = ""
 user_id = 0
+host_port = 'http://purpdletall.cs.longwood.edu:5000'
 
 #kanban varriables
 cur_proj = 1
@@ -57,11 +58,12 @@ def proj_change(proj_num = 1):
     global kanban_start
     global sect_start
     global cur_proj
+    global host_port
     sect_names.clear()
     boards.clear()
     kanban_start = 0
     sect_start = 0
-    task = requests.get('http://purpletall.cs.longwood.edu:5000/'+str(proj_num)+'/list').text
+    task = requests.get(host_port+'/'+str(proj_num)+'/list').text
     if task == 'ERROR':
         return
     task = json.loads(task)
@@ -103,7 +105,7 @@ def more_info(url):
 def send_recv(proj, cmd, args):
     global user_id
     global cur_proj
-    url = "http://purpletall.cs.longwood.edu:5000/" + str(proj) +'/'
+    url = host_port+"/" + str(proj) +'/'
     if cmd == 'add':
         if len(args) < 5:
             return -3
@@ -130,7 +132,7 @@ def send_recv(proj, cmd, args):
             return -3
         url = url + 'info?id=' +args[1]
         more_info(url)
-        url = 'http://purpletall.cs.longwood.edu:5000/'+str(proj)+'/list'
+        url = host_port+'/'+str(proj)+'/list'
     elif cmd == 'proj':
         if len(args) < 2:
             return -3
@@ -361,7 +363,7 @@ def login():
         screen.addstr(splity+3, splitx + int(splitx*.33) + 12, "               ")
 
         username = screen.getstr(splity+3,splitx + int(splitx*.33)+12,15)
-        user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+        user_id = requests.get(host_port+'/login?user={'+username.decode()+'}').text
         if str(user_id) != '0':
             break
         elif username.decode().upper() == 'QUIT':
@@ -369,7 +371,7 @@ def login():
             exit()
         elif username.decode().upper() == 'CREATE':
             create_user()
-            user_id = requests.get('http://purpletall.cs.longwood.edu:5000/login?user={'+username.decode()+'}').text
+            user_id = requests.get(host_port+'/login?user={'+username.decode()+'}').text
             break
         else:
             screen.addstr(splity-2, splitx, "INVALID USERNAME", curses.color_pair(1))
@@ -410,7 +412,7 @@ def create_user():
     lname = screen.getstr(splity+6,splitx+12,15)
     username = screen.getstr(splity+8,splitx+10,15)
     email = screen.getstr(splity+10,splitx+7,34)
-    requests.get("http://purpletall.cs.longwood.edu:5000/user?fname={"+fname.decode()+"}&lname={"+lname.decode()+"}&uname={"+username.decode()+"}&email={"+email.decode()+"}")
+    requests.get(host_port+"/user?fname={"+fname.decode()+"}&lname={"+lname.decode()+"}&uname={"+username.decode()+"}&email={"+email.decode()+"}")
     curses.noecho()
     screen.clear()
 
@@ -421,7 +423,7 @@ def proj_list(called_from = 0):
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
 
-    projs = json.loads(requests.get('http://purpletall.cs.longwood.edu:5000/projlist').text)
+    projs = json.loads(requests.get(host_port+'/projlist').text)
     max_y = splity+1 + 2*projs['count']
     for y in range(splity,max_y+1):
         for x in range(splitx,splitx+splitx):
@@ -479,7 +481,7 @@ def create_proj():
     curses.echo()
     pname = screen.getstr(splity+4,splitx+11,15)
     desc = screen.getstr(splity+6,splitx+11,15)
-    requests.get("http://purpletall.cs.longwood.edu:5000/newproj?name={"+pname.decode()+"}&desc={"+desc.decode()+"}")
+    requests.get(host_port+"/newproj?name={"+pname.decode()+"}&desc={"+desc.decode()+"}")
     curses.noecho()
     screen.clear()
 
@@ -505,7 +507,7 @@ def proj_choice():
             return
         elif parse[0].upper() == 'DPROJ':
             if len(parse) >= 2:
-                requests.get("http://purpletall.cs.longwood.edu:5000/delproj?id="+parse[1])
+                requests.get(host_port+"/delproj?id="+parse[1])
                 curses.noecho()
                 screen.clear()
                 return
@@ -520,7 +522,7 @@ def log(t_id):
     global cur_proj
     global screen
     screen.nodelay(False)
-    url = 'http://purpletall.cs.longwood.edu:5000/log/'+str(cur_proj)+'/'+str(t_id)
+    url = host_port+'/log/'+str(cur_proj)+'/'+str(t_id)
     resp = requests.get(url).text
     resp = json.loads(resp)
     size = screen.getmaxyx()
@@ -703,7 +705,7 @@ def kanban():
                 screen.addstr(size[0]-2, 1, "                                  ", curses.color_pair(2))
                 screen.addstr(size[0]-2, 1, "ERROR: NOT ENOUGH ARGS FOR COMMAND", curses.color_pair(1))
             else:
-                url = "http://purpletall.cs.longwood.edu:5000/" + str(cur_proj) +'/'
+                url = host_port+"/" + str(cur_proj) +'/'
                 if parsed[0].upper() == 'ACOL':
                     url = url + 'addcol?name={' + parsed[1] +'}'
                 elif parsed[0].upper() == 'DCOL': 
@@ -742,7 +744,7 @@ def kanban():
             msg = " "
             for word in parsed[2:]:
                 msg = msg + " " + word
-            requests.get("http://purpletall.cs.longwood.edu:5000/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
+            requests.get(host_port+"/ping?user="+str(user_id)+"&rcvr={"+parsed[1]+"}&msg={"+msg+"}")
         elif parsed[0] == 'UPT':
             useless = " "
         else:
