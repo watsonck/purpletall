@@ -305,11 +305,9 @@ def gitpull():
 			user = result['userid']
 		item['contributor'] = user
 		for flag in item['flags']:
-			db = get_db()
 			flag = flag.replace('<','').replace('>','')
 			command = flag[:4].upper()
 			if command == 'ADD ':
-				print('hullo')
 				args = flag.split(' ',5)
 				if len(args) is not 6:
 					print(len(args))
@@ -345,15 +343,17 @@ def gitpull():
 					db.execute("UPDATE task SET stage='%s',contributor=0 WHERE id=%s AND projid=%s" % (clmn, task, proj))
 				updateLog(0,task,proj,'Move',True,'Moved to stage: ' + str(clmn))
 			elif command == 'REMV':
-				args = flag.split(' ',3)
+				args = flag.split(' ',2)
 				if len(args) is not 3:
+					print(len(args))
 					continue;
 				proj = args[1]
 				task = args[2]
+				print(proj,task)
 				db.execute("DELETE FROM logs WHERE taskid = %s AND projid = %s;" % (task, proj))
 				db.execute("DELETE FROM task WHERE id = %s AND projid = %s;" % (task,proj))
 			elif command == 'PING':
-				args = flag.split(' ',3)
+				args = flag.split(' ',2)
 
 			else:
 				continue;
