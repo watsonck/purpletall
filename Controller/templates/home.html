@@ -43,7 +43,7 @@ function dofunction(){
 			<ul>
 				<li>
 					<div id="dest" ondrop="drop(event)" ondrop="dofunction()" ondragover="allowDrop(event)">
-						<p>[drag to here to move]</p>
+						<hr/>
 					</div>
 				</li>
 				{% for task in tasklist %}
@@ -52,13 +52,6 @@ function dofunction(){
 							<div id={{task.id}} draggable="true" ondragstart="drag(event)">
 								{{ task.id }}, {{ task.name }} <br>
 								{{ task.lab_user }}
-								<div ondrop="dofunction()">	
-								<form id=move method="POST" action="/{{data.metadata.project}}/move">
-									<input type="hidden" name="id" value={{ task.id }} />
-									<input type="hidden" name="stage" value={{ value }} />
-									<input type="hidden" name="user" value={{ userid }} />
-								</form>	
-								</div>
 								<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
 									<input type="hidden" name="id" value={{ task.id }} />
 									<input type="hidden" name="user" value={{ userid }} />
@@ -69,12 +62,12 @@ function dofunction(){
 									<input type="hidden" name="user" value={{ userid }} />
 									<input type="submit" value="Split" />
 								</form>
-							<form method="POST" action="/{{ data.metadata.project}}/info">
-							<input type="submit" value="Info" />
-							<input type="hidden" name="id" value="{{ task.id }}" />
-							<input type="hidden" name="user" value={{ userid }} />
-						</form>
-						</div>
+								<form method="POST" action="/{{ data.metadata.project}}/info">
+									<input type="submit" value="Info" />
+									<input type="hidden" name="id" value="{{ task.id }}" />
+									<input type="hidden" name="user" value={{ userid }} />
+								</form>
+							</div>
 						</li>
 						<br>
 					{% endif %}
@@ -84,6 +77,7 @@ function dofunction(){
 	{% endfor %}
 	</div>
 	<div class=sidebar>
+		add task:
 		<div if=add>
 			<form method="POST" action="/{{data.metadata.project}}/add">
 				task name: <input type="text" name="name" />
@@ -96,6 +90,7 @@ function dofunction(){
 			</form>
 		</div>
 		<br />
+		add column:
 		<div id=addcol>
 			<form method="POST" action="/{{data.metadata.project}}/addcol">
 				Column name:<input type=text name=name />
@@ -104,6 +99,7 @@ function dofunction(){
 			</form>
 		</div>
 		<br />
+		delete columns:
 		<div id=delcol>
 			<form method="POST" action="/{{data.metadata.project}}/delcol">
 				Column name:<input type=text name=name />
@@ -112,6 +108,7 @@ function dofunction(){
 			</form>
 		</div>
 		<br />
+		swap columns:
 		<div id=swpcol>
 			<form method="POST" action="/{{data.metadata.project}}/swap">
 				1st column name: <input type=text name=stage1 /> <br/>
@@ -120,6 +117,13 @@ function dofunction(){
 				<input type=submit value="swap columns" />
 			</form>
 		</div>
+		task move:
+		<form id=move method="POST" action="/{{data.metadata.project}}/move">
+			which one:<input type="text" name="taskid" />
+			to what column:<input type="text" name="stage" />
+			<input type="hidden" name="user" value={{ userid }} />
+			<input type=submit value="move it" />
+		</form>	
 	</div> <!--end of "sidebar"-->
 </div>
 {% endblock %}
