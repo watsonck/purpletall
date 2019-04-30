@@ -51,6 +51,7 @@ ALTER TABLE Stages ADD FOREIGN KEY (projId) REFERENCES Projects(projId) ON DELET
 ALTER TABLE Task ADD FOREIGN KEY (projId) REFERENCES Projects(projId) ON DELETE CASCADE;
 ALTER TABLE Task ADD FOREIGN KEY (contributor) REFERENCES Users(userId) ON DELETE CASCADE;
 
+/*
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Colin', 'Watson', 'colin.watson777@yahoo.com', 'watsonck');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Cameron', 'Haddock', 'cameron.haddock@live.longwood.edu','haddockcl');
 INSERT INTO Users (fname, lname, email, lab_user) VALUES ('Ryan', 'White', 'ryan.white@live.longwood.edu','whitery');
@@ -80,3 +81,4 @@ INSERT INTO Stages(projId, stageName, stageOrder) VALUES(2, 'Done',3);
 INSERT INTO Task(projId, name, description, stage, contributor) VALUES (2, 'TesterOne', 'Need to start this thing','todo',2);
 INSERT INTO Task(projId, name, description, stage, contributor) VALUES (2, 'TestTwo', 'Heres somethiong else','start',2);
 INSERT INTO Task(projId, name, description, stage, contributor) VALUES (2, 'TestThree','Last one','todo',2);
+*/

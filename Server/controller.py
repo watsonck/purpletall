@@ -3,12 +3,14 @@ from git import Git
 import psycopg2, psycopg2.extras, time, requests, json, smtplib, re
 
 #TODO *maybe* IMPLEMENT CONFIG FILE LOADING
+db = ''
 dbuser = ''
 dbpass = ''
 dbhost = ''
 
 
 def read_config():
+        global db
         global dbuser
         global dbpass
         global dbhost
@@ -18,7 +20,7 @@ def read_config():
         for line in config:
                 split = line.rstrip('\n').split('=',1)
                 values[split[0]] = split[1]
-                print(split[0],values[split[0]])
+        db = values['database']
         dbuser = values['database user']
         dbpass = values['database password']
         dbhost = values['database host']
@@ -32,7 +34,7 @@ except:
 app = Flask(__name__)
 app.config.from_object(__name__)
 app.config.update( dict(
-        DATABASE="haddock",
+        DATABASE=db,
         SECRET_KEY="Lizard Overlords",
         USERNAME=dbuser,
         PASSWORD=dbpass

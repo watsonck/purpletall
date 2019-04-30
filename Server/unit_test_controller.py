@@ -8,8 +8,18 @@ import psycopg2.extras
 
 app_context = app.app_context()
 app_context.push()
-
 current_app.name
+
+host_port = 'http://purpletall.cs.longwood.edu:5000'
+def read_config():
+        global host_port
+        config = open('unit_test_config.txt','r')
+        values = {}
+        for line in config:
+                split = line.rstrip('\n').split('=',1)
+                values[split[0]] = split[1]
+        host_port = 'http://' + values['host'] + ':' + values['port']
+read_config()
 
 class Test(unittest.TestCase):
 
@@ -66,7 +76,7 @@ class Test(unittest.TestCase):
         self.assertEqual(description, {'description': 'a project made to test switching'})
 
     def test_add_and_del(self):
-        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug=true").text
+        resp = requests.get(host_port+"/1/add?name={unittest1}&desc={This%20is%20a%20unittest}&time={2019-05-1}&bug=true").text
         self.assertNotEqual(json.loads(resp), "ERROR")
         db = get_db()
         db.execute("SELECT id FROM Task WHERE name = 'unittest1' AND description = 'This is a unittest' AND exptCompTime = '2019-05-1' AND bugged = True")
@@ -78,7 +88,7 @@ class Test(unittest.TestCase):
                 if task['name'] == 'unittest1' and task['is_bug'] == True:
                     taskid = task['id']
         self.assertEqual(taskid, name['id'])
-        resp =  requests.get("http://purpletall.cs.longwood.edu:5000/1/remove?id="+str(taskid)).text
+        resp =  requests.get(host_port+"/1/remove?id="+str(taskid)).text
         resp = json.loads(resp)
         ids = []
         for key1, stage in resp['stages'].items():
@@ -87,7 +97,7 @@ class Test(unittest.TestCase):
         self.assertNotIn(taskid, ids)
 
     def test_move(self): 
-        resp = requests.get("http://purpletall.cs.longwood.edu:5000/1/move?id=3&stage={start}").text
+        resp = requests.get(host_port+"/1/move?id=3&stage={start}").text
         self.assertNotEqual(json.loads(resp), "ERROR")
         db = get_db()
         db.execute("SELECT id FROM task WHERE projid = 1 AND stage ILIKE 'start'")
