@@ -1,0 +1,3 @@
+database host=postgres
+database user=haddock
+database password=haddock
