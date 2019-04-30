@@ -630,7 +630,7 @@ def kanban():
     draw_kanban(size[1],size[0],split)
     kanban_print(split, max_tasks, split-1)
     screen.addstr(size[0]-3, 1, "Please enter a command:", curses.A_REVERSE)
-    updater = threading.Timer(30,update)
+    updater = threading.Timer(3,update)
     updater.start()
     parsed = ""
     str1 = ""
@@ -639,7 +639,7 @@ def kanban():
         if len(str1) > 0:
             screen.addstr(size[0]-1,0,str1, curses.A_REVERSE)
         if updated:
-            c_upt = threading.Timer(30,update)
+            c_upt = threading.Timer(3,update)
             c_upt.start()
             proj_change(cur_proj)
             updated = False
