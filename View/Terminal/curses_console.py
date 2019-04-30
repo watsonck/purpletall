@@ -556,6 +556,7 @@ def log(t_id):
 def help():
     global screen
     screen.nodelay(False)
+    curses.echo()
     size = screen.getmaxyx()
     splity = int(size[0]/3)
     splitx = int(size[1]/3)
@@ -605,6 +606,7 @@ def help():
                 screen.addstr(splity+1,splitx+1,cmd_map[choice.decode().lower()], curses.A_REVERSE)
             screen.addstr(splity-1, splitx, "Press enter to continue", curses.A_REVERSE)
             choice = screen.getstr(size[0]-1,0, splitx*3-2)
+    curses.noecho()
 
 def update():
     global updated
