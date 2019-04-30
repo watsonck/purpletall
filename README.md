@@ -91,4 +91,19 @@ While in Kanban board:
 
 Git Flags:
 	To perform actions, place this flags in your git commits
+
+	Add a new task to a project:
+		<ADD (Project ID) (Task Name) (Expected Completion Date) (Is Bug Boolean) (Message)>
+		Ex: <ADD 1 Task5 5-5-2019 false This task is to test stuff>
+
+	Remove a task from a project:
+		<REMV (Project ID) (Task ID)
+		Ex: <REMV 1 9>
 	
+	Move a task to a different stage
+		<MOVE (Project ID) (Task ID) (Destination Stage Name)>
+		Ex: <MOVE 1 22 done>
+	
+	Ping a user with a message:
+		<PING (Recipient Username) (Message)>
+		<PING haddockcl You're a nerd>
