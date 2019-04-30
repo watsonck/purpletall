@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block content %}
+<script>
+function goBack() {
+	window.history.back();
+}
+</script>
+<h1>Info for task {{ dump.name }}</h1>
+<p>id: {{ dump.id }} in project id {{ dump.projid }}</p>
+<p>contributor: {{ dump.contributor }}</p>
+<p>description: {{ dump.description }}</p>
+<p>bugged: {{ dump.bugged }}</p>
+<p>begining time: {{ dump.starttime }}</p>
+<p>expected done: {{ dump.exptcomptime }}</p>
+<br>
+<button onclick="goBack()">Return to Task list</button>
+{% endblock %}

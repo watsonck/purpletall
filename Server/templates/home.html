@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block content %}
+<script> <!--w3schools-->
+function allowDrop(ev){
+	ev.preventDefault();
+}
+
+function drag(ev){
+	ev.dataTransfer.setData("text",ev.target.id);
+}
+
+function drop(ev){
+	ev.preventDefault();
+	var data = ev.dataTransfer.getData("text");
+	ev.target.appendChild(document.getElementById(data));
+}
+
+function formAutoSubmit() {
+	var form = document.getElementById("move");
+	form.submit();
+	Window.setTimeout(formQutoSubmit, 0);
+}
+function dofunction(){
+	formAutoSubmit();
+}
+</script>
+<h1>Kanban Board</h1>
+	<form method="POST" action=/projlist >
+		<input type="hidden" name="userid" value={{ userid }} />
+		<input type=submit value="Back to Projects" />
+	</form>
+	<form method="POST" action=/ >
+		<input type=submit value="Logout" />
+	</form>
+<div class=home>
+	<br/>
+	<div id="main">  
+	{% for key, value in data.metadata.stages.items() %}
+		<div class=stage>
+			<p class = title>{{ value }} </p>
+			<ul>
+				<li>
+					<div id="dest" ondrop="drop(event)" ondrop="dofunction()" ondragover="allowDrop(event)">
+						<hr/>
+					</div>
+				</li>
+				{% for task in tasklist %}
+					{% if task.stage.lower() == value.lower() %}
+						<li>
+							<div id={{task.id}} draggable="true" ondragstart="drag(event)">
+								{{ task.id }}, {{ task.name }} <br>
+								{{ task.lab_user }}
+								<form id=remove method="POST" action="/{{data.metadata.project}}/remove">
+									<input type="hidden" name="id" value={{ task.id }} />
+									<input type="hidden" name="user" value={{ userid }} />
+									<input type="submit" value="Del" />
+								</form>
+								<form id=split method="POST" action="/{{data.metadata.project}}/split">
+									<input type="hidden" name="id" value={{ task.id }} />
+									<input type="hidden" name="user" value={{ userid }} />
+									<input type="submit" value="Split" />
+								</form>
+								<form method="POST" action="/{{ data.metadata.project}}/info">
+									<input type="submit" value="Info" />
+									<input type="hidden" name="id" value="{{ task.id }}" />
+									<input type="hidden" name="user" value={{ userid }} />
+								</form>
+							</div>
+						</li>
+						<br>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	{% endfor %}
+	</div>
+	<div class=sidebar>
+		add task:
+		<div if=add>
+			<form method="POST" action="/{{data.metadata.project}}/add">
+				task name: <input type="text" name="name" />
+				description: <input type="text" name="desc" />
+				expected complete: <input type="datetime-local" name="time" />
+				is it a bug? <input type="test" name="bug" /> (true or false)
+				<input type="hidden" name="user" value={{ userid }} />
+				<input type="hidden" name="proj" value={{ data.metadata.project }} />
+				<input type="submit" value="Add" />
+			</form>
+		</div>
+		<br />
+		add column:
+		<div id=addcol>
+			<form method="POST" action="/{{data.metadata.project}}/addcol">
+				Column name:<input type=text name=name />
+				<input type="hidden" name="user" value={{ userid }} />
+				<input type=submit value="add column"/>
+			</form>
+		</div>
+		<br />
+		delete columns:
+		<div id=delcol>
+			<form method="POST" action="/{{data.metadata.project}}/delcol">
+				Column name:<input type=text name=name />
+				<input type="hidden" name="user" value={{ userid }} />
+				<input type=submit value="delete column" />
+			</form>
+		</div>
+		<br />
+		swap columns:
+		<div id=swpcol>
+			<form method="POST" action="/{{data.metadata.project}}/swap">
+				1st column name: <input type=text name=stage1 /> <br/>
+				2nd column swap: <input type=text name=stage2 />
+				<input type="hidden" name="user" value={{ userid }} />
+				<input type=submit value="swap columns" />
+			</form>
+		</div>
+		task move:
+		<form id=move method="POST" action="/{{data.metadata.project}}/move">
+			which one:<input type="text" name="id" />
+			to what column:<input type="text" name="stage" />
+			<input type="hidden" name="user" value={{ userid }} />
+			<input type=submit value="move it" />
+		</form>	
+	</div> <!--end of "sidebar"-->
+</div>
+{% endblock %}

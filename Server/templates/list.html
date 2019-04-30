@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome {{ curUser }}</h1>
+<form method="POST" action=/ >
+	<input type=submit value="Logout" />
+</form>
+<div class=home>
+    <h1>Projects</h1>
+    <ul>
+    {% for projects in List %}
+    <li>
+        {{projects.projid}}:
+        {{projects.name}}<br>
+        {{projects.description}}
+        <form method="POST" action="/{{projects.projid}}/list">
+            <input type="hidden" name="userid" value={{uid}} />
+            <input type="submit" value="Work in this project" />
+        </form>
+		<form method="POST" action="/delproj">
+			<input type="hidden" name=id value={{projects.projid}} />
+			<input type=submit value="Delete" />
+		</form>
+		</li>
+        <br>
+    {% endfor %}
+    </ul>
+	<form method="POST" action="/newproj">
+		<label for="name">Project Name:</label><br />
+		<input type=text name="name" /><br />
+		<label for="desc">Project Description:</label><br />
+		<input type=test name="desc" /><br />
+		<input type=submit value="Add Project" />
+	</form>
+</div>
+{% endblock %}
+

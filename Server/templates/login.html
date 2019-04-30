@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block func %}
+	{% if loginUser < 0 %}
+		onload="alert("Invalid login. Please try again.")"
+	{% endif %}
+{% endblock %}
+
+{% block content %}
+	<!--<script>
+	function scriptLoad() {
+	
+	}
+	</script>-->
+	<div id=login>
+	<svg width="100" height="400">
+		<rect width="100" height="400"
+		style="fill:rgb(128,0,128);stroke-width:10,stroke:rgb(0,0,0)" />
+	</svg>
+	<p>Please log in with your lab username</p>
+	<form method="POST" action="/login">
+		<fieldset>
+			<legend>Log In</legend>
+			<label for="username">Username:</label><br />
+			<input type="text" name="user" id="username" /><br />
+			<input type="submit" value="Log In" />
+		</fieldset>
+	</form>
+	<form method="POST" action=/addingauser >
+		<input type=submit value="Add User" />
+	</form>
+	</div>
+{% endblock %}

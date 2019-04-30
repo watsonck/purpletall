@@ -1,0 +1,84 @@
+h1{
+	border-bottom: 3px purple solid;
+}
+
+.title{
+	text-align: center;
+	border-bottom: 1px purple solid;
+}
+
+#login{
+	margin: 0 auto;
+	text-align: center;
+}
+
+/*#remove{
+	border: 1px solid black;
+	text: center;
+	width: 15px;
+	color: red;
+}
+
+#split{
+	border: 1px solid black;
+	text: center;
+	width: 15px;
+	color: green;
+}
+
+.fakebuttonsplit{
+	border: 1px solid black;
+	text: center;
+	width: 15px;
+	color: green;
+}*/
+
+#home{
+	display: flex;
+	margin: 0 auto;
+}
+
+#promptbar{
+	position: static;
+	width: 25%;
+	bottom: 0;
+}
+
+#main{
+	display: flex;
+	overflow-x: auto;
+	flex-direction: rows;
+	align-items: flex-start;
+	white-space: nowrap;
+}
+
+li{
+	margin-left: -10px;
+	margin-right: 10px;
+	padding: 10px;
+	list-style-type: none;
+}
+
+.stage{
+	/*
+	position: relative;
+	top: 30px;
+	*/
+	/*height: 50px;*/
+	bottom: 5%;
+	border: solid 3px purple;
+	display: inline-block;
+	width: 300px;
+	flex-shrink: 0;
+	flex-grow: 0;
+}
+
+.sidebar{
+	border-top: 3px purple solid;
+	/*position: absolute;*/
+	bottom: 5px;
+}
+
+.sidebar > form{
+	border-bottom: 1px solid purple;
+}

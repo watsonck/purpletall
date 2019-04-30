@@ -19,18 +19,32 @@ Contributers to Model:
   Colin Watson
 
 
+Setup Server:
+1) Copy server to host computer
+2) Have a postgres database in place
+3) Run: psql -h (host) -U username -f sql.input
+	Log in with password
+4) Edit config file to direct towards postgres database
+
+
+Setup Client:
+1) Copy client to client computer
+2) Edit config to direct towards host computer
+	Also supports changing how often server refreshes
+
 How to use:
 1) Start the controller:
-	cd Controller
-	python3 Controller.py
+	python3 controller.py
+----Using the terminal----
 2) Open another Terminal.
 3) Start the view:
-	cd View/Terminal
 	python3 curses_console.py
 ----Using the web----
-4)Using the website:
+2)Using the website:
     open your browser (in the lab)
-	put this in your address bar: purpletall.cs.longwood.edu:5000
+	Enter the host url where the server is located 
+
+
 Here are the view controls:
 
 ALL CMDS NON CASE SENSISTIVE
